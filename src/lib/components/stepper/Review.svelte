@@ -39,7 +39,7 @@
             <p
                 class="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl italic drop-shadow-sm tracking-wide text-center"
             >
-                {"Проверете дизайна, съобщението и гласовата поздрав преди да завършите."}
+                {"Проверете дизайна, съобщението и гласовата поздрав преди да завършите. Вашата персонализирана картичка за подаръци е готова!"}
             </p>
             <div class="flex flex-col gap-2 sm:gap-3 md:gap-4">
                 <aside id="wish-card-preview" class="mt-6 wish-card">

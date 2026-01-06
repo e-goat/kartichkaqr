@@ -65,7 +65,7 @@
     <title>{"Картичка QR - Създаи Картичка"}</title>
     <meta
         name="description"
-        content="Създайте персонализирана поздравителна картичка с вашия почерк и глас. Изберете дизайн, запишете съобщение и споделете с близките си. Create personalized greeting cards with handwriting and voice messages."
+        content="Създайте персонализирана поздравителна картичка с вашия почерк и глас. Изберете дизайн, запишете съобщение и споделете с близките си. Перфектни картички за подаръци за всички поводи. Create personalized greeting cards with handwriting and voice messages."
     />
 </svelte:head>
 

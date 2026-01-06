@@ -13,7 +13,8 @@
         <p>{data.description}</p>
     </div>
 {:else}
-    <p>Картичката не е намерена.</p>
+    <p>Картичката за подаръци не е намерена.</p>
 {/if}
 
-<button onclick={() => history.back()} class="btn btn-secondary">← Назад</button>
+<button onclick={() => history.back()} class="btn btn-secondary">← Назад</button
+>
