@@ -78,7 +78,6 @@
                     text={"Запази"}
                     buttonType="submit"
                     loading={ss.isSubmitting}
-                    disabled={true}
                 />
             {/if}
         </div>

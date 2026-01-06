@@ -2,6 +2,8 @@ interface CardState {
     title: string;
     sender: string;
     receiver: string;
+    tel?: string | null;
+    email?: string | null;
     description: string;
     templateId: number;
     slug: string;

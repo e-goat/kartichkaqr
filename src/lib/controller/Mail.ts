@@ -1,13 +1,13 @@
-import { Resend } from 'resend'
-import { RESEND_API_KEY } from '$lib/server/secrets'
-import { render } from 'svelte/server'
-import EmailTemplate from '$lib/components/EmailTemplate.svelte'
+import { Resend } from "resend";
+import { RESEND_API_KEY } from "$lib/server/secrets";
+import { render } from "svelte/server";
+import EmailTemplate from "$lib/components/EmailTemplate.svelte";
 
 class Mail {
-    #resend: Resend
+    #resend: Resend;
 
     constructor() {
-        this.#resend = new Resend(RESEND_API_KEY)
+        this.#resend = new Resend(RESEND_API_KEY);
     }
 
     async send({
@@ -16,46 +16,48 @@ class Mail {
         name,
         title,
         senderName,
+        description,
     }: {
-        to: string
-        from: string
-        name: string
-        title: string
-        senderName: string
+        to: string;
+        from: string;
+        name: string;
+        title: string;
+        senderName: string;
+        description: string;
     }) {
         try {
             const { body } = render(EmailTemplate, {
                 props: {
                     recipientName: name,
-                    senderName: senderName,
-                    wishMessage: title,
-                    cardImageUrl: '',
+                    senderName,
+                    title,
+                    description,
                 },
-            })
+            });
 
             const { data, error } = await this.#resend.emails.send({
-                from: from,
-                to: [to],
+                from: process.env.APP_EMAIL || from,
+                to: [process.env.ADMIN_EMAIL || "", to],
                 subject: title,
                 html: body,
-            })
+            });
 
             if (error) {
                 console.error({
                     error: error,
                     status: 500,
-                })
+                });
             }
 
-            return data
+            return data;
         } catch (error) {
             console.error({
                 error: error,
                 status: 500,
-            })
-            throw error
+            });
+            throw error;
         }
     }
 }
 
-export const MailController = new Mail()
+export const MailController = new Mail();

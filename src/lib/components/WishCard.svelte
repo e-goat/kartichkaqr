@@ -41,17 +41,14 @@
         isRotationPaused = !isRotationPaused;
     }
 
-    // Update text color when front element or cardFront changes
     $effect(() => {
         if (frontElement) {
             const computedStyle = window.getComputedStyle(frontElement);
             const bgColor = computedStyle.backgroundColor;
 
             if (hasCardFront) {
-                // For background images, default to white text with text shadow for readability
                 textColor = "white";
             } else {
-                // For solid colors, calculate the appropriate contrast
                 textColor = getContrastingColor(bgColor);
             }
         }

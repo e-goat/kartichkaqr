@@ -15,16 +15,17 @@
 
     let { templates = [] }: Props = $props();
 
-    // Find the selected template
     let selectedTemplate = $derived(
         templates.find((t) => t.id === cs.templateId) || null,
     );
 
-    // Physical copy request state
-    let requestPhysicalCopy = $state(false);
-    let physicalCopyName = $state("");
-    let physicalCopyEmail = $state("");
-    let physicalCopyPhone = $state("");
+    let physicalCopy = $state({
+        requested: false,
+        name: "",
+        email: "",
+        phone: "",
+        comment: "",
+    });
 </script>
 
 <section>
@@ -58,7 +59,7 @@
                             type="checkbox"
                             id="physical-copy-checkbox"
                             class="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-200 cursor-pointer"
-                            bind:checked={requestPhysicalCopy}
+                            bind:checked={physicalCopy.requested}
                         />
                         <label
                             for="physical-copy-checkbox"
@@ -68,7 +69,7 @@
                         </label>
                     </div>
 
-                    {#if requestPhysicalCopy}
+                    {#if physicalCopy.requested}
                         <div
                             class="flex flex-col gap-2 sm:gap-3 md:gap-4 mt-2 pl-2 sm:pl-4"
                         >
@@ -86,8 +87,8 @@
                                     class="rounded-xl border border-gray-200 bg-white px-4 py-3 text-base shadow focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors w-full"
                                     placeholder="Вашето име"
                                     autocomplete="name"
-                                    bind:value={physicalCopyName}
-                                    required={requestPhysicalCopy}
+                                    bind:value={physicalCopy.name}
+                                    required={physicalCopy.requested}
                                 />
                             </div>
 
@@ -105,8 +106,8 @@
                                     class="rounded-xl border border-gray-200 bg-white px-4 py-3 text-base shadow focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors w-full"
                                     placeholder="your.email@example.com"
                                     autocomplete="email"
-                                    bind:value={physicalCopyEmail}
-                                    required={requestPhysicalCopy}
+                                    bind:value={physicalCopy.email}
+                                    required={physicalCopy.requested}
                                 />
                             </div>
 
@@ -124,9 +125,25 @@
                                     class="rounded-xl border border-gray-200 bg-white px-4 py-3 text-base shadow focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors w-full"
                                     placeholder="+359 ..."
                                     autocomplete="tel"
-                                    bind:value={physicalCopyPhone}
-                                    required={requestPhysicalCopy}
+                                    bind:value={physicalCopy.phone}
+                                    required={physicalCopy.requested}
                                 />
+                            </div>
+
+                            <div class="flex flex-col w-full">
+                                <label
+                                    class="mb-1 text-sm font-medium text-gray-700"
+                                    for="physical-copy-phone"
+                                >
+                                    Допълнителен коментар
+                                </label>
+                                <textarea
+                                    id="physical-copy-comment"
+                                    name="physical-copy-comment"
+                                    class="rounded-xl border border-gray-200 bg-white px-4 py-3 text-base shadow focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors w-full h-24 resize-none"
+                                    placeholder="Коментар..."
+                                    bind:value={physicalCopy.comment}
+                                ></textarea>
                             </div>
                         </div>
                     {/if}

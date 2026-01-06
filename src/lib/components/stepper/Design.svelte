@@ -106,8 +106,7 @@
                 <li>
                     <button
                         type="button"
-                        class="w-full h-60 rounded-xl overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:cursor-pointer relative border bg-cover bg-center"
-                        class:border-solid={t.id == cs.templateId}
+                        class="border-4 w-full h-60 rounded-xl overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:cursor-pointer relative bg-cover bg-center"
                         class:border-custom-orange-600={t.id == cs.templateId}
                         class:border-transparent={t.id != cs.templateId}
                         style="background-image: url('{t.background}');"

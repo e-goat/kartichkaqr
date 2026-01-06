@@ -35,20 +35,20 @@ export const load: PageServerLoad = async ({ url }) => {
 export const actions: Actions = {
     create: async ({ request, fetch }) => {
         const formData = await request.formData();
-        const card = JSON.parse(formData.get("card") as string);
-        let cardInput: Prisma.CardCreateInput;
+        const cardMeta = JSON.parse(formData.get("card") as string);
+        let card: Prisma.CardCreateInput;
         ss.isSubmitting = true;
 
         try {
             // Page 1 validations
             if (
-                !card.title?.trim() ||
-                !card.receiver?.trim() ||
-                !card.sender?.trim()
+                !cardMeta.title?.trim() ||
+                !cardMeta.receiver?.trim() ||
+                !cardMeta.sender?.trim()
             ) {
                 ss.isSubmitting = false;
                 return fail(400, {
-                    card,
+                    cardMeta,
                     error: "Моля, попълнете всички полета.",
                     errorStep: 1,
                     missing: true,
@@ -56,50 +56,53 @@ export const actions: Actions = {
             }
 
             // Page 2 validations
-            if (!card.templateId) {
+            if (!cardMeta.templateId) {
                 ss.isSubmitting = false;
                 ss.currentStep = 2;
                 return fail(400, {
-                    card,
+                    cardMeta,
                     error: "Моля, изберете шаблон за картичката.",
                     errorStep: 2,
                 });
             }
 
-            cardInput = {
-                title: card.title,
-                description: card.description,
-                sender: card.sender,
-                receiver: card.receiver,
-                slug: card.slug,
-                audioUrl: card.audioUrl,
-                cardUuid: card.cardUuid,
+            card = {
+                title: cardMeta.title,
+                description: cardMeta.description,
+                sender: cardMeta.sender,
+                receiver: cardMeta.receiver,
+                slug: cardMeta.slug,
+                audioUrl: cardMeta.audioUrl,
+                cardUuid: cardMeta.cardUuid,
                 template: {
-                    connect: { id: card.templateId },
+                    connect: { id: cardMeta.templateId },
                 },
             };
 
-            // const file = formData.get("record") as File | null;
-            // if (file) {
-            //     const storeResponse = await VercelStorageController.store({
-            //         file: file,
-            //         mimeType: "webm",
-            //         uuid: cardInput.cardUuid as string,
-            //     });
-            //     cardInput.audioUrl = storeResponse.url;
-            // }
+            const file = formData.get("record") as File | null;
+            if (file) {
+                const storeResponse = await VercelStorageController.store({
+                    file: file,
+                    mimeType: "webm",
+                    uuid: card.cardUuid as string,
+                });
+                card.audioUrl = storeResponse.url;
+            }
 
-            // await createCard(cardInput)
+            await createCard(card);
 
-            // MailController.send({
-            //     to: cardInput.receiver,
-            //     from: cardInput.sender,
-            //     name: cardInput.receiver,
-            //     title: cardInput.title,
-            //     senderName: cardInput.sender,
-            // })
+            MailController.send({
+                to: process.env.ADMIN_EMAIL || "",
+                from: process.env.APP_EMAIL || "",
+                name: cardMeta.receiver,
+                title: cardMeta.title,
+                senderName: cardMeta.sender,
+                description: cardMeta.description || "",
+            });
 
-            return { success: true, card: cardInput };
+            ss.isSubmitting = false;
+
+            return { success: true, card };
         } catch (e) {
             ss.isSubmitting = false;
             console.error("Card creation error:", e);
@@ -109,13 +112,13 @@ export const actions: Actions = {
                 e.message.includes("Card_templateId_fkey")
             ) {
                 return fail(400, {
-                    card,
+                    cardMeta,
                     error: "Избраният шаблон не съществува. Моля, изберете валиден шаблон.",
                 });
             }
 
             return fail(500, {
-                card,
+                cardMeta,
                 error: `Възникна грешка при създаването на картичката.`,
             });
         }

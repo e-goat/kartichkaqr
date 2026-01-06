@@ -191,55 +191,6 @@
         z-index: 60;
     }
 
-    .logo-text {
-        color: #303030;
-        position: relative;
-        font:
-            24px Geologica,
-            -apple-system,
-            Roboto,
-            Helvetica,
-            sans-serif;
-    }
-
-    @media (max-width: 640px) {
-        .logo-text {
-            font-size: 20px;
-        }
-    }
-
-    .logo-kartichka {
-        color: rgba(48, 48, 48, 1);
-        font:
-            400 24px Geologica,
-            -apple-system,
-            Roboto,
-            Helvetica,
-            sans-serif;
-    }
-
-    @media (max-width: 640px) {
-        .logo-kartichka {
-            font-size: 20px;
-        }
-    }
-
-    .logo-qr {
-        color: rgba(48, 48, 48, 1);
-        font:
-            700 24px Geologica,
-            -apple-system,
-            Roboto,
-            Helvetica,
-            sans-serif;
-    }
-
-    @media (max-width: 640px) {
-        .logo-qr {
-            font-size: 20px;
-        }
-    }
-
     .desktop-nav {
         display: flex;
         align-items: center;
@@ -424,15 +375,6 @@
     @media (max-width: 320px) {
         .header-content {
             padding: 0 8px;
-        }
-
-        .logo-text {
-            font-size: 18px;
-        }
-
-        .logo-kartichka,
-        .logo-qr {
-            font-size: 18px;
         }
 
         .mobile-nav {
