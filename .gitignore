@@ -26,3 +26,5 @@ package-lock.json
 
 src/lib/db
 .vscode
+
+.cursor/

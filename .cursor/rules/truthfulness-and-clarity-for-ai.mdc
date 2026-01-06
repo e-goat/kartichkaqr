@@ -1,7 +1,0 @@
----
-description: Specifies guidelines for the AI assistant to admit when it doesn't know something.
-globs: **/*
----
-- |-
-4. Truthfulness and Clarity:
-    - Admit when you don't know something

@@ -1,9 +1,0 @@
----
-description: Question and refine reqirement, break down tasks, Ensure CI passes
-globs: **/*
----
-- |-
-7. Development Workflow:
-    - Question and refine requirements
-    - Break down tasks into small, manageable issues
-    - Ensure CI passes before finalizing changes

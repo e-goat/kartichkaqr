@@ -1,7 +1,7 @@
 <script lang="ts">
     import { cs } from "$lib/state.svelte";
     import { getContrastingColor } from "$lib/utils/helpers";
-
+    import { PUBLIC_ADMIN_EMAIL } from "$env/static/public";
     interface Props {
         cardFront?: string;
         cardBack?: string;
@@ -347,10 +347,10 @@
                         <div class="contact-section">
                             <p class="contact-label">Свържете се с нас:</p>
                             <a
-                                href="mailto:example@yahoo.com"
+                                href="mailto:{PUBLIC_ADMIN_EMAIL}"
                                 class="contact-email"
                             >
-                                example@yahoo.com
+                                {PUBLIC_ADMIN_EMAIL}
                             </a>
                             <p class="contact-note">
                                 Благодарим ви, че се доверихте на нас!
@@ -404,9 +404,9 @@
 
                     <div class="mb-4">
                         <a
-                            href="mailto:example@yahoo.com"
+                            href="mailto:{PUBLIC_ADMIN_EMAIL}"
                             class="text-sm text-blue-600 underline"
-                            >example@yahoo.com</a
+                            >{PUBLIC_ADMIN_EMAIL}</a
                         >
                     </div>
 
