@@ -4,8 +4,9 @@
     import Logo from "$lib/assets/logo.jpg";
     import Footer from "$lib/components/Footer.svelte";
     import Header from "$lib/components/Header.svelte";
+    import CookieModal from "$lib/components/CookieModal.svelte";
 
-    let { children } = $props();
+    let { children, data } = $props();
     injectAnalytics();
 </script>
 
@@ -17,4 +18,5 @@
         </div>
     </section>
     <Footer />
+    <CookieModal cookieConsent={data.cookieConsent} />
 </main>
