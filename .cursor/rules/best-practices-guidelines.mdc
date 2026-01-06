@@ -1,0 +1,6 @@
+---
+description: Specifies best practices, including using Zod for data validation. This rule promotes modern and robust development practices.
+globs: **/*
+---
+5. Best Practices:
+    - Use Zod for data validation

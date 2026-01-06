@@ -1,0 +1,10 @@
+---
+name: design-ux
+description: When writing tailwind always consider dark mode, ensure mobile-friendly environment, optimize performance, create modern buitiful UI, consider accessibility in all design decisions
+---
+2. Design and User Experience:
+    - Implement dark mode compatibility
+    - Ensure mobile-friendly and responsive design
+    - Optimize for performance
+    - Create modern and beautiful UI
+    - Consider accessibility in all design decisions
