@@ -1,6 +1,7 @@
 <script lang="ts">
     import WishCard from "$lib/components/WishCard.svelte";
-    import { cs } from "$lib/state.svelte.js";
+    import { cs, ss } from "$lib/state.svelte.js";
+    import { validatePhysicalCopy } from "$lib/utils/validation";
 
     interface Props {
         templates?: Array<{
@@ -26,6 +27,33 @@
         phone: "",
         comment: "",
     });
+
+    $effect(() => {
+        // Clear validation errors when user starts typing
+        if (physicalCopy.name && ss.validationErrors.name) {
+            delete ss.validationErrors.name;
+        }
+        if (physicalCopy.email && ss.validationErrors.email) {
+            delete ss.validationErrors.email;
+        }
+        if (physicalCopy.phone && ss.validationErrors.phone) {
+            delete ss.validationErrors.phone;
+        }
+        if (physicalCopy.comment && ss.validationErrors.comment) {
+            delete ss.validationErrors.comment;
+        }
+    });
+
+    // Validate physical copy when checkbox is toggled
+    function handlePhysicalCopyToggle() {
+        if (!physicalCopy.requested) {
+            // Clear validation errors when unchecking
+            delete ss.validationErrors.name;
+            delete ss.validationErrors.email;
+            delete ss.validationErrors.phone;
+            delete ss.validationErrors.comment;
+        }
+    }
 </script>
 
 <section>
@@ -60,6 +88,7 @@
                             id="physical-copy-checkbox"
                             class="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-200 cursor-pointer"
                             bind:checked={physicalCopy.requested}
+                            onchange={handlePhysicalCopyToggle}
                         />
                         <label
                             for="physical-copy-checkbox"
@@ -84,12 +113,29 @@
                                     id="physical-copy-name"
                                     name="physical-copy-name"
                                     type="text"
-                                    class="rounded-xl border border-gray-200 bg-white px-4 py-3 text-base shadow focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors w-full"
+                                    class="rounded-xl border px-4 py-3 text-base shadow focus:outline-none focus:ring-2 transition-colors w-full"
+                                    class:border-red-300={!!ss.validationErrors
+                                        .name}
+                                    class:border-gray-200={!ss.validationErrors
+                                        .name}
+                                    class:focus:border-red-500={!!ss
+                                        .validationErrors.name}
+                                    class:focus:ring-red-200={!!ss
+                                        .validationErrors.name}
+                                    class:focus:border-blue-500={!ss
+                                        .validationErrors.name}
+                                    class:focus:ring-blue-200={!ss
+                                        .validationErrors.name}
                                     placeholder="Вашето име"
                                     autocomplete="name"
                                     bind:value={physicalCopy.name}
                                     required={physicalCopy.requested}
                                 />
+                                {#if ss.validationErrors.name}
+                                    <p class="mt-1 text-sm text-red-600">
+                                        {ss.validationErrors.name}
+                                    </p>
+                                {/if}
                             </div>
 
                             <div class="flex flex-col w-full">
@@ -103,12 +149,29 @@
                                     id="physical-copy-email"
                                     name="physical-copy-email"
                                     type="email"
-                                    class="rounded-xl border border-gray-200 bg-white px-4 py-3 text-base shadow focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors w-full"
+                                    class="rounded-xl border px-4 py-3 text-base shadow focus:outline-none focus:ring-2 transition-colors w-full"
+                                    class:border-red-300={!!ss.validationErrors
+                                        .email}
+                                    class:border-gray-200={!ss.validationErrors
+                                        .email}
+                                    class:focus:border-red-500={!!ss
+                                        .validationErrors.email}
+                                    class:focus:ring-red-200={!!ss
+                                        .validationErrors.email}
+                                    class:focus:border-blue-500={!ss
+                                        .validationErrors.email}
+                                    class:focus:ring-blue-200={!ss
+                                        .validationErrors.email}
                                     placeholder="your.email@example.com"
                                     autocomplete="email"
                                     bind:value={physicalCopy.email}
                                     required={physicalCopy.requested}
                                 />
+                                {#if ss.validationErrors.email}
+                                    <p class="mt-1 text-sm text-red-600">
+                                        {ss.validationErrors.email}
+                                    </p>
+                                {/if}
                             </div>
 
                             <div class="flex flex-col w-full">
@@ -122,28 +185,62 @@
                                     id="physical-copy-phone"
                                     name="physical-copy-phone"
                                     type="tel"
-                                    class="rounded-xl border border-gray-200 bg-white px-4 py-3 text-base shadow focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors w-full"
+                                    class="rounded-xl border px-4 py-3 text-base shadow focus:outline-none focus:ring-2 transition-colors w-full"
+                                    class:border-red-300={!!ss.validationErrors
+                                        .phone}
+                                    class:border-gray-200={!ss.validationErrors
+                                        .phone}
+                                    class:focus:border-red-500={!!ss
+                                        .validationErrors.phone}
+                                    class:focus:ring-red-200={!!ss
+                                        .validationErrors.phone}
+                                    class:focus:border-blue-500={!ss
+                                        .validationErrors.phone}
+                                    class:focus:ring-blue-200={!ss
+                                        .validationErrors.phone}
                                     placeholder="+359 ..."
                                     autocomplete="tel"
                                     bind:value={physicalCopy.phone}
                                     required={physicalCopy.requested}
                                 />
+                                {#if ss.validationErrors.phone}
+                                    <p class="mt-1 text-sm text-red-600">
+                                        {ss.validationErrors.phone}
+                                    </p>
+                                {/if}
                             </div>
 
                             <div class="flex flex-col w-full">
                                 <label
                                     class="mb-1 text-sm font-medium text-gray-700"
-                                    for="physical-copy-phone"
+                                    for="physical-copy-comment"
                                 >
                                     Допълнителен коментар
                                 </label>
                                 <textarea
                                     id="physical-copy-comment"
                                     name="physical-copy-comment"
-                                    class="rounded-xl border border-gray-200 bg-white px-4 py-3 text-base shadow focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-200 transition-colors w-full h-24 resize-none"
+                                    class="rounded-xl border px-4 py-3 text-base shadow focus:outline-none focus:ring-2 transition-colors w-full h-24 resize-none"
+                                    class:border-red-300={!!ss.validationErrors
+                                        .comment}
+                                    class:border-gray-200={!ss.validationErrors
+                                        .comment}
+                                    class:focus:border-red-500={!!ss
+                                        .validationErrors.comment}
+                                    class:focus:ring-red-200={!!ss
+                                        .validationErrors.comment}
+                                    class:focus:border-blue-500={!ss
+                                        .validationErrors.comment}
+                                    class:focus:ring-blue-200={!ss
+                                        .validationErrors.comment}
                                     placeholder="Коментар..."
                                     bind:value={physicalCopy.comment}
                                 ></textarea>
+                                {#if ss.validationErrors.comment}
+                                    <p class="mt-1 text-sm text-red-600">
+                                        {ss.validationErrors.comment}
+                                    </p>
+                                {/if}
                             </div>
                         </div>
                     {/if}

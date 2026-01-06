@@ -18,6 +18,7 @@ interface StepperState {
     steps: number;
     isSubmitting: boolean;
     isRendering: boolean;
+    validationErrors: Record<string, string>;
 }
 
 interface RecorderState {
@@ -46,6 +47,7 @@ export const ss: StepperState = $state({
     steps: 0,
     isSubmitting: false,
     isRendering: false,
+    validationErrors: {},
 });
 
 export const rs: RecorderState = $state({
@@ -68,6 +70,7 @@ export function resetCardState() {
 
     ss.currentStep = 1;
     ss.isSubmitting = false;
+    ss.validationErrors = {};
 
     rs.blob = null;
 }

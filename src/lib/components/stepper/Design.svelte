@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { cs, tcc } from "$lib/state.svelte";
+    import { cs, ss, tcc } from "$lib/state.svelte";
     import Pagination from "../Pagination.svelte";
     import { goto } from "$app/navigation";
     import { getContrastingColorFromImage } from "$lib/utils/helpers";
@@ -43,6 +43,11 @@
             "border-solid",
             "border-custom-orange-600",
         );
+
+        // Clear validation error when template is selected
+        if (cs.templateId > 0 && ss.validationErrors.templateId) {
+            delete ss.validationErrors.templateId;
+        }
     }
     function handleClickEventAll(event: MouseEvent) {
         event.preventDefault();
@@ -101,6 +106,13 @@
                 >
             {/each}
         </section>
+        {#if ss.validationErrors.templateId}
+            <div class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <p class="text-sm text-red-600">
+                    {ss.validationErrors.templateId}
+                </p>
+            </div>
+        {/if}
         <ul class="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {#each data.templates as t}
                 <li>
@@ -108,7 +120,10 @@
                         type="button"
                         class="border-4 w-full h-60 rounded-xl overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:cursor-pointer relative bg-cover bg-center"
                         class:border-custom-orange-600={t.id == cs.templateId}
-                        class:border-transparent={t.id != cs.templateId}
+                        class:border-red-500={ss.validationErrors.templateId &&
+                            t.id == cs.templateId}
+                        class:border-transparent={t.id != cs.templateId &&
+                            !ss.validationErrors.templateId}
                         style="background-image: url('{t.background}');"
                         onclick={handleClickEvent}
                         data-template-id={t.id}

@@ -5,11 +5,16 @@
     import Breadcrumb from "./stepper/Breadcrumb.svelte";
     import { enhance } from "$app/forms";
     import { onMount, onDestroy } from "svelte";
+    import Swal from "sweetalert2";
 
     let { children, steps = 0, form } = $props();
     let initialStep: number = steps + 1 - steps;
+    let globalErrorMessage = $state<string | null>(null);
+
     ss.currentStep = initialStep;
     ss.isRendering = false;
+    ss.validationErrors = {};
+
     onMount(() => {
         ss.isRendering = true;
     });
@@ -17,6 +22,60 @@
     onDestroy(() => {
         ss.isRendering = false;
     });
+
+    async function handleNext() {
+        const result = await defineStepperEvent("next", steps, initialStep);
+
+        if (!result.success) {
+            if (result.validationResult?.errors) {
+                ss.validationErrors = result.validationResult.errors;
+            }
+            if (result.errorMessage) {
+                globalErrorMessage = result.errorMessage;
+                await Swal.fire({
+                    icon: "error",
+                    title: "Грешка при валидация",
+                    text: result.errorMessage,
+                    confirmButtonText: "Разбрах",
+                });
+            }
+        } else {
+            ss.validationErrors = {};
+            globalErrorMessage = null;
+        }
+    }
+
+    async function handlePrev() {
+        const result = await defineStepperEvent("prev", steps, initialStep);
+        if (result.success) {
+            ss.validationErrors = {};
+            globalErrorMessage = null;
+        }
+    }
+
+    async function handleSubmit() {
+        const result = await defineStepperEvent("submit", steps, initialStep);
+
+        if (!result.success) {
+            if (result.validationResult?.errors) {
+                ss.validationErrors = result.validationResult.errors;
+            }
+            if (result.errorMessage) {
+                globalErrorMessage = result.errorMessage;
+                await Swal.fire({
+                    icon: "error",
+                    title: "Грешка при валидация",
+                    text: result.errorMessage,
+                    confirmButtonText: "Разбрах",
+                });
+            }
+            return false;
+        }
+
+        ss.validationErrors = {};
+        globalErrorMessage = null;
+        return true;
+    }
 </script>
 
 <div
@@ -57,8 +116,7 @@
             <Button
                 ariaLabel="Предишна стъпка"
                 text={"Назад"}
-                clickEvent={(e) =>
-                    defineStepperEvent("prev", steps, initialStep)}
+                clickEvent={handlePrev}
                 disabled={ss.currentStep == initialStep}
                 buttonType="button"
             />
@@ -66,8 +124,7 @@
                 <Button
                     ariaLabel="Следваща стъпка"
                     text={"Напред"}
-                    clickEvent={(e) =>
-                        defineStepperEvent("next", steps, initialStep)}
+                    clickEvent={handleNext}
                     disabled={ss.currentStep == steps}
                     buttonType="button"
                 />
@@ -78,6 +135,16 @@
                     text={"Запази"}
                     buttonType="submit"
                     loading={ss.isSubmitting}
+                    clickEvent={async (e) => {
+                        e.preventDefault();
+                        const isValid = await handleSubmit();
+                        if (isValid) {
+                            const form = document.getElementById(
+                                "step-form",
+                            ) as HTMLFormElement;
+                            form?.requestSubmit();
+                        }
+                    }}
                 />
             {/if}
         </div>
