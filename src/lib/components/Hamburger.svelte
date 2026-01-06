@@ -87,7 +87,10 @@
     .hamburger-line {
         background-color: #303030;
         border-radius: 2px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition:
+            transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+            opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+            margin-top 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         transform-origin: center;
         display: block;
         width: 100%;

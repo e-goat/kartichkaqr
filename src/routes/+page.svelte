@@ -175,7 +175,7 @@
                 <button
                     on:click={handleCreateCard}
                     disabled={isLoading}
-                    class="flex gap-4 justify-center items-center px-6 py-3 bg-green-600 transition-all cursor-pointer duration-200 ease-in-out rounded-full hover:bg-green-700 hover:scale-105 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
+                    class="flex gap-4 justify-center items-center px-6 py-3 bg-green-600 transition-button cursor-pointer rounded-full hover:bg-green-700 hover:scale-105 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                     <div class="flex items-center justify-center w-5 h-5">
                         {#if isLoading}
