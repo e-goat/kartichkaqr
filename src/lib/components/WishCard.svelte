@@ -1,7 +1,6 @@
 <script lang="ts">
     import { cs } from "$lib/state.svelte";
     import { getContrastingColor } from "$lib/utils/helpers";
-    import { onMount } from "svelte";
 
     interface Props {
         cardFront?: string;
@@ -19,7 +18,7 @@
 
     let isOpened = $state(false);
     let isTransitioning = $state(false);
-    let isRotationPaused = $state(false);
+    let isHovered = $state(false);
     let textColor = $state("black");
     let frontElement = $state<HTMLDivElement>();
 
@@ -35,12 +34,6 @@
         }, 600);
     }
 
-    function toggleRotation(e: MouseEvent) {
-        e.stopPropagation();
-        e.preventDefault();
-        isRotationPaused = !isRotationPaused;
-    }
-
     $effect(() => {
         if (frontElement) {
             const computedStyle = window.getComputedStyle(frontElement);
@@ -53,64 +46,19 @@
             }
         }
     });
-
-    onMount(async () => {
-        const boxFront: HTMLElement | null = document.querySelector(
-            "#wish-card-preview .box-holder .box--front",
-        );
-        const boxBack: HTMLElement | null = document.querySelector(
-            "#wish-card-preview .box-holder .box--back",
-        );
-        const wishcardContainer: HTMLElement | null = document.querySelector(
-            "#wishcard-container",
-        );
-
-        boxFront!.addEventListener("mouseenter", (e) => {
-            if (!wishcardContainer?.classList.contains("hovered")) {
-                wishcardContainer?.classList.add("hovered");
-            }
-        });
-
-        boxFront!.addEventListener("mouseout", (e) => {
-            if (wishcardContainer?.classList.contains("hovered")) {
-                wishcardContainer?.classList.remove("hovered");
-            }
-        });
-    });
 </script>
 
 <div
     id="wishcard-container"
+    class:card-opened={isOpened}
+    class:card-hovered={isHovered && !isOpened}
+    onmouseenter={() => (isHovered = true)}
+    onmouseleave={() => (isHovered = false)}
     onclick={toggleCard}
     onkeydown={(e) => e.key === "Enter" && toggleCard()}
     role="button"
     tabindex="0"
 >
-    {#if !isOpened}
-        <button
-            class="rotate-control-btn"
-            onclick={toggleRotation}
-            aria-label={isRotationPaused ? "Resume rotation" : "Pause rotation"}
-        >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                class="rotate-icon"
-                class:paused={isRotationPaused}
-            >
-                <path
-                    d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"
-                />
-            </svg>
-        </button>
-    {/if}
     {#if isOpened}
         <div class="opened-card">
             <div class="card-content">
@@ -348,12 +296,11 @@
         <div
             class="box-holder"
             class:transitioning={isTransitioning}
-            class:paused={isRotationPaused}
             style="--card-front-img: url({cardFront}); --card-back-img: url({cardBack});"
         >
             <div
                 bind:this={frontElement}
-                class="box--front border-2 border-black flex flex-col text-center justify-center gap-8"
+                class="box--front flex flex-col text-center justify-center gap-8"
                 class:bg-custom-teal-300={!hasCardFront}
                 class:card-front-img={hasCardFront}
             >
@@ -408,15 +355,6 @@
 </div>
 
 <style>
-    @keyframes rotatingAnimation {
-        0% {
-            transform: rotateX(16deg) translate3d(0, 0, 0px) rotateY(0deg);
-        }
-        100% {
-            transform: rotateX(16deg) translate3d(0, 0, 0px) rotateY(360deg);
-        }
-    }
-
     #wishcard-container {
         position: relative;
         perspective: 1200px;
@@ -433,6 +371,7 @@
         min-height: 400px;
         margin: 2rem 0;
         cursor: pointer;
+        overflow: visible;
     }
 
     #wishcard-container:has(.opened-card) {
@@ -441,25 +380,20 @@
     }
 
     .box-holder {
-        transform: rotateY(20deg);
-        animation: 10000ms rotatingAnimation linear infinite;
+        transform: rotateX(16deg) rotateY(0deg);
         position: relative;
         transform-style: preserve-3d;
-        transition: transform 0.6s ease;
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: transform;
     }
 
     .box-holder.transitioning {
-        animation-play-state: paused;
-        transform: rotateY(0deg);
+        transform: rotateX(16deg) rotateY(0deg);
     }
 
-    .box-holder.paused {
-        animation-play-state: paused;
-    }
-
-    #wishcard-container:has(.hovered) {
-        animation-play-state: paused;
-        transform: rotateY(0deg);
+    /* Hover effect - gentle lift and slight opening */
+    #wishcard-container.card-hovered .box-holder:not(.transitioning) {
+        transform: rotateX(16deg) rotateY(-8deg) translateY(-8px) translateZ(0);
     }
 
     .box-holder > div {
@@ -472,11 +406,11 @@
     .box--front {
         width: 200px;
         height: 300px;
-        /* background: url({cardFront})
-            no-repeat center right; */
         background-size: auto 100%;
         transform: translate3d(-100px, -150px, 0) translate3d(0, 0, 0)
             rotateY(0deg);
+        border: 2px solid rgba(0, 0, 0, 0.15);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
     }
 
     .box--back {
@@ -752,45 +686,5 @@
         text-shadow:
             0 2px 4px rgba(0, 0, 0, 0.8),
             0 1px 2px rgba(0, 0, 0, 0.6);
-    }
-
-    .rotate-control-btn {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        z-index: 10;
-        background: white;
-        border: 2px solid #d1d5db;
-        border-radius: 50%;
-        width: 48px;
-        height: 48px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transition:
-            background-color 0.2s,
-            border-color 0.2s,
-            transform 0.2s;
-    }
-
-    .rotate-control-btn:hover {
-        background: #f3f4f6;
-        border-color: #9ca3af;
-        transform: scale(1.05);
-    }
-
-    .rotate-control-btn:active {
-        transform: scale(0.95);
-    }
-
-    .rotate-icon {
-        color: #374151;
-        transition: opacity 0.2s;
-    }
-
-    .rotate-icon.paused {
-        opacity: 0.5;
     }
 </style>
