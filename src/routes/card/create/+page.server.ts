@@ -34,7 +34,7 @@ export const load: PageServerLoad = async ({ url }) => {
 };
 
 export const actions: Actions = {
-    create: async ({ request, fetch }) => {
+    create: async ({ request, fetch, url }) => {
         const formData = await request.formData();
         const cardMeta = JSON.parse(formData.get("card") as string);
         let card: Prisma.CardCreateInput;
@@ -90,19 +90,38 @@ export const actions: Actions = {
                 card.audioUrl = storeResponse.url;
             }
 
-            await createCard(card);
+            const createdCard = await createCard(card);
 
             // Send mail only if physical copy is requested (checkbox is checked)
             const physicalCopyRequested =
                 formData.get("physical-copy-requested-value") === "true";
             if (physicalCopyRequested) {
+                // Get sender information from form data
+                const senderName =
+                    (formData.get("physical-copy-name") as string) || "";
+                const senderEmail =
+                    (formData.get("physical-copy-email") as string) || "";
+                const senderPhone =
+                    (formData.get("physical-copy-phone") as string) || "";
+                const senderAddress =
+                    (formData.get("physical-copy-address") as string) || "";
+
+                // Construct card URL
+                const origin = url.origin;
+                const cardUrl = `${origin}/card/${cardMeta.slug}`;
+
                 MailController.send({
                     to: ADMIN_EMAIL || "",
                     from: APP_EMAIL || "",
                     name: cardMeta.receiver,
                     title: cardMeta.title,
-                    senderName: cardMeta.sender,
+                    senderName: senderName || cardMeta.sender,
                     description: cardMeta.description || "",
+                    cardId: createdCard.id,
+                    senderEmail,
+                    senderPhone,
+                    senderAddress,
+                    cardUrl,
                 });
             }
 

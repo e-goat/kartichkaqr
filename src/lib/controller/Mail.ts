@@ -17,6 +17,11 @@ class Mail {
         title,
         senderName,
         description,
+        cardId,
+        senderEmail,
+        senderPhone,
+        senderAddress,
+        cardUrl,
     }: {
         to: string;
         from: string;
@@ -24,6 +29,11 @@ class Mail {
         title: string;
         senderName: string;
         description: string;
+        cardId: number;
+        senderEmail: string;
+        senderPhone: string;
+        senderAddress: string;
+        cardUrl: string;
     }) {
         try {
             const { body } = render(EmailTemplate, {
@@ -31,6 +41,12 @@ class Mail {
                     recipientName: name,
                     title,
                     description,
+                    cardId,
+                    senderName,
+                    senderEmail,
+                    senderPhone,
+                    senderAddress,
+                    cardUrl,
                 },
             });
 
