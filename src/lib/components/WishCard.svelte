@@ -63,9 +63,6 @@
 <div
     id="wishcard-container"
     class:card-opened={isOpened}
-    class:card-hovered={isHovered && !isOpened}
-    onmouseenter={() => (isHovered = true)}
-    onmouseleave={() => (isHovered = false)}
     onclick={toggleCard}
     onkeydown={(e) => e.key === "Enter" && toggleCard()}
     role="button"
@@ -80,6 +77,7 @@
                 onmouseenter={() => (isContentHovered = true)}
                 onmouseleave={() => (isContentHovered = false)}
                 class:content-hovered={isContentHovered}
+                role="presentation"
             >
                 <!-- Front Section -->
                 <div
@@ -366,7 +364,11 @@
         <div
             class="box-holder"
             class:transitioning={isTransitioning}
+            class:card-hovered={isHovered && !isOpened}
+            onmouseenter={() => (isHovered = true)}
+            onmouseleave={() => (isHovered = false)}
             style="--card-front-img: url({cardFront}); --card-back-img: url({cardBack});"
+            role="presentation"
         >
             <div
                 bind:this={frontElement}
@@ -447,6 +449,14 @@
         width: 100%;
     }
 
+    #wishcard-container:not(:has(.opened-card)) {
+        pointer-events: none;
+    }
+
+    #wishcard-container:not(:has(.opened-card)) .box-holder {
+        pointer-events: auto;
+    }
+
     @media (max-width: 768px) {
         #wishcard-container {
             perspective: 800px;
@@ -515,7 +525,7 @@
     }
 
     /* Hover effect - gentle lift and slight opening */
-    #wishcard-container.card-hovered .box-holder:not(.transitioning) {
+    .box-holder.card-hovered:not(.transitioning) {
         transform: rotateX(16deg) rotateY(-8deg) translateY(-8px) translateZ(0);
     }
 
@@ -970,6 +980,7 @@
         text-overflow: ellipsis;
         display: -webkit-box;
         -webkit-line-clamp: 8;
+        line-clamp: 8;
         -webkit-box-orient: vertical;
     }
 
