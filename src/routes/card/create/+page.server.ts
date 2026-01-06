@@ -3,6 +3,7 @@ import type { Actions } from "@sveltejs/kit";
 import { rs, ss } from "$lib/state.svelte";
 import { VercelStorageController } from "$lib/controller/VercelStorage";
 import { MailController } from "$lib/controller/Mail";
+import { ADMIN_EMAIL, APP_EMAIL } from "$lib/server/secrets";
 
 import * as db from "$lib/server/database";
 import { fail } from "@sveltejs/kit";
@@ -91,14 +92,19 @@ export const actions: Actions = {
 
             await createCard(card);
 
-            MailController.send({
-                to: process.env.ADMIN_EMAIL || "",
-                from: process.env.APP_EMAIL || "",
-                name: cardMeta.receiver,
-                title: cardMeta.title,
-                senderName: cardMeta.sender,
-                description: cardMeta.description || "",
-            });
+            // Send mail only if physical copy is requested (checkbox is checked)
+            const physicalCopyRequested =
+                formData.get("physical-copy-requested-value") === "true";
+            if (physicalCopyRequested) {
+                MailController.send({
+                    to: ADMIN_EMAIL || "",
+                    from: APP_EMAIL || "",
+                    name: cardMeta.receiver,
+                    title: cardMeta.title,
+                    senderName: cardMeta.sender,
+                    description: cardMeta.description || "",
+                });
+            }
 
             ss.isSubmitting = false;
 

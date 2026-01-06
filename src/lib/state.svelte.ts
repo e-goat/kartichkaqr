@@ -29,6 +29,15 @@ interface TemplateColorCache {
     colors: Map<number, string>;
 }
 
+interface PhysicalCopyState {
+    requested: boolean;
+    name: string;
+    email: string;
+    phone: string;
+    address: string;
+    comment: string;
+}
+
 export const cs: CardState = $state({
     title: "",
     sender: "",
@@ -58,6 +67,15 @@ export const tcc: TemplateColorCache = $state({
     colors: new Map(),
 });
 
+export const pcs: PhysicalCopyState = $state({
+    requested: false,
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    comment: "",
+});
+
 export function resetCardState() {
     cs.title = "";
     cs.sender = "";
@@ -73,4 +91,11 @@ export function resetCardState() {
     ss.validationErrors = {};
 
     rs.blob = null;
+
+    pcs.requested = false;
+    pcs.name = "";
+    pcs.email = "";
+    pcs.phone = "";
+    pcs.address = "";
+    pcs.comment = "";
 }

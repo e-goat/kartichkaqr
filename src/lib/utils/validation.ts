@@ -59,8 +59,6 @@ export function validateIntroStep(): ValidationResult {
         sender: cs.sender,
         title: cs.title,
         description: cs.description || "",
-        slug: cs.slug,
-        cardUuid: cs.cardUuid,
     };
 
     return validateSchema(introStepSchema, data);
@@ -116,6 +114,11 @@ export function validatePhysicalCopy(
             )
             .min(5, "Телефонният номер трябва да бъде поне 5 символа")
             .max(20, "Телефонният номер не може да бъде повече от 20 символа")
+            .trim(),
+        address: z
+            .string()
+            .min(1, "Адрес до офис на доставчик е задължителен")
+            .max(200, "Адресът не може да бъде повече от 200 символа")
             .trim(),
         comment: z.string().max(500).trim().optional().default(""),
     });

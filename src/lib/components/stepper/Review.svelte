@@ -1,7 +1,6 @@
 <script lang="ts">
     import WishCard from "$lib/components/WishCard.svelte";
-    import { cs, ss } from "$lib/state.svelte.js";
-    import { validatePhysicalCopy } from "$lib/utils/validation";
+    import { cs, ss, pcs } from "$lib/state.svelte.js";
 
     interface Props {
         templates?: Array<{
@@ -20,37 +19,40 @@
         templates.find((t) => t.id === cs.templateId) || null,
     );
 
-    let physicalCopy = $state({
-        requested: false,
-        name: "",
-        email: "",
-        phone: "",
-        comment: "",
-    });
-
     $effect(() => {
         // Clear validation errors when user starts typing
-        if (physicalCopy.name && ss.validationErrors.name) {
+        if (pcs.name && ss.validationErrors.name) {
             delete ss.validationErrors.name;
         }
-        if (physicalCopy.email && ss.validationErrors.email) {
+        if (pcs.email && ss.validationErrors.email) {
             delete ss.validationErrors.email;
         }
-        if (physicalCopy.phone && ss.validationErrors.phone) {
+        if (pcs.phone && ss.validationErrors.phone) {
             delete ss.validationErrors.phone;
         }
-        if (physicalCopy.comment && ss.validationErrors.comment) {
+        if (pcs.address && ss.validationErrors.address) {
+            delete ss.validationErrors.address;
+        }
+        if (pcs.comment && ss.validationErrors.comment) {
             delete ss.validationErrors.comment;
         }
     });
 
-    // Validate physical copy when checkbox is toggled
+    // Handle physical copy checkbox toggle - no validation, just clear fields when unchecked
     function handlePhysicalCopyToggle() {
-        if (!physicalCopy.requested) {
-            // Clear validation errors when unchecking
+        if (!pcs.requested) {
+            // Checkbox is unchecked - clear all fields and validation errors
+            pcs.name = "";
+            pcs.email = "";
+            pcs.phone = "";
+            pcs.address = "";
+            pcs.comment = "";
+
+            // Clear validation errors
             delete ss.validationErrors.name;
             delete ss.validationErrors.email;
             delete ss.validationErrors.phone;
+            delete ss.validationErrors.address;
             delete ss.validationErrors.comment;
         }
     }
@@ -86,9 +88,15 @@
                         <input
                             type="checkbox"
                             id="physical-copy-checkbox"
+                            name="physical-copy-requested"
                             class="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-200 cursor-pointer"
-                            bind:checked={physicalCopy.requested}
+                            bind:checked={pcs.requested}
                             onchange={handlePhysicalCopyToggle}
+                        />
+                        <input
+                            type="hidden"
+                            name="physical-copy-requested-value"
+                            value={pcs.requested ? "true" : "false"}
                         />
                         <label
                             for="physical-copy-checkbox"
@@ -98,7 +106,7 @@
                         </label>
                     </div>
 
-                    {#if physicalCopy.requested}
+                    {#if pcs.requested}
                         <div
                             class="flex flex-col gap-2 sm:gap-3 md:gap-4 mt-2 pl-2 sm:pl-4"
                         >
@@ -128,8 +136,8 @@
                                         .validationErrors.name}
                                     placeholder="Вашето име"
                                     autocomplete="name"
-                                    bind:value={physicalCopy.name}
-                                    required={physicalCopy.requested}
+                                    bind:value={pcs.name}
+                                    required={pcs.requested}
                                 />
                                 {#if ss.validationErrors.name}
                                     <p class="mt-1 text-sm text-red-600">
@@ -164,8 +172,8 @@
                                         .validationErrors.email}
                                     placeholder="your.email@example.com"
                                     autocomplete="email"
-                                    bind:value={physicalCopy.email}
-                                    required={physicalCopy.requested}
+                                    bind:value={pcs.email}
+                                    required={pcs.requested}
                                 />
                                 {#if ss.validationErrors.email}
                                     <p class="mt-1 text-sm text-red-600">
@@ -200,12 +208,49 @@
                                         .validationErrors.phone}
                                     placeholder="+359 ..."
                                     autocomplete="tel"
-                                    bind:value={physicalCopy.phone}
-                                    required={physicalCopy.requested}
+                                    bind:value={pcs.phone}
+                                    required={pcs.requested}
                                 />
                                 {#if ss.validationErrors.phone}
                                     <p class="mt-1 text-sm text-red-600">
                                         {ss.validationErrors.phone}
+                                    </p>
+                                {/if}
+                            </div>
+
+                            <div class="flex flex-col w-full">
+                                <label
+                                    class="mb-1 text-sm font-medium text-gray-700"
+                                    for="physical-copy-address"
+                                >
+                                    Адрес до офис на доставчик
+                                    <span class="text-red-500">*</span>
+                                </label>
+                                <input
+                                    id="physical-copy-address"
+                                    name="physical-copy-address"
+                                    type="text"
+                                    class="rounded-xl border px-4 py-3 text-base shadow focus:outline-none focus:ring-2 transition-colors w-full"
+                                    class:border-red-300={!!ss.validationErrors
+                                        .address}
+                                    class:border-gray-200={!ss.validationErrors
+                                        .address}
+                                    class:focus:border-red-500={!!ss
+                                        .validationErrors.address}
+                                    class:focus:ring-red-200={!!ss
+                                        .validationErrors.address}
+                                    class:focus:border-blue-500={!ss
+                                        .validationErrors.address}
+                                    class:focus:ring-blue-200={!ss
+                                        .validationErrors.address}
+                                    placeholder="Например: София, офис Еконт №123"
+                                    autocomplete="street-address"
+                                    bind:value={pcs.address}
+                                    required={pcs.requested}
+                                />
+                                {#if ss.validationErrors.address}
+                                    <p class="mt-1 text-sm text-red-600">
+                                        {ss.validationErrors.address}
                                     </p>
                                 {/if}
                             </div>
@@ -234,13 +279,28 @@
                                     class:focus:ring-blue-200={!ss
                                         .validationErrors.comment}
                                     placeholder="Коментар..."
-                                    bind:value={physicalCopy.comment}
+                                    bind:value={pcs.comment}
                                 ></textarea>
                                 {#if ss.validationErrors.comment}
                                     <p class="mt-1 text-sm text-red-600">
                                         {ss.validationErrors.comment}
                                     </p>
                                 {/if}
+                            </div>
+
+                            <!-- Pricing Information -->
+                            <div
+                                class="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg"
+                            >
+                                <p
+                                    class="text-xs text-gray-600 leading-relaxed"
+                                >
+                                    <strong>Ценообразуване:</strong> Изработката
+                                    на една картичка на принтер струва приблизително
+                                    4-5 евро. Разходите за доставка се изчисляват
+                                    според тарифите на българските превозвачи като
+                                    Еконт и зависят от теглото и разстоянието.
+                                </p>
                             </div>
                         </div>
                     {/if}

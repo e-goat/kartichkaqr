@@ -1,6 +1,10 @@
-import { ss } from "$lib/state.svelte";
+import { ss, pcs } from "$lib/state.svelte";
 import { error } from "@sveltejs/kit";
-import { validateStep, type ValidationResult } from "$lib/utils/validation";
+import {
+    validateStep,
+    validatePhysicalCopy,
+    type ValidationResult,
+} from "$lib/utils/validation";
 
 export interface StepperEventResult {
     success: boolean;
@@ -53,7 +57,29 @@ export async function defineStepperEvent(
                         "Моля, попълнете всички задължителни полета правилно.",
                 };
             }
-            // Note: Physical copy validation should be handled in Review component
+
+            // Validate physical copy if requested (step 4)
+            if (ss.currentStep === 4 && pcs.requested) {
+                const physicalCopyValidation = validatePhysicalCopy({
+                    name: pcs.name,
+                    email: pcs.email,
+                    phone: pcs.phone,
+                    address: pcs.address,
+                    comment: pcs.comment,
+                    requested: true,
+                });
+
+                if (!physicalCopyValidation.success) {
+                    return {
+                        success: false,
+                        validationResult: physicalCopyValidation,
+                        errorMessage:
+                            physicalCopyValidation.errorMessage ||
+                            "Моля, попълнете всички полета за физическа копия правилно.",
+                    };
+                }
+            }
+
             return { success: true };
 
         default:
