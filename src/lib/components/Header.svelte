@@ -56,30 +56,27 @@
 
         <!-- Desktop CTA Button -->
         <button
-            class="cta-button desktop-cta"
-            class:loading={isLoading || ss.isRendering}
+            class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-[#229e32] hover:bg-[#1e8a2c] active:scale-95 transition-[background-color,transform] duration-200 ease-out hover:scale-110 desktop-cta"
+            class:opacity-50={isLoading || ss.isRendering}
+            class:pointer-events-none={isLoading || ss.isRendering}
             aria-label="Създай картичка"
             onclick={handleCreateCard}
         >
             {#if isLoading}
                 <Loader size="sm" color="black" />
             {:else}
-                <div class="cta-icon">
-                    <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <path
-                            d="M11 14.01L18 13.963V3.99597L12.83 4.00297L11.016 5.81697L11 14.01ZM9 5.81697L7.179 4.04197L2 4.00697V13.963L9 14.01V5.81697ZM8 2.04697L10 4.00397L12 2.00397L17.997 1.99597C18.2596 1.99558 18.5198 2.04692 18.7626 2.14707C19.0054 2.24721 19.2261 2.3942 19.4121 2.57964C19.5981 2.76508 19.7457 2.98533 19.8466 3.22784C19.9475 3.47034 19.9996 3.73033 20 3.99297V13.963C20 14.491 19.7912 14.9976 19.4192 15.3723C19.0471 15.7469 18.542 15.9593 18.014 15.963L12 16.004L10.004 18.004L8 16.004L1.986 15.963C1.458 15.9593 0.952878 15.7469 0.580828 15.3723C0.208778 14.9976 -1.2936e-05 14.491 6.01176e-10 13.963V4.00697C6.01176e-10 3.47654 0.210714 2.96783 0.585786 2.59276C0.960859 2.21769 1.46957 2.00697 2 2.00697L8 2.04697Z"
-                            fill="black"
-                        />
-                    </svg>
-                </div>
+                <svg
+                    class="w-4 h-4"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <path
+                        d="M11 14.01L18 13.963V3.99597L12.83 4.00297L11.016 5.81697L11 14.01ZM9 5.81697L7.179 4.04197L2 4.00697V13.963L9 14.01V5.81697ZM8 2.04697L10 4.00397L12 2.00397L17.997 1.99597C18.2596 1.99558 18.5198 2.04692 18.7626 2.14707C19.0054 2.24721 19.2261 2.3942 19.4121 2.57964C19.5981 2.76508 19.7457 2.98533 19.8466 3.22784C19.9475 3.47034 19.9996 3.73033 20 3.99297V13.963C20 14.491 19.7912 14.9976 19.4192 15.3723C19.0471 15.7469 18.542 15.9593 18.014 15.963L12 16.004L10.004 18.004L8 16.004L1.986 15.963C1.458 15.9593 0.952878 15.7469 0.580828 15.3723C0.208778 14.9976 -1.2936e-05 14.491 6.01176e-10 13.963V4.00697C6.01176e-10 3.47654 0.210714 2.96783 0.585786 2.59276C0.960859 2.21769 1.46957 2.00697 2 2.00697L8 2.04697Z"
+                        fill="black"
+                    />
+                </svg>
             {/if}
-            <span class="cta-text">Създай картичка</span>
         </button>
 
         <!-- Mobile Menu Button -->
@@ -210,7 +207,6 @@
         }
     }
 
-    .cta-button,
     .mobile-cta-button {
         display: flex;
         padding: 12px 24px;
@@ -227,18 +223,15 @@
             transform 0.1s ease;
     }
 
-    .cta-button:hover,
     .mobile-cta-button:hover {
         background-color: #1e8a2c;
     }
 
-    .cta-button:active,
     .mobile-cta-button:active {
         transform: scale(0.98);
     }
 
     @media (max-width: 991px) {
-        .cta-button,
         .mobile-cta-button {
             padding: 10px 20px;
         }
@@ -250,20 +243,12 @@
         }
     }
 
-    .cta-icon {
-        display: flex;
+    .mobile-cta-button .cta-icon {
         width: 20px;
         height: 20px;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        position: relative;
     }
 
-    .cta-text {
-        color: #000;
-        position: relative;
+    .mobile-cta-button .cta-text {
         font:
             500 18px Montserrat,
             -apple-system,
@@ -273,7 +258,7 @@
     }
 
     @media (max-width: 991px) {
-        .cta-text {
+        .mobile-cta-button .cta-text {
             font-size: 16px;
         }
     }
