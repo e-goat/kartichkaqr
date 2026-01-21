@@ -15,10 +15,10 @@
         description = "",
     }: Props = $props();
 
-    // Constant for card height - scaled by factor of 2
+    // Constant for card height - sized to fit on laptop screens without scrolling
     // Will be adjusted via CSS for mobile
-    const CARD_HEIGHT = 600; // 300px * 2
-    const CARD_WIDTH = 400; // 200px * 2
+    const CARD_HEIGHT = 420; // Fits comfortably on 768px height screens
+    const CARD_WIDTH = 280; // Maintains 2:3 aspect ratio
 
     // 0 = closed, 1 = front view, 2 = back view
     let cardState = $state(0);
@@ -439,8 +439,8 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        min-height: 800px;
-        margin: 2rem 0;
+        min-height: 520px;
+        margin: 1rem 0;
         cursor: pointer;
         overflow: visible;
         padding: 1rem;
@@ -469,31 +469,31 @@
     }
 
     #wishcard-container:has(.opened-card) {
-        min-height: 800px;
-        margin: 2rem 0;
+        min-height: 520px;
+        margin: 1rem 0;
     }
 
     @media (max-width: 768px) {
         #wishcard-container {
-            min-height: 500px;
-            margin: 1rem 0;
+            min-height: 420px;
+            margin: 0.75rem 0;
             padding: 0.5rem;
         }
 
         #wishcard-container:has(.opened-card) {
-            min-height: 500px;
+            min-height: 420px;
         }
     }
 
     @media (max-width: 480px) {
         #wishcard-container {
-            min-height: 400px;
+            min-height: 350px;
             margin: 0.5rem 0;
             padding: 0.25rem;
         }
 
         #wishcard-container:has(.opened-card) {
-            min-height: 400px;
+            min-height: 350px;
         }
     }
 
@@ -509,13 +509,13 @@
 
     @media (max-width: 768px) {
         .box-holder {
-            max-width: min(90vw, 300px);
+            max-width: min(80vw, 240px);
         }
     }
 
     @media (max-width: 480px) {
         .box-holder {
-            max-width: min(85vw, 250px);
+            max-width: min(75vw, 200px);
         }
     }
 
@@ -613,14 +613,14 @@
     @media (max-width: 768px) {
         .box--front,
         .box--back {
-            width: min(90vw, 300px);
-            height: min(135vw, 450px);
+            width: min(80vw, 240px);
+            height: min(120vw, 360px);
         }
 
         .box--front {
             transform: translate3d(
-                    calc(min(90vw, 300px) / -2),
-                    calc(min(135vw, 450px) / -2),
+                    calc(min(80vw, 240px) / -2),
+                    calc(min(120vw, 360px) / -2),
                     0
                 )
                 translate3d(0, 0, 0) rotateY(0deg);
@@ -628,8 +628,8 @@
 
         .box--back {
             transform: translate3d(
-                    calc(min(90vw, 300px) / -2),
-                    calc(min(135vw, 450px) / -2),
+                    calc(min(80vw, 240px) / -2),
+                    calc(min(120vw, 360px) / -2),
                     0
                 )
                 translate3d(0, 0, -12px) rotateY(180deg);
@@ -637,8 +637,8 @@
 
         .box--side-left {
             transform: translate3d(
-                    calc(min(90vw, 300px) / -2),
-                    calc(min(135vw, 450px) / -2),
+                    calc(min(80vw, 240px) / -2),
+                    calc(min(120vw, 360px) / -2),
                     0
                 )
                 translate3d(-6px, 0, -6px) rotateY(-90deg);
@@ -646,32 +646,32 @@
 
         .box--side-right {
             transform: translate3d(
-                    calc(min(90vw, 300px) / -2),
-                    calc(min(135vw, 450px) / -2),
+                    calc(min(80vw, 240px) / -2),
+                    calc(min(120vw, 360px) / -2),
                     0
                 )
-                translate3d(calc(min(90vw, 300px) - 6px), 0px, -6px)
+                translate3d(calc(min(80vw, 240px) - 6px), 0px, -6px)
                 rotateY(90deg);
         }
 
         .box--top {
-            width: min(90vw, 300px);
+            width: min(80vw, 240px);
             transform: translate3d(
-                    calc(min(90vw, 300px) / -2),
-                    calc(min(135vw, 450px) / -2),
+                    calc(min(80vw, 240px) / -2),
+                    calc(min(120vw, 360px) / -2),
                     0
                 )
                 translate3d(0px, -6px, 6px) rotateX(90deg);
         }
 
         .box--bottom {
-            width: min(90vw, 300px);
+            width: min(80vw, 240px);
             transform: translate3d(
-                    calc(min(90vw, 300px) / -2),
-                    calc(min(135vw, 450px) / -2),
+                    calc(min(80vw, 240px) / -2),
+                    calc(min(120vw, 360px) / -2),
                     0
                 )
-                translate3d(0px, calc(min(135vw, 450px) - 6px), -6px)
+                translate3d(0px, calc(min(120vw, 360px) - 6px), -6px)
                 rotateX(-90deg);
         }
     }
@@ -679,14 +679,14 @@
     @media (max-width: 480px) {
         .box--front,
         .box--back {
-            width: min(85vw, 250px);
-            height: min(127.5vw, 375px);
+            width: min(75vw, 200px);
+            height: min(112.5vw, 300px);
         }
 
         .box--front {
             transform: translate3d(
-                    calc(min(85vw, 250px) / -2),
-                    calc(min(127.5vw, 375px) / -2),
+                    calc(min(75vw, 200px) / -2),
+                    calc(min(112.5vw, 300px) / -2),
                     0
                 )
                 translate3d(0, 0, 0) rotateY(0deg);
@@ -694,8 +694,8 @@
 
         .box--back {
             transform: translate3d(
-                    calc(min(85vw, 250px) / -2),
-                    calc(min(127.5vw, 375px) / -2),
+                    calc(min(75vw, 200px) / -2),
+                    calc(min(112.5vw, 300px) / -2),
                     0
                 )
                 translate3d(0, 0, -10px) rotateY(180deg);
@@ -703,8 +703,8 @@
 
         .box--side-left {
             transform: translate3d(
-                    calc(min(85vw, 250px) / -2),
-                    calc(min(127.5vw, 375px) / -2),
+                    calc(min(75vw, 200px) / -2),
+                    calc(min(112.5vw, 300px) / -2),
                     0
                 )
                 translate3d(-5px, 0, -5px) rotateY(-90deg);
@@ -712,32 +712,32 @@
 
         .box--side-right {
             transform: translate3d(
-                    calc(min(85vw, 250px) / -2),
-                    calc(min(127.5vw, 375px) / -2),
+                    calc(min(75vw, 200px) / -2),
+                    calc(min(112.5vw, 300px) / -2),
                     0
                 )
-                translate3d(calc(min(85vw, 250px) - 5px), 0px, -5px)
+                translate3d(calc(min(75vw, 200px) - 5px), 0px, -5px)
                 rotateY(90deg);
         }
 
         .box--top {
-            width: min(85vw, 250px);
+            width: min(75vw, 200px);
             transform: translate3d(
-                    calc(min(85vw, 250px) / -2),
-                    calc(min(127.5vw, 375px) / -2),
+                    calc(min(75vw, 200px) / -2),
+                    calc(min(112.5vw, 300px) / -2),
                     0
                 )
                 translate3d(0px, -5px, 5px) rotateX(90deg);
         }
 
         .box--bottom {
-            width: min(85vw, 250px);
+            width: min(75vw, 200px);
             transform: translate3d(
-                    calc(min(85vw, 250px) / -2),
-                    calc(min(127.5vw, 375px) / -2),
+                    calc(min(75vw, 200px) / -2),
+                    calc(min(112.5vw, 300px) / -2),
                     0
                 )
-                translate3d(0px, calc(min(127.5vw, 375px) - 5px), -5px)
+                translate3d(0px, calc(min(112.5vw, 300px) - 5px), -5px)
                 rotateX(-90deg);
         }
     }
@@ -751,11 +751,11 @@
     /* Opened card styles */
     .opened-card {
         width: 100%;
-        max-width: 800px;
+        max-width: 600px;
         background: white;
         border-radius: 16px;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        padding: 2rem;
+        padding: 1.5rem;
         animation: slideIn 0.6s ease-out;
         border: 1px solid #e5e7eb;
         margin: 0 auto;
@@ -764,14 +764,14 @@
 
     @media (max-width: 768px) {
         .opened-card {
-            padding: 1.5rem;
+            padding: 1rem;
             max-width: 95%;
         }
     }
 
     @media (max-width: 480px) {
         .opened-card {
-            padding: 1rem;
+            padding: 0.75rem;
         }
     }
 
@@ -788,13 +788,13 @@
 
     @media (max-width: 768px) {
         .card-content {
-            height: min(135vw, 450px);
+            height: min(120vw, 360px);
         }
     }
 
     @media (max-width: 480px) {
         .card-content {
-            height: min(127.5vw, 375px);
+            height: min(112.5vw, 300px);
         }
     }
 
@@ -841,13 +841,13 @@
 
     @media (max-width: 768px) {
         .front-section {
-            height: min(135vw, 450px);
+            height: min(120vw, 360px);
         }
     }
 
     @media (max-width: 480px) {
         .front-section {
-            height: min(127.5vw, 375px);
+            height: min(112.5vw, 300px);
         }
     }
 
@@ -1152,14 +1152,14 @@
     @media (max-width: 767px) {
         .back-section {
             padding: 1rem;
-            height: min(135vw, 450px);
+            height: min(120vw, 360px);
         }
     }
 
     @media (max-width: 480px) {
         .back-section {
             padding: 0.75rem;
-            height: min(127.5vw, 375px);
+            height: min(112.5vw, 300px);
         }
     }
 
