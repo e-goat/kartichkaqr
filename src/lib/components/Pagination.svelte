@@ -1,13 +1,24 @@
 <script lang="ts">
-    export let pageSize: number = 10;
-    export let url: string;
-    export let amount: number;
-    export let currentPage: number = 1;
+    type Props = {
+        pageSize?: number;
+        url?: string;
+        amount: number;
+        currentPage?: number;
+        onPageChange?: (page: number) => void;
+    };
 
-    $: totalItems = amount;
-    $: totalPages = Math.ceil(totalItems / pageSize);
-    $: visiblePages = (() => {
-        const pages = [];
+    let {
+        pageSize = 10,
+        url = "",
+        amount,
+        currentPage = 1,
+        onPageChange,
+    }: Props = $props();
+
+    const totalPages = $derived(Math.ceil(amount / pageSize));
+
+    const visiblePages = $derived.by(() => {
+        const pages: (number | string)[] = [];
         const maxVisible = 7;
 
         if (totalPages <= maxVisible) {
@@ -40,7 +51,18 @@
         }
 
         return pages;
-    })();
+    });
+
+    function handlePageClick(event: MouseEvent, page: number) {
+        if (onPageChange) {
+            event.preventDefault();
+            onPageChange(page);
+        }
+    }
+
+    function buildHref(page: number): string {
+        return `${url}?limit=${pageSize}&skip=${pageSize * (page - 1)}`;
+    }
 </script>
 
 {#if totalPages > 1}
@@ -50,10 +72,10 @@
     >
         {#if currentPage > 1}
             <a
-                href="{url}?limit={pageSize}&skip={pageSize *
-                    (currentPage - 2)}"
+                href={buildHref(currentPage - 1)}
                 class="flex items-center justify-center w-10 h-10 text-sm font-medium text-custom-orange-600 bg-white border border-custom-orange-200 rounded-lg hover:bg-custom-orange-200 hover:text-custom-orange-600 transition-colors duration-200"
                 aria-label="Предишна страница"
+                onclick={(e) => handlePageClick(e, currentPage - 1)}
             >
                 <svg
                     class="w-4 h-4"
@@ -105,9 +127,9 @@
                 </span>
             {:else}
                 <a
-                    href="{url}?limit={pageSize}&skip={pageSize *
-                        (Number(page) - 1)}"
+                    href={buildHref(Number(page))}
                     class="flex items-center justify-center w-10 h-10 text-sm font-medium text-custom-orange-600 bg-white border border-custom-orange-200 rounded-lg hover:bg-custom-orange-200 hover:text-custom-orange-600 hover:border-custom-orange-400 transition-colors duration-200"
+                    onclick={(e) => handlePageClick(e, Number(page))}
                 >
                     {page}
                 </a>
@@ -117,9 +139,10 @@
         <!-- Next button -->
         {#if currentPage < totalPages}
             <a
-                href="{url}?limit={pageSize}&skip={pageSize * currentPage}"
+                href={buildHref(currentPage + 1)}
                 class="flex items-center justify-center w-10 h-10 text-sm font-medium text-black bg-white border border-custom-orange-200 rounded-lg hover:bg-custom-orange-200 hover:text-black transition-colors duration-200"
                 aria-label="Следваща страница"
+                onclick={(e) => handlePageClick(e, currentPage + 1)}
             >
                 <svg
                     class="w-4 h-4"

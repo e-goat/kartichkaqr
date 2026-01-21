@@ -4,10 +4,13 @@
     import Loader from "$lib/components/Loader.svelte";
     import Hamburger from "$lib/components/Hamburger.svelte";
     import { ss } from "$lib/state.svelte";
+    import { onMount } from "svelte";
 
     let { logo = "" }: { logo?: string } = $props();
     let mobileMenuOpen = $state(false);
     let isLoading = $state(false);
+    let isScrolled = $state(false);
+    let headerElement = $state<HTMLElement>();
 
     function toggleMobileMenu() {
         mobileMenuOpen = !mobileMenuOpen;
@@ -27,6 +30,37 @@
     function handleHome(e: MouseEvent) {
         goto("/");
     }
+
+    onMount(() => {
+        if (typeof window === "undefined") return;
+
+        let lastScrollY = window.scrollY;
+        const scrollThreshold = 50; // Start shrinking after 50px scroll
+
+        function handleScroll() {
+            const currentScrollY = window.scrollY;
+
+            // Shrink when scrolled down past threshold
+            // Expand when scrolled back to top
+            if (currentScrollY > scrollThreshold) {
+                isScrolled = true;
+            } else {
+                isScrolled = false;
+            }
+
+            lastScrollY = currentScrollY;
+        }
+
+        // Use passive listener for better performance
+        window.addEventListener("scroll", handleScroll, { passive: true });
+
+        // Initial check
+        handleScroll();
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    });
 </script>
 
 <link
@@ -34,7 +68,7 @@
     href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;700&family=Montserrat:wght@400;500&display=swap"
 />
 
-<header class="header-container">
+<header class="header-container" bind:this={headerElement}>
     <div class="header-content">
         <button
             class="logo-link flex items-center gap-2 text-amber-600 font-bold text-lg hover:text-amber-800 transition-colors"
@@ -44,7 +78,8 @@
             <img
                 alt="KartichkaQR"
                 src={logo}
-                class="w-10 h-10 rounded-full object-cover shadow"
+                class="logo-image"
+                class:logo-shrunk={isScrolled}
             />
         </button>
 
@@ -186,6 +221,26 @@
     .logo-link {
         text-decoration: none;
         z-index: 60;
+    }
+
+    .logo-image {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 9999px;
+        object-fit: cover;
+        box-shadow:
+            0 1px 3px 0 rgba(0, 0, 0, 0.1),
+            0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        transition:
+            transform 0.3s ease-out,
+            width 0.3s ease-out,
+            height 0.3s ease-out;
+    }
+
+    .logo-shrunk {
+        transform: scale(0.9);
+        width: 2.25rem;
+        height: 2.25rem;
     }
 
     .desktop-nav {
