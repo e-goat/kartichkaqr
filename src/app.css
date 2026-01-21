@@ -93,3 +93,78 @@ body::-webkit-scrollbar-thumb {
     transform: translateY(0) !important;
     box-shadow: 0 2px 4px rgba(145, 115, 25, 0.2) !important;
 }
+
+.swal-cancel-button {
+    background-color: #6b7280 !important;
+    border: 2px solid #4b5563 !important;
+    color: white !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 0.75rem !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    cursor: pointer !important;
+    margin-right: 0.5rem !important;
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease !important;
+}
+
+.swal-cancel-button:hover {
+    background-color: #4b5563 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(75, 85, 99, 0.3) !important;
+}
+
+.swal-cancel-button:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 4px rgba(75, 85, 99, 0.2) !important;
+}
+
+.swal-copy-button {
+    background-color: #3b82f6 !important;
+    border: 2px solid #2563eb !important;
+    color: white !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 0.75rem !important;
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+    cursor: pointer !important;
+    margin-right: 0.5rem !important;
+    transition:
+        background-color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease !important;
+}
+
+.swal-copy-button:hover {
+    background-color: #2563eb !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+}
+
+.swal-copy-button:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2) !important;
+}
+
+/* Stack SweetAlert2 buttons vertically on mobile */
+@media (max-width: 480px) {
+    .swal2-actions {
+        flex-direction: column-reverse !important;
+        gap: 0.5rem !important;
+    }
+
+    .swal2-actions button {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+
+    .swal-cancel-button {
+        margin-right: 0 !important;
+    }
+
+    .swal-copy-button {
+        margin-right: 0 !important;
+    }
+}

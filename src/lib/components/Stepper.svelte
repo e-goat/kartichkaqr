@@ -139,10 +139,26 @@
                         e.preventDefault();
                         const isValid = await handleSubmit();
                         if (isValid) {
-                            const form = document.getElementById(
-                                "step-form",
-                            ) as HTMLFormElement;
-                            form?.requestSubmit();
+                            const confirmation = await Swal.fire({
+                                title: "Потвърждение",
+                                text: "Сигурни ли сте, че дизайнът на картичката е окончателен?",
+                                icon: "question",
+                                showCancelButton: true,
+                                confirmButtonText: "Да, създай картичката",
+                                cancelButtonText: "Отказ",
+                                customClass: {
+                                    confirmButton: "swal-confirm-button",
+                                    cancelButton: "swal-cancel-button",
+                                },
+                                buttonsStyling: false,
+                            });
+
+                            if (confirmation.isConfirmed) {
+                                const form = document.getElementById(
+                                    "step-form",
+                                ) as HTMLFormElement;
+                                form?.requestSubmit();
+                            }
                         }
                     }}
                 />

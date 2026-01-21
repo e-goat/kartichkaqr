@@ -126,7 +126,11 @@ export const actions: Actions = {
 
             ss.isSubmitting = false;
 
-            return { success: true, card };
+            // Construct card URL for response
+            const origin = url.origin;
+            const cardUrl = `${origin}/card/${cardMeta.slug}`;
+
+            return { success: true, card, cardUrl, physicalCopyRequested };
         } catch (e) {
             ss.isSubmitting = false;
             console.error("Card creation error:", e);
