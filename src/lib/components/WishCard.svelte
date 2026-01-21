@@ -403,9 +403,9 @@
 
                     <div class="mb-4">
                         <a
-                            href="mailto:{PUBLIC_ADMIN_EMAIL}"
+                            href="mailto:info@kartichkaqr.com"
                             class="text-sm text-blue-600 underline"
-                            >{PUBLIC_ADMIN_EMAIL}</a
+                            >info@kartichkaqr.com</a
                         >
                     </div>
 
