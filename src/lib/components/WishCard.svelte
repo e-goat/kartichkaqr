@@ -1,6 +1,8 @@
 <script lang="ts">
     import { cs } from "$lib/state.svelte";
     import { getContrastingColor } from "$lib/utils/helpers";
+    import { buildQR } from "$lib/utils/qr";
+
     interface Props {
         cardFront?: string;
         cardBack?: string;
@@ -15,46 +17,32 @@
         description = "",
     }: Props = $props();
 
-    // Constant for card height - sized to fit on laptop screens without scrolling
+    // Constant for card height - sized for comfortable viewing
     // Will be adjusted via CSS for mobile
-    const CARD_HEIGHT = 420; // Fits comfortably on 768px height screens
-    const CARD_WIDTH = 280; // Maintains 2:3 aspect ratio
+    const CARD_HEIGHT = 540; // Larger for better visibility
+    const CARD_WIDTH = 360; // Maintains 2:3 aspect ratio
 
-    // 0 = closed, 1 = front view, 2 = back view
+    // 0 = closed (front), 1 = open (inner), 2 = back
     let cardState = $state(0);
-    let isTransitioning = $state(false);
-    let isHovered = $state(false);
     let isContentHovered = $state(false);
-    let textColor = $state("black");
     let frontElement = $state<HTMLDivElement>();
+    let textColor = $state("black");
 
-    let hasCardFront = $derived(cardFront != "");
-    let hasCardBack = $derived(cardBack != "");
+    let hasCardFront = $derived(!!cardFront);
     let isOpened = $derived(cardState > 0);
     let isBackView = $derived(cardState === 2);
 
     function toggleCard() {
-        if (isTransitioning) return;
-        isTransitioning = true;
-
-        // Cycle through states: closed -> front -> back -> closed
+        // Cycle: closed -> inner -> back -> closed
         cardState = (cardState + 1) % 3;
-
-        setTimeout(() => {
-            isTransitioning = false;
-        }, 600);
     }
 
     $effect(() => {
-        if (frontElement) {
+        if (frontElement && hasCardFront) {
+            textColor = "white";
+        } else if (frontElement) {
             const computedStyle = window.getComputedStyle(frontElement);
-            const bgColor = computedStyle.backgroundColor;
-
-            if (hasCardFront) {
-                textColor = "white";
-            } else {
-                textColor = getContrastingColor(bgColor);
-            }
+            textColor = getContrastingColor(computedStyle.backgroundColor);
         }
     });
 </script>
@@ -68,315 +56,67 @@
     tabindex="0"
     style="--card-height: {CARD_HEIGHT}px; --card-width: {CARD_WIDTH}px;"
 >
-    {#if isOpened}
-        <div class="opened-card">
+    <div
+        class="opened-card"
+        class:closed-preview={!isOpened}
+        class:card-open={isOpened && !isBackView}
+    >
+        {#if isOpened}
             <div
-                class="card-content"
+                class="card-pages-flip"
                 class:show-back={isBackView}
                 onmouseenter={() => (isContentHovered = true)}
                 onmouseleave={() => (isContentHovered = false)}
-                class:content-hovered={isContentHovered}
                 role="presentation"
             >
-                <!-- Front Section -->
                 <div
-                    class="front-section"
-                    class:section-hovered={isContentHovered && !isBackView}
+                    class="card-pages card-pages-inner"
+                    class:content-hovered={isContentHovered && !isBackView}
                 >
-                    <!-- Watermark Top Left -->
-                    <div class="watermark watermark-left">KartichkaQR</div>
-
-                    <!-- Left Side -->
-                    <div class="left-side">
-                        <div class="qr-container">
-                            <div class="qr-code-placeholder">
-                                <!-- Dummy QR Code SVG -->
-                                <svg
-                                    width="128"
-                                    height="128"
-                                    viewBox="0 0 64 64"
-                                    class="dummy-qr"
-                                    style="max-width: 100%; height: auto;"
-                                >
-                                    <rect width="64" height="64" fill="white" />
-                                    <!-- QR code pattern simulation -->
-                                    <rect
-                                        x="8"
-                                        y="8"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="16"
-                                        y="8"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="32"
-                                        y="8"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="40"
-                                        y="8"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="48"
-                                        y="8"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-
-                                    <rect
-                                        x="8"
-                                        y="16"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="24"
-                                        y="16"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="40"
-                                        y="16"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="48"
-                                        y="16"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-
-                                    <rect
-                                        x="8"
-                                        y="24"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="16"
-                                        y="24"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="32"
-                                        y="24"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="48"
-                                        y="24"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-
-                                    <rect
-                                        x="8"
-                                        y="32"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="24"
-                                        y="32"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="32"
-                                        y="32"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="40"
-                                        y="32"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-
-                                    <rect
-                                        x="8"
-                                        y="40"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="16"
-                                        y="40"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="40"
-                                        y="40"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="48"
-                                        y="40"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-
-                                    <rect
-                                        x="8"
-                                        y="48"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="24"
-                                        y="48"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="32"
-                                        y="48"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                    <rect
-                                        x="48"
-                                        y="48"
-                                        width="6"
-                                        height="6"
-                                        fill="black"
-                                    />
-                                </svg>
+                    <div bind:this={frontElement} class="card-inner">
+                        <div class="inner-left">
+                            <div class="qr-block">
+                                <p class="qr-label">От:</p>
+                                <p class="qr-value">{cs.sender || "—"}</p>
+                                <div class="qr-image-wrap">
+                                    <PlaceholderQR size={100} />
+                                </div>
+                                <p class="qr-instruction">
+                                    Сканирайте за да чуете вашият гласов поздрав
+                                </p>
+                                <p class="qr-label">До:</p>
+                                <p class="qr-value">{cs.receiver || "—"}</p>
                             </div>
-                            <p class="qr-instruction">
-                                Сканирайте QR кода за да чуете поздрав
-                            </p>
                         </div>
-                    </div>
-
-                    <!-- Divider Line -->
-                    <div class="vertical-divider"></div>
-
-                    <!-- Right Side -->
-                    <div class="right-side">
-                        <!-- Watermark Top Right -->
-                        <div class="watermark watermark-right">KartichkaQR</div>
-                        <div class="right-content">
-                            <h1 class="card-title">
-                                {cs.title || title}
-                            </h1>
-                            <p class="card-description">
-                                {cs.description || description}
-                            </p>
+                        <div class="vertical-divider"></div>
+                        <div class="inner-right">
+                            <div class="right-content">
+                                <h1 class="card-title">
+                                    {cs.title || title}
+                                </h1>
+                                <p class="card-description">
+                                    {cs.description || description}
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Back Section -->
-                <div
-                    class="back-section"
-                    class:section-hovered={isContentHovered && isBackView}
-                >
-                    <!-- Watermark Top Left -->
-                    <div class="watermark watermark-left">KartichkaQR</div>
-
-                    <!-- Watermark Top Right -->
-                    <div class="watermark watermark-right">KartichkaQR</div>
-
-                    <div class="contact-content">
-                        <div class="brand-section">
-                            <div class="brand-logo">
-                                <svg
-                                    width="48"
-                                    height="48"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                >
-                                    <rect
-                                        x="3"
-                                        y="3"
-                                        width="18"
-                                        height="18"
-                                        rx="2"
-                                    />
-                                    <path d="M9 9h6v6H9z" />
-                                </svg>
-                            </div>
-                            <p class="brand-name">KartichkaQR</p>
-                            <p class="brand-tagline">
-                                Вашата персонализирана картичка
-                            </p>
-                        </div>
-                        <div class="contact-section">
-                            <p class="contact-label">Свържете се с нас:</p>
-                            <a
-                                href="mailto:kartichkaqr@gmail.com"
-                                class="contact-email"
-                            >
-                                kartichkaqr@gmail.com
-                            </a>
-                            <p class="contact-note">
-                                Благодарим ви, че се доверихте на нас!
-                            </p>
-                        </div>
+                <div class="card-pages-back">
+                    <div class="back-content">
+                        <span class="back-rule" aria-hidden="true"></span>
+                        <span class="back-brand">kartichkaqr</span>
                     </div>
                 </div>
             </div>
-        </div>
-    {:else}
-        <div
-            class="box-holder"
-            class:transitioning={isTransitioning}
-            class:card-hovered={isHovered && !isOpened}
-            onmouseenter={() => (isHovered = true)}
-            onmouseleave={() => (isHovered = false)}
-            style="--card-front-img: url({cardFront}); --card-back-img: url({cardBack});"
-            role="presentation"
-        >
+        {:else}
             <div
                 bind:this={frontElement}
-                class="box--front flex flex-col text-center justify-center gap-8"
-                class:bg-custom-teal-300={!hasCardFront}
+                class="front-section front-preview"
                 class:card-front-img={hasCardFront}
+                style="--card-front-img: url('{cardFront}');"
             >
                 <h1
-                    class="text-lg px-2"
+                    class="card-title-preview"
                     class:text-white={textColor === "white"}
                     class:text-black={textColor === "black"}
                     class:text-shadow={hasCardFront}
@@ -384,45 +124,8 @@
                     {cs.title || title}
                 </h1>
             </div>
-            <div class="box--side-left bg-white border-2 border-black"></div>
-            <div class="box--side-right bg-white border-2 border-black"></div>
-            <div class="box--top bg-white"></div>
-            <div class="box--bottom bg-white border-2 border-black"></div>
-            <div class="box--back border-2 border-black bg-white">
-                <div
-                    class="flex flex-col items-center justify-center h-full p-4 text-center"
-                >
-                    <div class="mb-4">
-                        <p class="text-sm text-gray-700 mb-2">
-                            Благодарим ви че се доверихте на
-                        </p>
-                        <p class="text-lg font-bold text-gray-800">
-                            KartichkaQR
-                        </p>
-                    </div>
-
-                    <div class="mb-4">
-                        <a
-                            href="mailto:info@kartichkaqr.com"
-                            class="text-sm text-blue-600 underline"
-                            >info@kartichkaqr.com</a
-                        >
-                    </div>
-
-                    <!-- QR Code Template -->
-                    <div
-                        class="qr-code-template bg-gray-100 border-2 border-gray-300 rounded-lg p-2"
-                    >
-                        <div
-                            class="w-16 h-16 bg-white border border-gray-200 rounded flex items-center justify-center"
-                        >
-                            <div class="text-xs text-gray-400">QR</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {/if}
+        {/if}
+    </div>
 </div>
 
 <style>
@@ -444,380 +147,238 @@
         cursor: pointer;
         overflow: visible;
         padding: 1rem;
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
         box-sizing: border-box;
         width: 100%;
     }
 
-    #wishcard-container:not(:has(.opened-card)) {
+    #wishcard-container:has(.closed-preview) {
         pointer-events: none;
     }
 
-    #wishcard-container:not(:has(.opened-card)) .box-holder {
+    #wishcard-container:has(.closed-preview) .opened-card {
         pointer-events: auto;
     }
 
     @media (max-width: 768px) {
         #wishcard-container {
             perspective: 800px;
+            min-height: 380px;
+            margin: 0.75rem 0;
+            padding: 0.5rem;
+            padding-left: max(0.5rem, env(safe-area-inset-left));
+            padding-right: max(0.5rem, env(safe-area-inset-right));
         }
     }
 
     @media (max-width: 480px) {
         #wishcard-container {
             perspective: 600px;
+            min-height: 280px;
+            margin: 0.5rem 0;
+            padding: 0.375rem;
+            padding-left: max(0.375rem, env(safe-area-inset-left));
+            padding-right: max(0.375rem, env(safe-area-inset-right));
         }
     }
 
     #wishcard-container:has(.opened-card) {
-        min-height: 520px;
+        min-height: 600px;
         margin: 1rem 0;
     }
 
     @media (max-width: 768px) {
-        #wishcard-container {
-            min-height: 420px;
-            margin: 0.75rem 0;
-            padding: 0.5rem;
-        }
-
         #wishcard-container:has(.opened-card) {
-            min-height: 420px;
+            min-height: auto;
         }
     }
 
     @media (max-width: 480px) {
-        #wishcard-container {
-            min-height: 350px;
-            margin: 0.5rem 0;
-            padding: 0.25rem;
-        }
-
         #wishcard-container:has(.opened-card) {
-            min-height: 350px;
+            min-height: auto;
         }
     }
 
-    .box-holder {
-        transform: rotateX(16deg) rotateY(0deg);
-        position: relative;
-        transform-style: preserve-3d;
-        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        will-change: transform;
-        width: 100%;
-        max-width: var(--card-width);
-    }
-
-    @media (max-width: 768px) {
-        .box-holder {
-            max-width: min(80vw, 240px);
-        }
-    }
-
-    @media (max-width: 480px) {
-        .box-holder {
-            max-width: min(75vw, 200px);
-        }
-    }
-
-    .box-holder.transitioning {
-        transform: rotateX(16deg) rotateY(0deg);
-    }
-
-    /* Hover effect - gentle lift and slight opening */
-    .box-holder.card-hovered:not(.transitioning) {
-        transform: rotateX(16deg) rotateY(-8deg) translateY(-8px) translateZ(0);
-    }
-
-    .box-holder > div {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        backface-visibility: hidden;
-    }
-
-    .box--front {
-        width: var(--card-width);
-        height: var(--card-height);
-        background-size: auto 100%;
-        transform: translate3d(
-                calc(var(--card-width) / -2),
-                calc(var(--card-height) / -2),
-                0
-            )
-            translate3d(0, 0, 0) rotateY(0deg);
-        border: 2px solid rgba(0, 0, 0, 0.15);
-        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-    }
-
-    .box--back {
-        width: var(--card-width);
-        height: var(--card-height);
-        background-size: auto 100%;
-        transform: translate3d(
-                calc(var(--card-width) / -2),
-                calc(var(--card-height) / -2),
-                0
-            )
-            translate3d(0, 0, -16px) rotateY(180deg);
-    }
-
-    .box--side-left {
-        width: 16px;
-        height: var(--card-height);
-        background-size: auto 100%;
-        transform: translate3d(
-                calc(var(--card-width) / -2),
-                calc(var(--card-height) / -2),
-                0
-            )
-            translate3d(-8px, 0, -8px) rotateY(-90deg);
-    }
-
-    .box--side-right {
-        width: 16px;
-        height: var(--card-height);
-        background-size: cover;
-        transform: translate3d(
-                calc(var(--card-width) / -2),
-                calc(var(--card-height) / -2),
-                0
-            )
-            translate3d(calc(var(--card-width) - 8px), 0px, -8px) rotateY(90deg);
-    }
-
-    .box--top {
-        width: var(--card-width);
-        height: 16px;
-        background-size: cover;
-        transform: translate3d(
-                calc(var(--card-width) / -2),
-                calc(var(--card-height) / -2),
-                0
-            )
-            translate3d(0px, -8px, 8px) rotateX(90deg);
-    }
-
-    .box--bottom {
-        width: var(--card-width);
-        height: 16px;
-        background-size: cover;
-        transform: translate3d(
-                calc(var(--card-width) / -2),
-                calc(var(--card-height) / -2),
-                0
-            )
-            translate3d(0px, calc(var(--card-height) - 8px), -8px)
-            rotateX(-90deg);
-    }
-
-    @media (max-width: 768px) {
-        .box--front,
-        .box--back {
-            width: min(80vw, 240px);
-            height: min(120vw, 360px);
-        }
-
-        .box--front {
-            transform: translate3d(
-                    calc(min(80vw, 240px) / -2),
-                    calc(min(120vw, 360px) / -2),
-                    0
-                )
-                translate3d(0, 0, 0) rotateY(0deg);
-        }
-
-        .box--back {
-            transform: translate3d(
-                    calc(min(80vw, 240px) / -2),
-                    calc(min(120vw, 360px) / -2),
-                    0
-                )
-                translate3d(0, 0, -12px) rotateY(180deg);
-        }
-
-        .box--side-left {
-            transform: translate3d(
-                    calc(min(80vw, 240px) / -2),
-                    calc(min(120vw, 360px) / -2),
-                    0
-                )
-                translate3d(-6px, 0, -6px) rotateY(-90deg);
-        }
-
-        .box--side-right {
-            transform: translate3d(
-                    calc(min(80vw, 240px) / -2),
-                    calc(min(120vw, 360px) / -2),
-                    0
-                )
-                translate3d(calc(min(80vw, 240px) - 6px), 0px, -6px)
-                rotateY(90deg);
-        }
-
-        .box--top {
-            width: min(80vw, 240px);
-            transform: translate3d(
-                    calc(min(80vw, 240px) / -2),
-                    calc(min(120vw, 360px) / -2),
-                    0
-                )
-                translate3d(0px, -6px, 6px) rotateX(90deg);
-        }
-
-        .box--bottom {
-            width: min(80vw, 240px);
-            transform: translate3d(
-                    calc(min(80vw, 240px) / -2),
-                    calc(min(120vw, 360px) / -2),
-                    0
-                )
-                translate3d(0px, calc(min(120vw, 360px) - 6px), -6px)
-                rotateX(-90deg);
-        }
-    }
-
-    @media (max-width: 480px) {
-        .box--front,
-        .box--back {
-            width: min(75vw, 200px);
-            height: min(112.5vw, 300px);
-        }
-
-        .box--front {
-            transform: translate3d(
-                    calc(min(75vw, 200px) / -2),
-                    calc(min(112.5vw, 300px) / -2),
-                    0
-                )
-                translate3d(0, 0, 0) rotateY(0deg);
-        }
-
-        .box--back {
-            transform: translate3d(
-                    calc(min(75vw, 200px) / -2),
-                    calc(min(112.5vw, 300px) / -2),
-                    0
-                )
-                translate3d(0, 0, -10px) rotateY(180deg);
-        }
-
-        .box--side-left {
-            transform: translate3d(
-                    calc(min(75vw, 200px) / -2),
-                    calc(min(112.5vw, 300px) / -2),
-                    0
-                )
-                translate3d(-5px, 0, -5px) rotateY(-90deg);
-        }
-
-        .box--side-right {
-            transform: translate3d(
-                    calc(min(75vw, 200px) / -2),
-                    calc(min(112.5vw, 300px) / -2),
-                    0
-                )
-                translate3d(calc(min(75vw, 200px) - 5px), 0px, -5px)
-                rotateY(90deg);
-        }
-
-        .box--top {
-            width: min(75vw, 200px);
-            transform: translate3d(
-                    calc(min(75vw, 200px) / -2),
-                    calc(min(112.5vw, 300px) / -2),
-                    0
-                )
-                translate3d(0px, -5px, 5px) rotateX(90deg);
-        }
-
-        .box--bottom {
-            width: min(75vw, 200px);
-            transform: translate3d(
-                    calc(min(75vw, 200px) / -2),
-                    calc(min(112.5vw, 300px) / -2),
-                    0
-                )
-                translate3d(0px, calc(min(112.5vw, 300px) - 5px), -5px)
-                rotateX(-90deg);
-        }
-    }
-
-    .card-front-img {
-        background-image: var(--card-front-img);
-        background-size: auto 100%;
-        background-position: center;
-    }
-
-    /* Opened card styles */
+    /* Card styles - narrow when closed, wider when open */
     .opened-card {
         width: 100%;
-        max-width: 600px;
+        max-width: var(--card-width);
         background: white;
         border-radius: 16px;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        padding: 1.5rem;
         animation: slideIn 0.6s ease-out;
-        border: 1px solid #e5e7eb;
+        border: 1px solid #111827;
         margin: 0 auto;
         box-sizing: border-box;
+        overflow: hidden;
+        transition: max-width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .opened-card.card-open {
+        max-width: min(95vw, 700px);
     }
 
     @media (max-width: 768px) {
         .opened-card {
             padding: 1rem;
-            max-width: 95%;
+        }
+
+        .opened-card.card-open {
+            max-width: min(95vw, 640px);
         }
     }
 
     @media (max-width: 480px) {
         .opened-card {
             padding: 0.75rem;
+            border-radius: 12px;
+        }
+
+        .opened-card.card-open {
+            max-width: 95vw;
         }
     }
 
-    .card-content {
-        display: flex;
-        flex-direction: column;
-        gap: 0;
-        height: var(--card-height);
-        transform-style: preserve-3d;
-        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Flip container for inner (state 1) <-> back (state 2) */
+    .card-pages-flip {
         position: relative;
         width: 100%;
+        min-height: var(--card-height);
+        transform-style: preserve-3d;
+        transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    @media (max-width: 768px) {
-        .card-content {
-            height: min(120vw, 360px);
+    .card-pages-flip.show-back {
+        transform: rotateY(180deg);
+    }
+
+    /* Inner view - single panel with left (QR) and right (title/description) */
+    .card-pages {
+        display: flex;
+        min-height: var(--card-height);
+        width: 100%;
+        position: relative;
+        backface-visibility: hidden;
+        transition: transform 0.2s ease;
+    }
+
+    .card-pages.content-hovered {
+        transform: scale(1.01);
+    }
+
+    @media (hover: none) and (pointer: coarse) {
+        .card-pages.content-hovered {
+            transform: none;
+        }
+    }
+
+    .card-inner {
+        display: flex;
+        flex-direction: row;
+        align-items: stretch;
+        justify-content: stretch;
+        width: 100%;
+        min-height: var(--card-height);
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+    }
+
+    .inner-left,
+    .inner-right {
+        position: relative;
+    }
+
+    .inner-left {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .inner-right {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @media (max-width: 767px) {
+        .card-inner {
+            flex-direction: column;
+            padding: 1.25rem;
+            min-height: 320px;
         }
     }
 
     @media (max-width: 480px) {
-        .card-content {
-            height: min(112.5vw, 300px);
+        .card-inner {
+            padding: 1rem;
+            min-height: 280px;
         }
     }
 
-    .card-content.show-back {
+    /* Back view (3rd click) - modern minimal light palette */
+    .card-pages-back {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem;
+        border-radius: 12px;
+        border: 1px solid #e7e5e4;
+        background: #fafaf9;
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, 0.8),
+            0 1px 2px rgba(0, 0, 0, 0.04);
+        backface-visibility: hidden;
         transform: rotateY(180deg);
     }
 
-    .card-content.content-hovered {
-        transform: scale(1.01);
+    .back-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        align-self: stretch;
     }
 
-    .card-content.show-back.content-hovered {
-        transform: rotateY(180deg) scale(1.01);
+    .back-rule {
+        display: block;
+        width: 2.5rem;
+        height: 1px;
+        background: #a8a29e;
     }
 
-    @media (min-width: 768px) {
-        .card-content {
-            flex-direction: row;
-            height: var(--card-height);
+    .back-brand {
+        font-size: 0.65rem;
+        font-weight: 400;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        color: #78716c;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        .card-pages-back {
+            border-color: #404040;
+            background: #262626;
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.05),
+                0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-rule {
+            background: #737373;
+        }
+
+        .back-brand {
+            color: #a3a3a3;
         }
     }
-
-    /* Front Section */
+    /* Front Section (closed state) */
     .front-section {
         background: linear-gradient(
             135deg,
@@ -836,41 +397,50 @@
             opacity 0.3s ease;
         backface-visibility: hidden;
         transform: rotateY(0deg);
-        height: var(--card-height);
+        min-height: var(--card-height);
+    }
+
+    .front-section.card-front-img {
+        background-image: var(--card-front-img);
+        background-size: cover;
+        background-position: center;
+    }
+
+    .front-preview {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: var(--card-height);
+    }
+
+    .card-title-preview {
+        font-size: clamp(1.25rem, 4vw, 2rem);
+        font-weight: bold;
+        margin: 0;
+        text-align: center;
+        padding: 0 1rem;
     }
 
     @media (max-width: 768px) {
         .front-section {
-            height: min(120vw, 360px);
+            padding: 1.25rem;
+            min-height: 320px;
+        }
+
+        .card-pages-back {
+            padding: 1.25rem;
         }
     }
 
     @media (max-width: 480px) {
         .front-section {
-            height: min(112.5vw, 300px);
+            padding: 1rem;
+            min-height: 280px;
         }
-    }
 
-    .card-content.show-back .front-section {
-        opacity: 0;
-        pointer-events: none;
-    }
-
-    .front-section.section-hovered {
-        background: linear-gradient(
-            135deg,
-            rgba(147, 197, 253, 0.2) 0%,
-            rgba(147, 197, 253, 0.1) 100%
-        );
-        box-shadow: 0 4px 12px rgba(147, 197, 253, 0.2);
-    }
-
-    .left-side {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
+        .card-pages-back {
+            padding: 1rem;
+        }
     }
 
     .vertical-divider {
@@ -878,14 +448,6 @@
         background: linear-gradient(180deg, transparent, #d1d5db, transparent);
         margin: 0 2rem;
         flex-shrink: 0;
-    }
-
-    .right-side {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: relative;
     }
 
     .right-content {
@@ -903,12 +465,12 @@
 
     @media (max-width: 767px) {
         .front-section {
-            padding: 1rem;
             flex-direction: column;
-            min-height: auto;
+            align-items: center;
+            gap: 0;
         }
 
-        .vertical-divider {
+        .card-inner .vertical-divider {
             width: 100%;
             height: 1px;
             background: linear-gradient(
@@ -917,16 +479,18 @@
                 #d1d5db,
                 transparent
             );
-            margin: 1rem 0;
+            margin: 0.75rem 0;
         }
 
-        .left-side {
-            min-height: 150px;
+        .inner-left {
             width: 100%;
+            flex-shrink: 0;
         }
 
-        .right-side {
+        .inner-right {
             width: 100%;
+            flex: 1;
+            min-height: 0;
         }
 
         .right-content {
@@ -937,16 +501,18 @@
     }
 
     @media (max-width: 480px) {
-        .front-section {
-            padding: 0.75rem;
-        }
-
-        .left-side {
-            min-height: 120px;
-        }
-
         .right-content {
             gap: 0.75rem;
+        }
+
+        .card-inner .qr-block {
+            max-width: 160px;
+        }
+
+        .card-inner .qr-image-wrap img,
+        .card-inner .qr-image-wrap :global(svg) {
+            width: 80px;
+            height: 80px;
         }
     }
 
@@ -988,38 +554,15 @@
     }
 
     /* QR Code Section */
-    .qr-container {
+    .qr-block {
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
         flex-shrink: 0;
-        gap: 0.75rem;
+        gap: 0.5rem;
         width: 100%;
         max-width: 200px;
-    }
-
-    @media (max-width: 480px) {
-        .qr-container {
-            max-width: 150px;
-            gap: 0.5rem;
-        }
-    }
-
-    .qr-code-placeholder {
-        background: white;
-        border-radius: 8px;
-        padding: 1rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        border: 1px solid #e5e7eb;
-        transition:
-            transform 0.2s ease,
-            box-shadow 0.2s ease;
-    }
-
-    .content-hovered .qr-code-placeholder {
-        transform: scale(1.05);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
     .qr-instruction {
@@ -1027,219 +570,57 @@
         color: #9ca3af;
         text-align: center;
         margin: 0;
-        line-height: 1.4;
+        line-height: 1.3;
     }
 
-    .dummy-qr {
-        display: block;
-        max-width: 100%;
-        height: auto;
+    .qr-label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin: 0;
     }
 
-    @media (max-width: 480px) {
-        .dummy-qr {
-            width: 96px;
-            height: 96px;
-        }
-    }
-
-    /* Watermarks */
-    .watermark {
-        position: absolute;
-        top: 1rem;
-        font-size: 0.75rem;
-        color: rgba(0, 0, 0, 0.08);
-        font-weight: 300;
-        letter-spacing: 0.1em;
-        pointer-events: none;
-        z-index: 1;
-        user-select: none;
-    }
-
-    .watermark-left {
-        left: 1.5rem;
-    }
-
-    .watermark-right {
-        right: 1.5rem;
-    }
-
-    @media (max-width: 767px) {
-        .watermark {
-            font-size: 0.65rem;
-            top: 0.75rem;
-        }
-
-        .watermark-left {
-            left: 0.75rem;
-        }
-
-        .watermark-right {
-            right: 0.75rem;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .watermark {
-            font-size: 0.55rem;
-            top: 0.5rem;
-        }
-
-        .watermark-left {
-            left: 0.5rem;
-        }
-
-        .watermark-right {
-            right: 0.5rem;
-        }
-    }
-
-    /* Back Section */
-    .back-section {
-        background: linear-gradient(
-            135deg,
-            rgba(167, 139, 250, 0.15) 0%,
-            rgba(167, 139, 250, 0.05) 100%
-        );
-        border-radius: 12px;
-        padding: 2rem;
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition:
-            background-color 0.3s ease,
-            box-shadow 0.3s ease,
-            opacity 0.3s ease;
-        backface-visibility: hidden;
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        opacity: 0;
-        pointer-events: none;
-        transform: rotateY(180deg);
-        height: var(--card-height);
-        box-sizing: border-box;
-    }
-
-    .card-content.show-back .back-section {
-        opacity: 1;
-        pointer-events: auto;
-    }
-
-    @media (min-width: 768px) {
-        .back-section {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            height: var(--card-height);
-        }
-    }
-
-    .back-section.section-hovered {
-        background: linear-gradient(
-            135deg,
-            rgba(167, 139, 250, 0.2) 0%,
-            rgba(167, 139, 250, 0.1) 100%
-        );
-        box-shadow: 0 4px 12px rgba(167, 139, 250, 0.2);
-    }
-
-    @media (max-width: 767px) {
-        .back-section {
-            padding: 1rem;
-            height: min(120vw, 360px);
-        }
-    }
-
-    @media (max-width: 480px) {
-        .back-section {
-            padding: 0.75rem;
-            height: min(112.5vw, 300px);
-        }
-    }
-
-    .contact-content {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 1.5rem;
+    .qr-value {
+        font-size: 0.85rem;
+        color: #374151;
         text-align: center;
-        width: 100%;
-        position: relative;
-        z-index: 0;
-    }
-
-    .brand-section {
-        margin-bottom: 0.5rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .brand-logo {
-        color: #6366f1;
-        margin-bottom: 0.25rem;
-        opacity: 0.8;
-    }
-
-    .brand-name {
-        font-size: 1.25rem;
-        font-weight: bold;
-        color: #1f2937;
         margin: 0;
+        word-break: break-word;
+        max-width: 100%;
     }
 
-    .brand-tagline {
-        font-size: 0.75rem;
-        color: #6b7280;
-        font-style: italic;
-        margin: 0;
-    }
-
-    .contact-section {
+    .qr-image-wrap {
         display: flex;
-        flex-direction: column;
         align-items: center;
-        gap: 0.25rem;
+        justify-content: center;
+        line-height: 0;
     }
 
-    .contact-label {
-        font-size: 0.875rem;
-        color: #6b7280;
-        margin: 0 0 0.5rem 0;
-        font-weight: 500;
+    .qr-image-wrap img,
+    .qr-image-wrap :global(svg) {
+        width: 100px;
+        height: 100px;
+        transition: transform 0.2s ease;
     }
 
-    .contact-email {
-        color: #2563eb;
-        text-decoration: none;
-        font-size: 0.95rem;
-        font-weight: 500;
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        display: inline-block;
-        transition:
-            background-color 0.2s ease,
-            color 0.2s ease;
+    .content-hovered .qr-image-wrap img,
+    .content-hovered .qr-image-wrap :global(svg) {
+        transform: scale(1.05);
     }
 
-    .contact-email:hover {
-        color: #1d4ed8;
-        background-color: rgba(37, 99, 235, 0.1);
+    @media (hover: none) and (pointer: coarse) {
+        .content-hovered .qr-image-wrap img,
+        .content-hovered .qr-image-wrap :global(svg) {
+            transform: none;
+        }
     }
 
-    .contact-note {
-        font-size: 0.75rem;
-        color: #9ca3af;
-        margin: 0.75rem 0 0 0;
-        font-style: italic;
+    .text-shadow {
+        text-shadow:
+            0 2px 4px rgba(0, 0, 0, 0.8),
+            0 1px 2px rgba(0, 0, 0, 0.6);
     }
 
     @keyframes slideIn {
@@ -1251,11 +632,5 @@
             opacity: 1;
             transform: translateY(0) scale(1);
         }
-    }
-
-    .text-shadow {
-        text-shadow:
-            0 2px 4px rgba(0, 0, 0, 0.8),
-            0 1px 2px rgba(0, 0, 0, 0.6);
     }
 </style>

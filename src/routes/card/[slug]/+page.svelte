@@ -1,4 +1,19 @@
 <script lang="ts">
+    import PlaceholderQR from "$lib/components/PlaceholderQR.svelte";
+    import { cs } from "$lib/state.svelte";
+    import { buildQR } from "$lib/utils/qr";
+
+    let qrCodeUrl = $state("");
+    let hasSlug = $derived(!!cs.audioUrl);
+
+    $effect(() => {
+        const audioUrl = cs.audioUrl || "";
+        if (!audioUrl) return;
+        buildQR(audioUrl).then((qr) => {
+            qrCodeUrl = qr;
+        });
+    });
+
     type CardData = {
         name: string;
         description: string;

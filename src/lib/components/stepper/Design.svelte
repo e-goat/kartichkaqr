@@ -59,7 +59,6 @@
             total = result.total;
             currentPage = result.currentPage;
 
-            // Wait for DOM to update, then calculate colors for new templates
             await tick();
             calculateTemplateColors();
         } catch (error) {
