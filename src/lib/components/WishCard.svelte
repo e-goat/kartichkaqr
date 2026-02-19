@@ -2,12 +2,20 @@
     import { cs } from "$lib/state.svelte";
     import { getContrastingColor } from "$lib/utils/helpers";
     import { buildQR } from "$lib/utils/qr";
+    import PlaceholderQR from "$lib/components/PlaceholderQR.svelte";
 
     interface Props {
         cardFront?: string;
         cardBack?: string;
         title?: string;
         description?: string;
+        sender?: string;
+        receiver?: string;
+        audioUrl?: string | null;
+        /** When true (e.g. Review step): always show placeholder QR, never show audio player */
+        previewMode?: boolean;
+        /** When set (e.g. single card page): QR code links to this URL (card page link) */
+        cardPageUrl?: string | null;
     }
 
     let {
@@ -15,7 +23,37 @@
         cardBack = "",
         title = "",
         description = "",
+        sender,
+        receiver,
+        audioUrl: audioUrlProp,
+        previewMode = false,
+        cardPageUrl = null,
     }: Props = $props();
+
+    const displayTitle = $derived(cs.title || title);
+    const displayDescription = $derived(cs.description || description);
+    const descriptionLength = $derived(displayDescription.length);
+    const displaySender = $derived(sender ?? cs.sender ?? "—");
+    const displayReceiver = $derived(receiver ?? cs.receiver ?? "—");
+    const effectiveAudioUrl = $derived(audioUrlProp ?? cs.audioUrl ?? null);
+    const hasAudio = $derived(!!effectiveAudioUrl);
+    /** Show left QR block: always in preview; or when we have a QR target (card page or audio) */
+    const showQRSection = $derived(previewMode || !!cardPageUrl || hasAudio);
+    /** URL to encode in QR: card page when provided, else audio (only when not preview) */
+    const qrTargetUrl = $derived(
+        previewMode ? null : cardPageUrl || effectiveAudioUrl || null,
+    );
+    /** Show audio player only on created card view when card has audio */
+    const showAudioPlayer = $derived(hasAudio && !previewMode);
+
+    let qrCodeUrl = $state("");
+    $effect(() => {
+        const url = qrTargetUrl;
+        if (!url) return;
+        buildQR(url, 20).then((qr) => {
+            qrCodeUrl = qr;
+        });
+    });
 
     // Constant for card height - sized for comfortable viewing
     // Will be adjusted via CSS for mobile
@@ -26,6 +64,7 @@
     let cardState = $state(0);
     let isContentHovered = $state(false);
     let frontElement = $state<HTMLDivElement>();
+    let openedCardElement = $state<HTMLDivElement>();
     let textColor = $state("black");
 
     let hasCardFront = $derived(!!cardFront);
@@ -35,6 +74,11 @@
     function toggleCard() {
         // Cycle: closed -> inner -> back -> closed
         cardState = (cardState + 1) % 3;
+    }
+
+    function handleContainerClick(e: MouseEvent) {
+        if (!openedCardElement?.contains(e.target as Node)) return;
+        toggleCard();
     }
 
     $effect(() => {
@@ -50,13 +94,14 @@
 <div
     id="wishcard-container"
     class:card-opened={isOpened}
-    onclick={toggleCard}
+    onclick={handleContainerClick}
     onkeydown={(e) => e.key === "Enter" && toggleCard()}
     role="button"
     tabindex="0"
     style="--card-height: {CARD_HEIGHT}px; --card-width: {CARD_WIDTH}px;"
 >
     <div
+        bind:this={openedCardElement}
         class="opened-card"
         class:closed-preview={!isOpened}
         class:card-open={isOpened && !isBackView}
@@ -74,28 +119,59 @@
                     class:content-hovered={isContentHovered && !isBackView}
                 >
                     <div bind:this={frontElement} class="card-inner">
-                        <div class="inner-left">
-                            <div class="qr-block">
-                                <p class="qr-label">От:</p>
-                                <p class="qr-value">{cs.sender || "—"}</p>
-                                <div class="qr-image-wrap">
-                                    <PlaceholderQR size={100} />
+                        {#if showQRSection}
+                            <div class="inner-left">
+                                <div class="qr-block">
+                                    <p class="qr-label">От:</p>
+                                    <p class="qr-value">{displaySender}</p>
+                                    <div class="qr-image-wrap">
+                                        {#if qrCodeUrl}
+                                            <img
+                                                src={qrCodeUrl}
+                                                alt="QR код за картичката"
+                                                width="100"
+                                                height="100"
+                                            />
+                                        {:else}
+                                            <PlaceholderQR size={100} />
+                                        {/if}
+                                    </div>
+                                    <p class="qr-instruction">
+                                        {#if previewMode || cardPageUrl}
+                                            Сканирайте за да отворите картичката
+                                        {:else}
+                                            Сканирайте за да чуете вашият гласов
+                                            поздрав
+                                        {/if}
+                                    </p>
+                                    <p class="qr-label">До:</p>
+                                    <p class="qr-value">{displayReceiver}</p>
+                                    {#if showAudioPlayer}
+                                        <audio
+                                            src={effectiveAudioUrl || ""}
+                                            controls
+                                            class="audio-player"
+                                            preload="metadata"
+                                            aria-label="Възпроизвеждане на гласов поздрав"
+                                        ></audio>
+                                    {/if}
                                 </div>
-                                <p class="qr-instruction">
-                                    Сканирайте за да чуете вашият гласов поздрав
-                                </p>
-                                <p class="qr-label">До:</p>
-                                <p class="qr-value">{cs.receiver || "—"}</p>
                             </div>
-                        </div>
-                        <div class="vertical-divider"></div>
+                            <div class="vertical-divider"></div>
+                        {/if}
                         <div class="inner-right">
                             <div class="right-content">
                                 <h1 class="card-title">
-                                    {cs.title || title}
+                                    {displayTitle}
                                 </h1>
-                                <p class="card-description">
-                                    {cs.description || description}
+                                <p
+                                    class="card-description"
+                                    class:description-medium={descriptionLength >
+                                        200}
+                                    class:description-long={descriptionLength >
+                                        400}
+                                >
+                                    {displayDescription}
                                 </p>
                             </div>
                         </div>
@@ -121,7 +197,7 @@
                     class:text-black={textColor === "black"}
                     class:text-shadow={hasCardFront}
                 >
-                    {cs.title || title}
+                    {displayTitle}
                 </h1>
             </div>
         {/if}
@@ -225,7 +301,7 @@
         }
 
         .opened-card.card-open {
-            max-width: min(95vw, 640px);
+            max-width: var(--card-width);
         }
     }
 
@@ -236,7 +312,7 @@
         }
 
         .opened-card.card-open {
-            max-width: 95vw;
+            max-width: var(--card-width);
         }
     }
 
@@ -247,6 +323,18 @@
         min-height: var(--card-height);
         transform-style: preserve-3d;
         transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    @media (max-width: 768px) {
+        .card-pages-flip {
+            min-height: 320px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .card-pages-flip {
+            min-height: 280px;
+        }
     }
 
     .card-pages-flip.show-back {
@@ -261,6 +349,18 @@
         position: relative;
         backface-visibility: hidden;
         transition: transform 0.2s ease;
+    }
+
+    @media (max-width: 768px) {
+        .card-pages {
+            min-height: 320px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .card-pages {
+            min-height: 280px;
+        }
     }
 
     .card-pages.content-hovered {
@@ -288,17 +388,17 @@
     .inner-left,
     .inner-right {
         position: relative;
+        min-width: 0;
+        flex: 1 1 0;
     }
 
     .inner-left {
-        flex: 1;
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
     .inner-right {
-        flex: 1;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -457,10 +557,12 @@
         justify-content: center;
         gap: 1.5rem;
         width: 100%;
+        min-width: 0;
         max-width: 400px;
         text-align: center;
         padding: 0 1rem;
         box-sizing: border-box;
+        overflow: hidden;
     }
 
     @media (max-width: 767px) {
@@ -549,6 +651,14 @@
         -webkit-box-orient: vertical;
     }
 
+    .card-description.description-medium {
+        font-size: 0.9rem;
+    }
+
+    .card-description.description-long {
+        font-size: 0.8rem;
+    }
+
     .content-hovered .card-description {
         color: #1f2937;
     }
@@ -603,6 +713,13 @@
         width: 100px;
         height: 100px;
         transition: transform 0.2s ease;
+    }
+
+    .qr-block .audio-player {
+        width: 100%;
+        max-width: 180px;
+        margin-top: 0.5rem;
+        height: 32px;
     }
 
     .content-hovered .qr-image-wrap img,

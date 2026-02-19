@@ -76,8 +76,13 @@
                     <WishCard
                         cardFront={selectedTemplate?.background || ""}
                         cardBack={selectedTemplate?.background || ""}
-                        title={selectedTemplate?.title || ""}
-                        description={selectedTemplate?.description || ""}
+                        title={cs.title || selectedTemplate?.title || ""}
+                        description={cs.description ||
+                            selectedTemplate?.description ||
+                            ""}
+                        sender={cs.sender ?? undefined}
+                        receiver={cs.receiver ?? undefined}
+                        previewMode={true}
                     />
                 </aside>
                 <aside

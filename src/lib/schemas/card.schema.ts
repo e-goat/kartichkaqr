@@ -21,7 +21,7 @@ export const introStepSchema = z.object({
         .trim(),
     description: z
         .string()
-        .max(1024, "Описанието не може да бъде повече от 1024 символа")
+        .max(500, "Описанието не може да бъде повече от 500 символа")
         .trim()
         .optional()
         .default(""),

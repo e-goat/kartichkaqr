@@ -6,6 +6,7 @@ const prisma = new PrismaClient();
 export async function getCardBySlug(slug: string) {
     return prisma.card.findUnique({
         where: { slug },
+        include: { template: true },
     });
 }
 

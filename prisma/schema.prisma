@@ -33,6 +33,7 @@ model Template {
     id          Int      @id @default(autoincrement())
     cards       Card[]
     title       String
+    titlePos    String @default("top")
     description String   @default("")
     type        String
     background  String

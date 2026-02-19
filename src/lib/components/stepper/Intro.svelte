@@ -154,7 +154,7 @@
                         placeholder="Добавете кратко съобщение"
                         bind:value={cs.description}
                         rows="4"
-                        maxlength="1024"
+                        maxlength="500"
                     ></textarea>
                     {#if ss.validationErrors.description}
                         <p class="mt-1 text-sm text-red-600">
@@ -162,7 +162,7 @@
                         </p>
                     {:else}
                         <p class="mt-1 text-sm text-gray-500">
-                            {cs.description?.length || 0} / 1024 символа
+                            {cs.description?.length || 0} / 500 символа
                         </p>
                     {/if}
                 </div>
