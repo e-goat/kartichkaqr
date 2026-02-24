@@ -14,9 +14,6 @@
         "format": "npx prettier . --write",
         "postinstall": "prisma generate"
     },
-    "prisma": {
-        "seed": "tsx prisma/seed.ts"
-    },
     "devDependencies": {
         "@eslint/js": "^9.28.0",
         "@sveltejs/adapter-auto": "^6.0.0",
@@ -46,6 +43,7 @@
         "@vercel/analytics": "^1.5.0",
         "@vercel/blob": "^1.1.1",
         "bindings": "^1.5.0",
+        "dotenv": "^17.3.1",
         "qrcode": "^1.5.4",
         "resend": "^6.0.2",
         "slug": "^11.0.0",
