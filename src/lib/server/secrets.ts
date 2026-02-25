@@ -11,3 +11,5 @@ export const OPTIMIZE_API_KEY = env.OPTIMIZE_API_KEY;
 export const ADMIN_EMAIL = env.ADMIN_EMAIL;
 
 export const APP_EMAIL = env.APP_EMAIL;
+
+export const ADMIN_DASHBOARD_KEY = env.ADMIN_DASHBOARD_KEY;

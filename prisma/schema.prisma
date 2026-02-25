@@ -33,11 +33,24 @@ model Template {
     id          Int      @id @default(autoincrement())
     cards       Card[]
     title       String
-    titlePos    String @default("top")
+    titlePos    TitlePosition   @default(top)
     description String   @default("")
     type        String
     background  String
     backgroundBack String @default("")
     font        String   @default("Arial")
     createdAt   DateTime @default(now())
+}
+
+model Session {
+    id Int @id @default(autoincrement())
+    secretHash Bytes
+    createdAt DateTime @default(now())
+    lastVerifiedAt DateTime? @default(now())
+}
+
+enum TitlePosition {
+    top
+    bottom
+    center
 }

@@ -81,7 +81,7 @@ export const actions: Actions = {
 
             const file = formData.get("record") as File | null;
             if (file) {
-                const storeResponse = await VercelStorageController.store({
+                const storeResponse = await VercelStorageController.storeAudio({
                     file: file,
                     mimeType: "webm",
                     uuid: card.cardUuid as string,
