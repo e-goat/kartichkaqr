@@ -34,7 +34,7 @@ model Template {
     cards       Card[]
     title       String
     titlePos    TitlePosition   @default(top)
-    description String   @default("")
+    description String?
     type        String
     background  String
     backgroundBack String @default("")
