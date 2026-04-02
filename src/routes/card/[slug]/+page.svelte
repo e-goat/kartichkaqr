@@ -15,7 +15,7 @@
             background: string;
             backgroundBack: string;
         };
-    } | null;
+    };
 
     let { data }: { data: CardData } = $props();
 </script>
@@ -30,26 +30,18 @@
         ← Назад
     </button>
 
-    {#if data}
-        <WishCard
-            cardFront={data.template?.background ?? ""}
-            cardBack={data.template?.backgroundBack ??
-                data.template?.background ??
-                ""}
-            title={data.title}
-            description={data.description}
-            sender={data.sender ?? undefined}
-            receiver={data.receiver ?? undefined}
-            audioUrl={data.audioUrl}
-            cardPageUrl={data.cardPageUrl ?? null}
-        />
-    {:else}
-        <div class="not-found">
-            <p class="text-center text-gray-600 dark:text-gray-400 py-8">
-                Картичката за подаръци не е намерена.
-            </p>
-        </div>
-    {/if}
+    <WishCard
+        cardFront={data.template?.background ?? ""}
+        cardBack={data.template?.backgroundBack ??
+            data.template?.background ??
+            ""}
+        title={data.title}
+        description={data.description}
+        sender={data.sender ?? undefined}
+        receiver={data.receiver ?? undefined}
+        audioUrl={data.audioUrl}
+        cardPageUrl={data.cardPageUrl ?? null}
+    />
 </div>
 
 <style>
