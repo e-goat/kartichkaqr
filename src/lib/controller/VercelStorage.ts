@@ -37,6 +37,7 @@ class VercelStorage {
 
             const result = await put(`${uuid}.${mimeType}`, file, {
                 access: "public",
+                token: BLOB_READ_WRITE_TOKEN,
             });
 
             console.log("Recording stored successfully", result);
@@ -79,6 +80,7 @@ class VercelStorage {
                 file,
                 {
                     access: "public",
+                    token: BLOB_READ_WRITE_TOKEN,
                 },
             );
 
@@ -114,14 +116,17 @@ class VercelStorage {
         const uuid = crypto.randomUUID();
         const path = `${category}/${uuid}.${ext}`;
 
-        const result = await put(path, file, { access: "public" });
+        const result = await put(path, file, {
+            access: "public",
+            token: BLOB_READ_WRITE_TOKEN,
+        });
         return result;
     }
 
     /** Delete a blob by its URL (from store/storeWithCategory). */
     async deleteByUrl(url: string): Promise<void> {
         if (!url?.trim()) throw new Error("Missing url");
-        await del([url]);
+        await del([url], { token: BLOB_READ_WRITE_TOKEN });
     }
 }
 
