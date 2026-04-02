@@ -26,6 +26,8 @@ model Card {
     createdAt   DateTime @default(now())
     audioUrl    String?
     cardUuid    String @unique @default(uuid())
+
+    @@map("cards")
 }
 
 model Template {
@@ -39,6 +41,8 @@ model Template {
     backgroundBack String @default("")
     font        String   @default("Arial")
     createdAt   DateTime @default(now())
+
+    @@map("templates")
 }
 
 enum TitlePosition {
