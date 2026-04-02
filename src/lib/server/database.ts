@@ -1,9 +1,11 @@
 import { PrismaClient, Prisma } from "$lib/db";
 import { error } from "@sveltejs/kit";
 import { DATABASE_URL } from "$env/static/private";
-import { PrismaPostgresAdapter } from "@prisma/adapter-ppg";
+import { PrismaPg } from "@prisma/adapter-pg";
+import pg from "pg";
 
-const adapter = new PrismaPostgresAdapter({ connectionString: DATABASE_URL });
+const pool = new pg.Pool({ connectionString: DATABASE_URL });
+const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 export async function getCardBySlug(slug: string) {

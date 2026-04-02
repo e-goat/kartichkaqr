@@ -1,7 +1,8 @@
 import * as helpers from "$lib/utils/helpers";
 import { PrismaClient, type Session } from "$lib/db";
 import { DATABASE_URL } from "$env/static/private";
-import { PrismaPostgresAdapter } from "@prisma/adapter-ppg";
+import { PrismaPg } from "@prisma/adapter-pg";
+import pg from "pg";
 
 interface SessionWithToken {
     id: string;
@@ -125,8 +126,7 @@ class Auth {
     }
 }
 
-export default new Auth(
-    new PrismaClient({
-        adapter: new PrismaPostgresAdapter({ connectionString: DATABASE_URL }),
-    }),
-);
+const pool = new pg.Pool({ connectionString: DATABASE_URL });
+const adapter = new PrismaPg(pool);
+
+export default new Auth(new PrismaClient({ adapter }));

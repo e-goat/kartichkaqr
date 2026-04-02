@@ -1,33 +1,37 @@
 import "dotenv/config";
-import { PrismaClient, Prisma } from '../src/lib/db'
-import { \ } from '@prisma/adapter-ppg'
+import { PrismaClient } from "../src/lib/db";
+import { PrismaPg } from "@prisma/adapter-pg";
+import pg from "pg";
 
-const adapter = new PrismaPostgresAdapter({ connectionString: process.env.DATABASE_URL! })
-const prisma = new PrismaClient({ adapter })
+const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL! });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
-// Add tables to seed here
-const SEED_TARGET: string[] = [
-    // 'card',
-    // 'template',
-];
+async function main() {
+    const categories = [
+        { name: "Благодарност" },
+        { name: "Любов" },
+        { name: "Подкрепа" },
+        { name: "Празници" },
+        { name: "Специални дни" },
+    ];
 
-/**
- * @param data The data to seed into the table
- * @param table The name of the table to seed
- */
-export async function main(data: any, table: string) {
-    switch (table) {
-        case 'card':
-            // Seed card here
-            break
-        case 'template':
-            // Seed template here
-            break
-        default:
-            throw new Error(`Unknown table: ${table}`)
-    }
+    await prisma.category.createMany({
+        data: categories,
+        skipDuplicates: true,
+    });
+
+    console.log("Seeded categories successfully.");
 }
 
-for (const table of SEED_TARGET) {
-    await main(null, table)
-}
+main()
+    .then(async () => {
+        await prisma.$disconnect();
+        await pool.end();
+    })
+    .catch(async (e) => {
+        console.error(e);
+        await prisma.$disconnect();
+        await pool.end();
+        process.exit(1);
+    });
