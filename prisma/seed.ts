@@ -20,8 +20,21 @@ async function main() {
         data: categories,
         skipDuplicates: true,
     });
-
     console.log("Seeded categories successfully.");
+
+    const fonts = [
+        { name: "Arial" },
+        { name: "Times New Roman" },
+        { name: "Courier New" },
+        { name: "Verdana" },
+        { name: "Georgia" },
+    ];
+
+    await prisma.font.createMany({
+        data: fonts,
+        skipDuplicates: true,
+    });
+    console.log("Seeded fonts successfully.");
 }
 
 main()
