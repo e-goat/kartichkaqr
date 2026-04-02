@@ -1,6 +1,9 @@
+import "dotenv/config";
 import { PrismaClient, Prisma } from '../src/lib/db'
+import { \ } from '@prisma/adapter-ppg'
 
-const prisma = new PrismaClient()
+const adapter = new PrismaPostgresAdapter({ connectionString: process.env.DATABASE_URL! })
+const prisma = new PrismaClient({ adapter })
 
 // Add tables to seed here
 const SEED_TARGET: string[] = [

@@ -1,7 +1,10 @@
 import { PrismaClient, Prisma } from "$lib/db";
 import { error } from "@sveltejs/kit";
+import { DATABASE_URL } from "$env/static/private";
+import { PrismaPostgresAdapter } from "@prisma/adapter-ppg";
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPostgresAdapter({ connectionString: DATABASE_URL });
+const prisma = new PrismaClient({ adapter });
 
 export async function getCardBySlug(slug: string) {
     return prisma.card.findUnique({
