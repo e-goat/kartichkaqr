@@ -1,1 +1,1 @@
-export const handle = () => {}
+export const handle = () => {};
