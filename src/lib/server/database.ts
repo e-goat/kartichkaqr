@@ -35,10 +35,10 @@ export async function getAllTemplates(limit: number, skip: number) {
     return { templates, total };
 }
 
-export async function getAllTemplatesByType(
+export async function getAllTemplatesByCategory(
     limit: number,
     skip: number,
-    type: string,
+    categoryId: number,
 ) {
     if (limit > 100) {
         throw error(400, "Bad Request");
@@ -47,18 +47,17 @@ export async function getAllTemplatesByType(
         prisma.template.findMany({
             take: limit,
             skip,
-            where: { type },
+            where: { categoryId },
             orderBy: { createdAt: "desc" },
         }),
-        prisma.template.count({ where: { type } }),
+        prisma.template.count({ where: { categoryId } }),
     ]);
 
     return { templates, total };
 }
 
 export async function getAllCategories() {
-    return prisma.template.findMany({
-        where: {},
-        distinct: ["type"],
+    return prisma.category.findMany({
+        orderBy: { id: "asc" },
     });
 }

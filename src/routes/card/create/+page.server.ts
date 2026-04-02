@@ -14,12 +14,10 @@ export const load: PageServerLoad = async ({ url }) => {
     const skip: number = Number(url.searchParams.get("skip")) || 0;
     const currentPage: number = Math.floor(skip / limit) + 1;
 
-    const type = url.searchParams.get("type") || "";
-    let result = await db.getAllTemplates(limit, skip);
-
-    if (type) {
-        result = await db.getAllTemplatesByType(limit, skip, type);
-    }
+    const categoryId = url.searchParams.get("categoryId");
+    let result = categoryId
+        ? await db.getAllTemplatesByCategory(limit, skip, Number(categoryId))
+        : await db.getAllTemplates(limit, skip);
 
     const categories = await db.getAllCategories();
 

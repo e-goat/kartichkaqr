@@ -13,7 +13,8 @@
     };
 
     type Category = {
-        type: string;
+        id: number;
+        name: string;
     };
 
     type PageProp = {
@@ -33,10 +34,10 @@
     let total = $state(data.total);
     let currentPage = $state(data.currentPage);
     let pageSize = $state(data.pageSize);
-    let selectedCategory = $state<string>("");
+    let selectedCategory = $state<number | null>(null);
     let isLoading = $state(false);
 
-    async function fetchTemplates(type: string, page: number = 1) {
+    async function fetchTemplates(categoryId: number | null, page: number = 1) {
         isLoading = true;
         const skip = (page - 1) * pageSize;
         const params = new URLSearchParams({
@@ -44,8 +45,8 @@
             skip: String(skip),
         });
 
-        if (type) {
-            params.set("type", type);
+        if (categoryId) {
+            params.set("categoryId", String(categoryId));
         }
 
         try {
@@ -108,14 +109,14 @@
 
     function handleClickEventAll(event: MouseEvent) {
         event.preventDefault();
-        selectedCategory = "";
-        fetchTemplates("");
+        selectedCategory = null;
+        fetchTemplates(null);
     }
 
-    function handleClickEventCategory(event: MouseEvent, type: string) {
+    function handleClickEventCategory(event: MouseEvent, categoryId: number) {
         event.preventDefault();
-        selectedCategory = type;
-        fetchTemplates(type);
+        selectedCategory = categoryId;
+        fetchTemplates(categoryId);
     }
 
     function handlePageChange(page: number) {
@@ -144,8 +145,8 @@
             <button
                 type="button"
                 class="text-white text-sm md:text-base lg:text-lg px-2.5 py-0.5 rounded-full p-5 cursor-pointer transition-colors duration-200"
-                class:bg-custom-orange-600={selectedCategory === ""}
-                class:bg-gray-500={selectedCategory !== ""}
+                class:bg-custom-orange-600={selectedCategory === null}
+                class:bg-gray-500={selectedCategory !== null}
                 onclick={handleClickEventAll}
             >
                 Всички
@@ -154,11 +155,11 @@
                 <button
                     type="button"
                     class="text-white text-sm md:text-base lg:text-lg px-2.5 py-0.5 rounded-full p-5 cursor-pointer transition-colors duration-200"
-                    class:bg-custom-orange-600={selectedCategory === c.type}
-                    class:bg-gray-500={selectedCategory !== c.type}
-                    onclick={(e) => handleClickEventCategory(e, c.type)}
+                    class:bg-custom-orange-600={selectedCategory === c.id}
+                    class:bg-gray-500={selectedCategory !== c.id}
+                    onclick={(e) => handleClickEventCategory(e, c.id)}
                 >
-                    {c.type}
+                    {c.name}
                 </button>
             {/each}
         </section>
@@ -175,6 +176,12 @@
                 <div
                     class="animate-spin rounded-full h-12 w-12 border-4 border-custom-orange-600 border-t-transparent"
                 ></div>
+            </div>
+        {:else if templates.length === 0}
+            <div class="mt-6 flex justify-center items-center py-20">
+                <p class="text-gray-500 text-lg italic">
+                    Няма налични шаблони за тази категория.
+                </p>
             </div>
         {:else}
             <ul
