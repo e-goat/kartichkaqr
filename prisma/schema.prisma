@@ -25,34 +25,43 @@ model Card {
     slug        String   @unique
     createdAt   DateTime @default(now())
     audioUrl    String?
-    cardUuid    String @unique @default(uuid())
+    cardUuid    String   @unique @default(uuid())
 
     @@map("cards")
 }
 
 model Template {
-    id          Int      @id @default(autoincrement())
-    cards       Card[]
-    title       String
-    titlePos    TitlePosition   @default(top)
-    description String?
-    type        String
-    background  String
-    backgroundBack String @default("")
-    font        String   @default("Arial")
-    createdAt   DateTime @default(now())
-    category    Category @relation(fields: [categoryId], references: [id])
-    categoryId  Int
+    id             Int           @id @default(autoincrement())
+    cards          Card[]
+    title          String
+    titlePos       TitlePosition @default(top)
+    description    String?
+    type           String
+    background     String
+    backgroundBack String        @default("")
+    font           Font         @relation(fields: [fontId], references: [id])
+    fontId         Int          @default(1)
+    createdAt      DateTime      @default(now())
+    categories     Category      @relation(fields: [categoryId], references: [id])
+    categoryId     Int
 
     @@map("templates")
 }
 
 model Category {
-    id          Int      @id @default(autoincrement())
-    name        String   @unique
-    templates   Template[]
+    id        Int        @id @default(autoincrement())
+    name      String     @unique
+    templates Template[]
 
     @@map("categories")
+}
+
+model Font {
+    id        Int        @id @default(autoincrement())
+    name      String     @unique
+    templates Template[]
+
+    @@map("fonts")
 }
 
 enum TitlePosition {
