@@ -12,13 +12,13 @@ interface SessionWithToken {
 
 class Auth {
     #prisma: PrismaClient;
-    #sessionExpiryTime: number;
+    // #sessionExpiryTime: number;
     #inactivityTimeoutSeconds: number;
     #activityCheckIntervalSeconds: number;
 
     constructor(prisma: PrismaClient) {
         this.#prisma = prisma;
-        this.#sessionExpiryTime = 60 * 60 * 24; // 1 day
+        // this.#sessionExpiryTime = 60 * 60 * 24; // 1 day
         this.#inactivityTimeoutSeconds = 60 * 60 * 24 * 10; // 10 days
         this.#activityCheckIntervalSeconds = 60 * 60; // 1 hour
     }

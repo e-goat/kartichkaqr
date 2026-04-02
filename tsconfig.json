@@ -16,7 +16,11 @@
             "**/node_modules",
             "_build",
             "temp/*",
-            "src/lib/db/*"
+            "src/lib/db/*",
+            ".vercel/*",
+            ".svelte-kit/*",
+            ".husky/*",
+            "prisma/*"
         ]
     }
     // Path aliases are handled by https://svelte.dev/docs/kit/configuration#alias

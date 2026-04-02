@@ -17,8 +17,21 @@ export default tseslint.config(
             "prisma/*",
             "src/lib/assets/*",
             "src/lib/db/*",
+            ".vercel/*",
+            ".husky/*",
+            ".cursor/*",
+            ".vscode/*",
+            "src/lib/components/*",
         ],
     },
     prettier,
     ...svelte.configs.prettier,
+    {
+        languageOptions: {
+            globals: {
+                browser: true,
+                node: true,
+            },
+        },
+    },
 );
