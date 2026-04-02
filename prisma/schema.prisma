@@ -41,13 +41,6 @@ model Template {
     createdAt   DateTime @default(now())
 }
 
-model Session {
-    id Int @id @default(autoincrement())
-    secretHash Bytes
-    createdAt DateTime @default(now())
-    lastVerifiedAt DateTime? @default(now())
-}
-
 enum TitlePosition {
     top
     bottom
