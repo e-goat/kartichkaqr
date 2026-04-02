@@ -41,8 +41,18 @@ model Template {
     backgroundBack String @default("")
     font        String   @default("Arial")
     createdAt   DateTime @default(now())
+    category    Category @relation(fields: [categoryId], references: [id])
+    categoryId  Int
 
     @@map("templates")
+}
+
+model Category {
+    id          Int      @id @default(autoincrement())
+    name        String   @unique
+    templates   Template[]
+
+    @@map("categories")
 }
 
 enum TitlePosition {
