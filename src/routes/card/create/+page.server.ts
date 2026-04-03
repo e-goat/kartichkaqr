@@ -1,6 +1,6 @@
 import type { PageServerLoad } from "./$types";
 import type { Actions } from "@sveltejs/kit";
-import { rs, ss } from "$lib/state.svelte";
+import { cs, ts, ss } from "$lib/state.svelte";
 import { VercelStorageController } from "$lib/controller/VercelStorage";
 import { MailController } from "$lib/controller/Mail";
 import { APP_EMAIL, ADMIN_EMAIL } from "$lib/server/secrets";
@@ -35,15 +35,12 @@ export const actions: Actions = {
         const formData = await request.formData();
         const cardMeta = JSON.parse(formData.get("card") as string);
         let card: Prisma.CardCreateInput;
+
         ss.isSubmitting = true;
 
         try {
             // Page 1 validations
-            if (
-                !cardMeta.title?.trim() ||
-                !cardMeta.receiver?.trim() ||
-                !cardMeta.sender?.trim()
-            ) {
+            if (!cardMeta.receiver?.trim() || !cardMeta.sender?.trim()) {
                 ss.isSubmitting = false;
                 return fail(400, {
                     cardMeta,
@@ -57,6 +54,7 @@ export const actions: Actions = {
             if (!cardMeta.templateId) {
                 ss.isSubmitting = false;
                 ss.currentStep = 2;
+
                 return fail(400, {
                     cardMeta,
                     error: "Моля, изберете шаблон за картичката.",
@@ -65,9 +63,11 @@ export const actions: Actions = {
             }
 
             card = {
-                title: cardMeta.title,
-                description: cardMeta.description,
                 sender: cardMeta.sender,
+                description:
+                    cardMeta.description != null
+                        ? cardMeta.description
+                        : ts.description,
                 receiver: cardMeta.receiver,
                 slug: cardMeta.slug,
                 audioUrl: cardMeta.audioUrl,
@@ -111,9 +111,9 @@ export const actions: Actions = {
                     to: ADMIN_EMAIL || "",
                     from: APP_EMAIL || "",
                     name: cardMeta.receiver,
-                    title: cardMeta.title,
+                    title: "Нова карта " + cardMeta.slug,
                     senderName: senderName || cardMeta.sender,
-                    description: cardMeta.description || "",
+                    description: "",
                     cardId: createdCard.id,
                     senderEmail,
                     senderPhone,

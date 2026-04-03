@@ -1,3 +1,4 @@
+// IN YOUR INTERFACE
 interface CardState {
     title: string;
     sender: string;
@@ -38,6 +39,14 @@ interface PhysicalCopyState {
     comment: string;
 }
 
+// I only care for those props
+interface TemplateState {
+    description: string;
+    title: string;
+    backgroundBack: string;
+}
+
+// UNITED STATES
 export const cs: CardState = $state({
     title: "",
     sender: "",
@@ -67,6 +76,12 @@ export const tcc: TemplateColorCache = $state({
     colors: new Map(),
 });
 
+export const ts: TemplateState = $state({
+    description: "",
+    title: "",
+    backgroundBack: "",
+});
+
 export const pcs: PhysicalCopyState = $state({
     requested: false,
     name: "",
@@ -76,6 +91,7 @@ export const pcs: PhysicalCopyState = $state({
     comment: "",
 });
 
+// Well, you need this...
 export function resetCardState() {
     cs.title = "";
     cs.sender = "";

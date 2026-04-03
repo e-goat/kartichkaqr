@@ -57,7 +57,6 @@ export function validateIntroStep(): ValidationResult {
     const data: IntroStepData = {
         receiver: cs.receiver,
         sender: cs.sender,
-        title: cs.title,
         description: cs.description || "",
     };
 

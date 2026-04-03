@@ -1,7 +1,6 @@
 <script lang="ts">
-    import { cs, ss } from "$lib/state.svelte";
+    import { cs, ss, ts } from "$lib/state.svelte";
     import * as helpers from "$lib/utils/helpers";
-    import { getFieldError } from "$lib/utils/validation";
 
     cs.slug = helpers.generateSlug(6);
     cs.cardUuid = helpers.generateCardUuid();
@@ -13,9 +12,6 @@
         }
         if (cs.sender && ss.validationErrors.sender) {
             delete ss.validationErrors.sender;
-        }
-        if (cs.title && ss.validationErrors.title) {
-            delete ss.validationErrors.title;
         }
         if (cs.description && ss.validationErrors.description) {
             delete ss.validationErrors.description;
@@ -98,35 +94,6 @@
                     {#if ss.validationErrors.sender}
                         <p class="mt-1 text-sm text-red-600">
                             {ss.validationErrors.sender}
-                        </p>
-                    {/if}
-                </div>
-                <div class="flex flex-col w-full mb-2 sm:mb-3 md:mb-4">
-                    <label
-                        class="mb-1 text-sm font-medium text-gray-700"
-                        for="title-input"
-                    >
-                        Заглавие
-                    </label>
-                    <input
-                        id="title-input"
-                        name="title"
-                        type="text"
-                        class="rounded-xl border px-4 py-3 text-base shadow focus:outline-none focus:ring-2 transition-colors w-full"
-                        class:border-red-300={!!ss.validationErrors.title}
-                        class:border-gray-200={!ss.validationErrors.title}
-                        class:focus:border-red-500={!!ss.validationErrors.title}
-                        class:focus:ring-red-200={!!ss.validationErrors.title}
-                        class:focus:border-blue-500={!ss.validationErrors.title}
-                        class:focus:ring-blue-200={!ss.validationErrors.title}
-                        placeholder="Заглавие"
-                        autocomplete="off"
-                        bind:value={cs.title}
-                        required
-                    />
-                    {#if ss.validationErrors.title}
-                        <p class="mt-1 text-sm text-red-600">
-                            {ss.validationErrors.title}
                         </p>
                     {/if}
                 </div>

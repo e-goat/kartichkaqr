@@ -1,6 +1,6 @@
 <script lang="ts">
     import WishCard from "$lib/components/WishCard.svelte";
-    import { cs, ss, pcs } from "$lib/state.svelte.js";
+    import { cs, ss, pcs, ts } from "$lib/state.svelte.js";
 
     interface Props {
         templates?: Array<{
@@ -75,7 +75,7 @@
                 <aside id="wish-card-preview" class="mt-6 wish-card">
                     <WishCard
                         cardFront={selectedTemplate?.background || ""}
-                        cardBack={selectedTemplate?.background || ""}
+                        cardBack={ts.backgroundBack}
                         title={cs.title || selectedTemplate?.title || ""}
                         description={cs.description ||
                             selectedTemplate?.description ||
@@ -112,6 +112,17 @@
                     </div>
 
                     {#if pcs.requested}
+                        <!-- Pricing Information -->
+                        <div
+                            class="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg"
+                        >
+                            <p class="text-xs text-gray-600 leading-relaxed">
+                                <strong>Ценообразуване:</strong> Изработката на една
+                                картичка на принтер 5 евро. Разходите за доставка
+                                се изчисляват според тарифите на българските превозвачи
+                                като Еконт и зависят от теглото и разстоянието.
+                            </p>
+                        </div>
                         <div
                             class="flex flex-col gap-2 sm:gap-3 md:gap-4 mt-2 pl-2 sm:pl-4"
                         >
@@ -291,21 +302,6 @@
                                         {ss.validationErrors.comment}
                                     </p>
                                 {/if}
-                            </div>
-
-                            <!-- Pricing Information -->
-                            <div
-                                class="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg"
-                            >
-                                <p
-                                    class="text-xs text-gray-600 leading-relaxed"
-                                >
-                                    <strong>Ценообразуване:</strong> Изработката
-                                    на една картичка на принтер струва приблизително
-                                    4-5 евро. Разходите за доставка се изчисляват
-                                    според тарифите на българските превозвачи като
-                                    Еконт и зависят от теглото и разстоянието.
-                                </p>
                             </div>
                         </div>
                     {/if}

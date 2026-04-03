@@ -12,9 +12,7 @@
         sender?: string;
         receiver?: string;
         audioUrl?: string | null;
-        /** When true (e.g. Review step): always show placeholder QR, never show audio player */
         previewMode?: boolean;
-        /** When set (e.g. single card page): QR code links to this URL (card page link) */
         cardPageUrl?: string | null;
     }
 
@@ -31,19 +29,15 @@
     }: Props = $props();
 
     const displayTitle = $derived(cs.title || title);
-    const displayDescription = $derived(cs.description || description);
-    const descriptionLength = $derived(displayDescription.length);
+    const descriptionLength = $derived(description.length);
     const displaySender = $derived(sender ?? cs.sender ?? "—");
     const displayReceiver = $derived(receiver ?? cs.receiver ?? "—");
     const effectiveAudioUrl = $derived(audioUrlProp ?? cs.audioUrl ?? null);
     const hasAudio = $derived(!!effectiveAudioUrl);
-    /** Show left QR block: always in preview; or when we have a QR target (card page or audio) */
     const showQRSection = $derived(previewMode || !!cardPageUrl || hasAudio);
-    /** URL to encode in QR: card page when provided, else audio (only when not preview) */
     const qrTargetUrl = $derived(
         previewMode ? null : cardPageUrl || effectiveAudioUrl || null,
     );
-    /** Show audio player only on created card view when card has audio */
     const showAudioPlayer = $derived(hasAudio && !previewMode);
 
     let qrCodeUrl = $state("");
@@ -55,8 +49,6 @@
         });
     });
 
-    // Constant for card height - sized for comfortable viewing
-    // Will be adjusted via CSS for mobile
     const CARD_HEIGHT = 540; // Larger for better visibility
     const CARD_WIDTH = 360; // Maintains 2:3 aspect ratio
 
@@ -171,13 +163,16 @@
                                     class:description-long={descriptionLength >
                                         400}
                                 >
-                                    {displayDescription}
+                                    {description}
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="card-pages-back">
+                <div
+                    class="card-pages-back"
+                    style="background-color: {cardBack}"
+                >
                     <div class="back-content">
                         <span class="back-rule" aria-hidden="true"></span>
                         <span class="back-brand">kartichkaqr</span>
@@ -458,7 +453,7 @@
         font-weight: 400;
         letter-spacing: 0.2em;
         text-transform: uppercase;
-        color: #78716c;
+        color: #262626;
     }
 
     @media (prefers-color-scheme: dark) {

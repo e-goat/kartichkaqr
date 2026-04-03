@@ -14,11 +14,6 @@ export const introStepSchema = z.object({
         .min(1, "Вашето име е задължително")
         .max(100, "Вашето име не може да бъде повече от 100 символа")
         .trim(),
-    title: z
-        .string()
-        .min(1, "Заглавие е задължително")
-        .max(200, "Заглавие не може да бъде повече от 200 символа")
-        .trim(),
     description: z
         .string()
         .max(500, "Описанието не може да бъде повече от 500 символа")
@@ -84,16 +79,11 @@ export const physicalCopySchema = z.object({
         .default(""),
 });
 
-/**
- * Complete card validation schema (for final submission)
- */
-export const completeCardSchema = introStepSchema
-    .merge(designStepSchema)
-    .merge(recordStepSchema);
+export const completeCardSchema = introStepSchema.extend({
+    designStepSchema,
+    recordStepSchema,
+});
 
-/**
- * Type exports for TypeScript
- */
 export type IntroStepData = z.infer<typeof introStepSchema>;
 export type DesignStepData = z.infer<typeof designStepSchema>;
 export type RecordStepData = z.infer<typeof recordStepSchema>;

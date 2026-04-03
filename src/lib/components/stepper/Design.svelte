@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { cs, ss, tcc } from "$lib/state.svelte";
+    import { cs, ss, tcc, ts } from "$lib/state.svelte";
     import Pagination from "../Pagination.svelte";
     import { getContrastingColorFromImage } from "$lib/utils/helpers";
     import { onMount, tick } from "svelte";
@@ -94,6 +94,14 @@
             );
         }
         cs.templateId = parseInt(target?.dataset.templateId ?? "0");
+        cs.title = target?.dataset.templateTitle ?? "";
+        cs.description = target?.dataset.templateDescription ?? "";
+        ts.backgroundBack = target?.dataset.templateBackgroundBack ?? "";
+        // Presumably the client have updated description prop beforehand in Intro component
+        if (cs.description !== "") {
+            cs.description = target?.dataset.templateDescription ?? "";
+        }
+
         target?.classList.remove("border", "border-transparent");
         target?.classList.add(
             "border",
@@ -201,6 +209,9 @@
                             style="background-image: url('{t.background}');"
                             onclick={handleClickEvent}
                             data-template-id={t.id}
+                            data-template-title={t.title}
+                            data-template-description={t.description}
+                            data-template-background-back={t.backgroundBack}
                         >
                             <!-- Card text -->
                             <div
@@ -218,7 +229,9 @@
                             </div>
 
                             <div
-                                class="absolute top-3 right-3 w-3 h-3 bg-white/30 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                class="absolute top-3 right-3 w-3 h-3 bg-white/30
+                                rounded-full opacity-0 group-hover:opacity-100
+                                transition-opacity duration-300"
                             ></div>
                         </button>
                     </li>

@@ -5,66 +5,66 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-    provider = "prisma-client-js"
-    output   = "../src/lib/db"
+  provider = "prisma-client-js"
+  output   = "../src/lib/db"
 }
 
 datasource db {
-    provider = "postgresql"
+  provider = "postgresql"
 }
 
 model Card {
-    id          Int      @id @default(autoincrement())
-    template    Template @relation(fields: [templateId], references: [id])
-    templateId  Int
-    title       String
-    description String
-    qrCode      String?
-    sender      String?
-    receiver    String?
-    slug        String   @unique
-    createdAt   DateTime @default(now())
-    audioUrl    String?
-    cardUuid    String   @unique @default(uuid())
+  id          Int      @id @default(autoincrement())
+  template    Template @relation(fields: [templateId], references: [id])
+  templateId  Int
+  qrCode      String?
+  sender      String?
+  receiver    String?
+  slug        String   @unique
+  createdAt   DateTime @default(now())
+  audioUrl    String?
+  cardUuid    String   @unique @default(uuid())
+  description String?
 
-    @@map("cards")
+  @@map("cards")
 }
 
 model Template {
-    id             Int           @id @default(autoincrement())
-    cards          Card[]
-    title          String
-    titlePos       TitlePosition @default(top)
-    description    String?
-    background     String
-    backgroundBack String        @default("")
-    font           Font         @relation(fields: [fontId], references: [id])
-    fontId         Int          @default(1)
-    categories     Category      @relation(fields: [categoryId], references: [id])
-    categoryId     Int
-    createdAt      DateTime      @default(now())
+  id             Int           @id @default(autoincrement())
+  cards          Card[]
+  title          String
+  titlePos       TitlePosition @default(top)
+  description    String?
+  background     String
+  backgroundBack String        @default("#ffffff")
+  font           Font          @relation(fields: [fontId], references: [id])
+  fontId         Int           @default(1)
+  fontColor      String        @default("#ffffff")
+  categories     Category      @relation(fields: [categoryId], references: [id])
+  categoryId     Int
+  createdAt      DateTime      @default(now())
 
-    @@map("templates")
+  @@map("templates")
 }
 
 model Category {
-    id        Int        @id @default(autoincrement())
-    name      String     @unique
-    templates Template[]
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  templates Template[]
 
-    @@map("categories")
+  @@map("categories")
 }
 
 model Font {
-    id        Int        @id @default(autoincrement())
-    name      String     @unique
-    templates Template[]
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  templates Template[]
 
-    @@map("fonts")
+  @@map("fonts")
 }
 
 enum TitlePosition {
-    top
-    bottom
-    center
+  top
+  bottom
+  center
 }
