@@ -108,12 +108,12 @@ export const actions: Actions = {
                 const cardUrl = `${origin}/card/${cardMeta.slug}`;
 
                 MailController.send({
-                    to: PUBLIC_ADMIN_EMAIL || "",
-                    from: APP_EMAIL || "",
+                    to: PUBLIC_ADMIN_EMAIL || "duchevmartin@gmail.com",
+                    from: APP_EMAIL,
                     name: cardMeta.receiver,
-                    title: "Нова карта " + cardMeta.slug,
+                    title: "Нова карта - " + cardMeta.slug,
                     senderName: senderName || cardMeta.sender,
-                    description: "",
+                    description: `Линк към картичката: ${origin}/card/${cardMeta.slug}`,
                     cardId: createdCard.id,
                     senderEmail,
                     senderPhone,

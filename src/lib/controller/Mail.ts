@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { RESEND_API_KEY, ADMIN_EMAIL, APP_EMAIL } from "$lib/server/secrets";
+import { RESEND_API_KEY } from "$lib/server/secrets";
 import { render } from "svelte/server";
 import EmailTemplate from "$lib/components/EmailTemplate.svelte";
 
@@ -51,8 +51,8 @@ class Mail {
             });
 
             const { data, error } = await this.#resend.emails.send({
-                from: APP_EMAIL || from,
-                to: [ADMIN_EMAIL || "", to],
+                from: from,
+                to: [to],
                 subject: title,
                 html: body,
             });
@@ -70,7 +70,6 @@ class Mail {
                 error: error,
                 status: 500,
             });
-            throw error;
         }
     }
 }
