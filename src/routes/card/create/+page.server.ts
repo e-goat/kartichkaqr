@@ -1,9 +1,10 @@
 import type { PageServerLoad } from "./$types";
 import type { Actions } from "@sveltejs/kit";
+import type { Card, Template } from "$lib/db";
 import { cs, ts, ss } from "$lib/state.svelte";
 import { VercelStorageController } from "$lib/controller/VercelStorage";
 import { MailController } from "$lib/controller/Mail";
-import { APP_EMAIL, PUBLIC_ADMIN_EMAIL } from "$lib/server/secrets";
+import { APP_EMAIL, ADMIN_EMAIL, APP_NAME } from "$lib/server/secrets";
 import * as db from "$lib/server/database";
 import { fail } from "@sveltejs/kit";
 import { createCard } from "$lib/server/database";
@@ -34,6 +35,7 @@ export const actions: Actions = {
     create: async ({ request, fetch, url }) => {
         const formData = await request.formData();
         const cardMeta = JSON.parse(formData.get("card") as string);
+
         let card: Prisma.CardCreateInput;
 
         ss.isSubmitting = true;
@@ -64,10 +66,7 @@ export const actions: Actions = {
 
             card = {
                 sender: cardMeta.sender,
-                description:
-                    cardMeta.description != null
-                        ? cardMeta.description
-                        : ts.description,
+                description: cardMeta.description ?? ts.description,
                 receiver: cardMeta.receiver,
                 slug: cardMeta.slug,
                 audioUrl: cardMeta.audioUrl,
@@ -86,13 +85,9 @@ export const actions: Actions = {
                 });
                 card.audioUrl = storeResponse.url;
             }
+            const createdCard: Card = await createCard(card);
 
-            const createdCard = await createCard(card);
-
-            // Send mail only if physical copy is requested (checkbox is checked)
-            const physicalCopyRequested =
-                formData.get("physical-copy-requested-value") === "true";
-            if (physicalCopyRequested) {
+            if (formData.get("physical-copy-requested-value")) {
                 // Get sender information from form data
                 const senderName =
                     (formData.get("physical-copy-name") as string) || "";
@@ -102,23 +97,36 @@ export const actions: Actions = {
                     (formData.get("physical-copy-phone") as string) || "";
                 const senderAddress =
                     (formData.get("physical-copy-address") as string) || "";
+                const senderComment =
+                    (formData.get("physical-copy-comment") as string) || "";
 
                 // Construct card URL
                 const origin = url.origin;
                 const cardUrl = `${origin}/card/${cardMeta.slug}`;
 
+                console.log(
+                    "Sending email to " + ADMIN_EMAIL,
+                    "From: " + APP_EMAIL,
+                );
+
+                const template: Template = await db.getTemplateById(
+                    createdCard.templateId,
+                );
+
                 MailController.send({
-                    to: PUBLIC_ADMIN_EMAIL || "duchevmartin@gmail.com",
+                    to: ADMIN_EMAIL || "duchevmartin@gmail.com",
                     from: APP_EMAIL,
                     name: cardMeta.receiver,
-                    title: "Нова карта - " + cardMeta.slug,
+                    title: APP_NAME + " Нова карта",
+                    cardTitle: template.title,
                     senderName: senderName || cardMeta.sender,
-                    description: `Линк към картичката: ${origin}/card/${cardMeta.slug}`,
+                    cardDescription: cardMeta.description,
                     cardId: createdCard.id,
                     senderEmail,
                     senderPhone,
                     senderAddress,
                     cardUrl,
+                    senderComment,
                 });
             }
 
@@ -128,7 +136,7 @@ export const actions: Actions = {
             const origin = url.origin;
             const cardUrl = `${origin}/card/${cardMeta.slug}`;
 
-            return { success: true, card, cardUrl, physicalCopyRequested };
+            return { success: true, card, cardUrl };
         } catch (e) {
             ss.isSubmitting = false;
             console.error("Card creation error:", e);
@@ -145,7 +153,7 @@ export const actions: Actions = {
 
             return fail(500, {
                 cardMeta,
-                error: `Възникна грешка при създаването на картичката.`,
+                error: "Възникна грешка при създаването на картичката.",
             });
         }
     },

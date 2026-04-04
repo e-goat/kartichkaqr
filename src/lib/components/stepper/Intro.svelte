@@ -121,7 +121,7 @@
                         placeholder="Добавете кратко съобщение"
                         bind:value={cs.description}
                         rows="4"
-                        maxlength="500"
+                        maxlength="512"
                     ></textarea>
                     {#if ss.validationErrors.description}
                         <p class="mt-1 text-sm text-red-600">

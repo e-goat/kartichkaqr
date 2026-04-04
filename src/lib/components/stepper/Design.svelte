@@ -10,6 +10,7 @@
         description: string;
         background: string;
         backgroundBack: string;
+        titlePos: string;
     };
 
     type Category = {
@@ -97,8 +98,9 @@
         cs.title = target?.dataset.templateTitle ?? "";
         cs.description = target?.dataset.templateDescription ?? "";
         ts.backgroundBack = target?.dataset.templateBackgroundBack ?? "";
-        // Presumably the client have updated description prop beforehand in Intro component
-        if (cs.description !== "") {
+        ts.titlePosition = target?.dataset.titlePosition ?? "center";
+
+        if (!cs.description) {
             cs.description = target?.dataset.templateDescription ?? "";
         }
 
@@ -212,6 +214,7 @@
                             data-template-title={t.title}
                             data-template-description={t.description}
                             data-template-background-back={t.backgroundBack}
+                            data-title-position={t.titlePos}
                         >
                             <!-- Card text -->
                             <div

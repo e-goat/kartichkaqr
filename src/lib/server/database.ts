@@ -58,6 +58,12 @@ export async function getAllTemplatesByCategory(
     return { templates, total };
 }
 
+export async function getTemplateById(templateId: number) {
+    return prisma.template.findUniqueOrThrow({
+        where: { id: templateId },
+    });
+}
+
 export async function getAllCategories() {
     return prisma.category.findMany({
         orderBy: { id: "asc" },

@@ -1,14 +1,16 @@
 <script>
     let {
         recipientName,
-        description,
+        cardDescription,
         title,
+        cardTitle,
         cardId,
         senderName,
         senderEmail,
         senderPhone,
         senderAddress,
         cardUrl,
+        senderComment,
     } = $props();
 </script>
 
@@ -66,14 +68,14 @@
                         style="margin: 0 0 10px 0; font-size: 15px; color: #333333; line-height: 1.6;"
                     >
                         <strong>Заглавие:</strong>
-                        {title}
+                        {cardTitle}
                     </p>
-                    {#if description}
+                    {#if cardDescription}
                         <p
                             style="margin: 0 0 10px 0; font-size: 15px; color: #333333; line-height: 1.6;"
                         >
                             <strong>Описание:</strong>
-                            {description}
+                            {cardDescription}
                         </p>
                     {/if}
                 </div>
@@ -123,8 +125,16 @@
                         <p
                             style="margin: 0 0 8px 0; font-size: 15px; color: #333333; line-height: 1.6;"
                         >
-                            <strong>Адрес:</strong>
+                            <strong>Адрес за доставка:</strong>
                             {senderAddress}
+                        </p>
+                    {/if}
+                    {#if senderComment}
+                        <p
+                            style="margin: 0 0 8px 0; font-size: 15px; color: #333333; line-height: 1.6;"
+                        >
+                            <strong>Коментар:</strong>
+                            {senderComment}
                         </p>
                     {/if}
                 </div>
@@ -134,17 +144,6 @@
                     <div
                         style="margin: 20px 0; padding: 20px; background-color: #ffffff; border-radius: 8px; border: 1px solid #e5e5e5; text-align: center;"
                     >
-                        <h2
-                            style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600; color: #333333;"
-                        >
-                            QR код на картичката:
-                        </h2>
-                        <p
-                            style="margin: 0 0 15px 0; font-size: 14px; color: #666666; line-height: 1.5;"
-                        >
-                            Моля, сканирайте QR кода или кликнете на линка
-                            по-долу, за да видите картичката:
-                        </p>
                         <p style="margin: 0 0 15px 0;">
                             <a
                                 href={cardUrl}

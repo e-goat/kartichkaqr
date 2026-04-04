@@ -15,38 +15,44 @@ class Mail {
         from,
         name,
         title,
+        cardTitle,
         senderName,
-        description,
+        cardDescription,
         cardId,
         senderEmail,
         senderPhone,
         senderAddress,
         cardUrl,
+        senderComment,
     }: {
         to: string;
         from: string;
         name: string;
         title: string;
+        cardTitle: string;
         senderName: string;
-        description: string;
+        cardDescription: string;
         cardId: number;
         senderEmail: string;
         senderPhone: string;
         senderAddress: string;
         cardUrl: string;
+        senderComment: string;
     }) {
         try {
             const { body } = render(EmailTemplate, {
                 props: {
                     recipientName: name,
                     title,
-                    description,
+                    cardTitle,
+                    cardDescription,
                     cardId,
                     senderName,
                     senderEmail,
                     senderPhone,
                     senderAddress,
                     cardUrl,
+                    senderComment,
                 },
             });
 

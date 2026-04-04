@@ -65,6 +65,8 @@ model Font {
 
 enum TitlePosition {
   top
+  right
   bottom
+  left
   center
 }

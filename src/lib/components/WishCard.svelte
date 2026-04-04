@@ -1,11 +1,11 @@
 <script lang="ts">
     import { cs } from "$lib/state.svelte";
-    import { getContrastingColor } from "$lib/utils/helpers";
     import { buildQR } from "$lib/utils/qr";
     import PlaceholderQR from "$lib/components/PlaceholderQR.svelte";
 
     interface Props {
         cardFront?: string;
+        fontColor?: string;
         cardBack?: string;
         title?: string;
         description?: string;
@@ -14,10 +14,12 @@
         audioUrl?: string | null;
         previewMode?: boolean;
         cardPageUrl?: string | null;
+        titlePosition?: string | "center";
     }
 
     let {
         cardFront = "",
+        fontColor = "black",
         cardBack = "",
         title = "",
         description = "",
@@ -26,6 +28,7 @@
         audioUrl: audioUrlProp,
         previewMode = false,
         cardPageUrl = null,
+        titlePosition = "center",
     }: Props = $props();
 
     const displayTitle = $derived(cs.title || title);
@@ -57,7 +60,6 @@
     let isContentHovered = $state(false);
     let frontElement = $state<HTMLDivElement>();
     let openedCardElement = $state<HTMLDivElement>();
-    let textColor = $state("black");
 
     let hasCardFront = $derived(!!cardFront);
     let isOpened = $derived(cardState > 0);
@@ -72,15 +74,6 @@
         if (!openedCardElement?.contains(e.target as Node)) return;
         toggleCard();
     }
-
-    $effect(() => {
-        if (frontElement && hasCardFront) {
-            textColor = "white";
-        } else if (frontElement) {
-            const computedStyle = window.getComputedStyle(frontElement);
-            textColor = getContrastingColor(computedStyle.backgroundColor);
-        }
-    });
 </script>
 
 <div
@@ -182,15 +175,12 @@
         {:else}
             <div
                 bind:this={frontElement}
-                class="front-section front-preview"
+                class="front-section"
                 class:card-front-img={hasCardFront}
                 style="--card-front-img: url('{cardFront}');"
             >
                 <h1
-                    class="card-title-preview"
-                    class:text-white={textColor === "white"}
-                    class:text-black={textColor === "black"}
-                    class:text-shadow={hasCardFront}
+                    class="antialiased text-[{fontColor}] card-title-preview text-align-{titlePosition}"
                 >
                     {displayTitle}
                 </h1>
@@ -475,23 +465,6 @@
     }
     /* Front Section (closed state) */
     .front-section {
-        background: linear-gradient(
-            135deg,
-            rgba(147, 197, 253, 0.15) 0%,
-            rgba(147, 197, 253, 0.05) 100%
-        );
-        border-radius: 12px;
-        padding: 2rem;
-        flex: 1;
-        display: flex;
-        align-items: stretch;
-        justify-content: stretch;
-        transition:
-            background-color 0.3s ease,
-            box-shadow 0.3s ease,
-            opacity 0.3s ease;
-        backface-visibility: hidden;
-        transform: rotateY(0deg);
         min-height: var(--card-height);
     }
 
@@ -499,13 +472,6 @@
         background-image: var(--card-front-img);
         background-size: cover;
         background-position: center;
-    }
-
-    .front-preview {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: var(--card-height);
     }
 
     .card-title-preview {
@@ -562,8 +528,8 @@
 
     @media (max-width: 767px) {
         .front-section {
-            flex-direction: column;
-            align-items: center;
+            /*flex-direction: column;*/
+            /*align-items: center;*/
             gap: 0;
         }
 

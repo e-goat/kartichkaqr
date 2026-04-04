@@ -83,6 +83,7 @@
                         sender={cs.sender ?? undefined}
                         receiver={cs.receiver ?? undefined}
                         previewMode={true}
+                        titlePosition={ts.titlePosition}
                     />
                 </aside>
                 <aside

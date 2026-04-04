@@ -43,6 +43,7 @@ interface PhysicalCopyState {
 interface TemplateState {
     description: string;
     title: string;
+    titlePosition: string;
     backgroundBack: string;
 }
 
@@ -79,6 +80,7 @@ export const tcc: TemplateColorCache = $state({
 export const ts: TemplateState = $state({
     description: "",
     title: "",
+    titlePosition: "center",
     backgroundBack: "",
 });
 
