@@ -8,7 +8,7 @@ export const BLOB_READ_WRITE_TOKEN = env.BLOB_READ_WRITE_TOKEN;
 
 export const OPTIMIZE_API_KEY = env.OPTIMIZE_API_KEY;
 
-export const ADMIN_EMAIL = env.ADMIN_EMAIL;
+export const PUBLIC_ADMIN_EMAIL = env.PUBLIC_ADMIN_EMAIL;
 
 export const APP_EMAIL = env.APP_EMAIL;
 

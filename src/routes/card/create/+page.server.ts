@@ -3,7 +3,7 @@ import type { Actions } from "@sveltejs/kit";
 import { cs, ts, ss } from "$lib/state.svelte";
 import { VercelStorageController } from "$lib/controller/VercelStorage";
 import { MailController } from "$lib/controller/Mail";
-import { APP_EMAIL, ADMIN_EMAIL } from "$lib/server/secrets";
+import { APP_EMAIL, PUBLIC_ADMIN_EMAIL } from "$lib/server/secrets";
 import * as db from "$lib/server/database";
 import { fail } from "@sveltejs/kit";
 import { createCard } from "$lib/server/database";
@@ -108,7 +108,7 @@ export const actions: Actions = {
                 const cardUrl = `${origin}/card/${cardMeta.slug}`;
 
                 MailController.send({
-                    to: ADMIN_EMAIL || "",
+                    to: PUBLIC_ADMIN_EMAIL || "",
                     from: APP_EMAIL || "",
                     name: cardMeta.receiver,
                     title: "Нова карта " + cardMeta.slug,
