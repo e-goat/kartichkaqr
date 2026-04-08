@@ -64,6 +64,9 @@ export const actions: Actions = {
                 });
             }
 
+            const origin = url.origin;
+            const cardUrl = `${origin}/card/${cardMeta.slug}`;
+
             card = {
                 sender: cardMeta.sender,
                 description: cardMeta.description ?? ts.description,
@@ -71,11 +74,11 @@ export const actions: Actions = {
                 slug: cardMeta.slug,
                 audioUrl: cardMeta.audioUrl,
                 cardUuid: cardMeta.cardUuid,
+                qrCode: cardUrl,
                 template: {
                     connect: { id: cardMeta.templateId },
                 },
             };
-
             const file = formData.get("record") as File | null;
             if (file) {
                 const storeResponse = await VercelStorageController.storeAudio({
@@ -86,7 +89,11 @@ export const actions: Actions = {
                 card.audioUrl = storeResponse.url;
             }
             const createdCard: Card = await createCard(card);
+            console.log(createdCard);
 
+            /**
+             * Send email to admin if a physical copy is requested
+             */
             if (formData.get("physical-copy-requested-value")) {
                 // Get sender information from form data
                 const senderName =
@@ -131,10 +138,6 @@ export const actions: Actions = {
             }
 
             ss.isSubmitting = false;
-
-            // Construct card URL for response
-            const origin = url.origin;
-            const cardUrl = `${origin}/card/${cardMeta.slug}`;
 
             return { success: true, card, cardUrl };
         } catch (e) {

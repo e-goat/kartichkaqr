@@ -6,6 +6,7 @@
     import { enhance } from "$app/forms";
     import { onMount, onDestroy } from "svelte";
     import Swal from "sweetalert2";
+    import Separator from "$lib/assets/separator.svg";
 
     let { children, steps = 0, form } = $props();
     let initialStep: number = steps + 1 - steps;
@@ -85,8 +86,8 @@
         <div class="self-center" data-name="Създаване на картичка">
             Създаване на картичка
         </div>
-        <img
-            src="https://api.builder.io/api/v1/image/assets/4a0213629c3d4d16819d485544a6041f/fcdd06e83421f850362bbf1507002e7f74febf42?placeholderIfAbsent=true"
+        <enhanced:img
+            src={Separator}
             class="object-contain mt-4 w-full aspect-[200]"
             alt="Card creation illustration"
         />

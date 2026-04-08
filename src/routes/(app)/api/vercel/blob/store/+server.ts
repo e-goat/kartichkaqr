@@ -8,6 +8,7 @@ function errorResponse(message: string, status: number) {
 }
 
 export const POST: RequestHandler = async ({ request }) => {
+    console.log("POST request received");
     const authResponse = validateAdminAuth(request);
     if (authResponse) return authResponse;
 

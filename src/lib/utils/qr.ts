@@ -6,13 +6,14 @@ import QRCode from "qrcode";
  */
 export async function buildQR(
     url: string,
-    qr_width: number = 100,
+    qr_width: number = 24,
 ): Promise<string> {
     const opts = {
         errorCorrectionLevel: "H",
-        type: "image/jpeg",
+        type: "image/avif",
         quality: 0.3,
         margin: 1,
+        width: qr_width,
     };
 
     return QRCode.toDataURL(url, opts);

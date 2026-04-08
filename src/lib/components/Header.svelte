@@ -75,7 +75,7 @@
             aria-label="Начало"
             onclick={handleHome}
         >
-            <img
+            <enhanced:img
                 alt="KartichkaQR"
                 src={logo}
                 class="logo-image"

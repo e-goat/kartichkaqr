@@ -1,5 +1,11 @@
 <script lang="ts">
     import { ss } from "$lib/state.svelte";
+    import ConnectorIcon from "$lib/assets/connector-icon.svg";
+    import StepIconOne from "$lib/assets/step-1-icon.svg";
+    import StepIconTwo from "$lib/assets/step-2-icon.svg";
+    import StepIconThree from "$lib/assets/step-3-icon.svg";
+    import StepIconFour from "$lib/assets/step-4-icon.svg";
+
     export let steps: number = 0;
 
     const stepLabels = [
@@ -9,15 +15,7 @@
         "Добавете гласово съобщение",
     ];
 
-    const stepIcons = [
-        "https://api.builder.io/api/v1/image/assets/4a0213629c3d4d16819d485544a6041f/e6bf875351107d468749db12006274e0cab93142?placeholderIfAbsent=true",
-        "https://api.builder.io/api/v1/image/assets/4a0213629c3d4d16819d485544a6041f/57a03bd1ea96d8719df6910a8116870c47b7013b?placeholderIfAbsent=true",
-        "https://api.builder.io/api/v1/image/assets/4a0213629c3d4d16819d485544a6041f/929b9bd167072096954f3eb1c7b16534fffc4571?placeholderIfAbsent=true",
-        "https://api.builder.io/api/v1/image/assets/4a0213629c3d4d16819d485544a6041f/898ab4fe0428339fbbb29aeb04fa2d7f6ee05dfd?placeholderIfAbsent=true",
-    ];
-
-    const connectorIcon =
-        "https://api.builder.io/api/v1/image/assets/4a0213629c3d4d16819d485544a6041f/219e2131ec7006cb724fa4b68eb36f4a88fc4cf3?placeholderIfAbsent=true";
+    const stepIcons = [StepIconOne, StepIconTwo, StepIconThree, StepIconFour];
 </script>
 
 <!-- Mobile/Tablet view: single item with swipe animation -->
@@ -35,7 +33,7 @@
                 <div
                     class="w-full flex-shrink-0 flex gap-3 items-center justify-center text-base font-medium text-zinc-800"
                 >
-                    <img
+                    <enhanced:img
                         src={stepIcons[index]}
                         alt="Step {stepNum} icon"
                         class="object-contain shrink-0 {index === 0
@@ -98,7 +96,7 @@
                 ? 'min-w-60'
                 : ''}"
         >
-            <img
+            <enhanced:img
                 src={stepIcons[index]}
                 alt="Step {stepNum} icon"
                 class="object-contain shrink-0 self-stretch my-auto {index === 0
@@ -126,8 +124,8 @@
         </div>
 
         {#if index < steps - 1}
-            <img
-                src={connectorIcon}
+            <enhanced:img
+                src={ConnectorIcon}
                 alt="Step connector"
                 class="object-contain shrink-0 self-stretch my-auto aspect-[20.83] w-[42px] {isCompleted
                     ? 'opacity-100'

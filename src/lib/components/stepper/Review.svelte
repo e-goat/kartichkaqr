@@ -59,7 +59,7 @@
 </script>
 
 <section>
-    <div class="flex flex-col gap-2 sm:gap-3 md:gap-4">
+    <div class="flex flex-col gap-4 md:gap-2">
         <aside class="flex flex-col gap-2 sm:gap-3 md:gap-4">
             <h1
                 class="mb-2 sm:mb-3 md:mb-4 text-xl md:text-2xl lg:text-3xl leading-none text-gray-900 text-center"

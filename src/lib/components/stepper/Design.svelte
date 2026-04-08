@@ -201,40 +201,30 @@
                     <li>
                         <button
                             type="button"
-                            class="wish-card border-4 w-full h-60 rounded-xl overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:cursor-pointer relative bg-cover bg-center"
+                            class="wish-card border-4 w-full h-60 rounded-xl overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:cursor-pointer relative"
                             class:border-custom-orange-600={t.id ==
                                 cs.templateId}
                             class:border-red-500={ss.validationErrors
                                 .templateId && t.id == cs.templateId}
                             class:border-transparent={t.id != cs.templateId &&
                                 !ss.validationErrors.templateId}
-                            style="background-image: url('{t.background}');"
                             onclick={handleClickEvent}
                             data-template-id={t.id}
                             data-template-title={t.title}
                             data-template-description={t.description}
                             data-template-background-back={t.backgroundBack}
                             data-title-position={t.titlePos}
+                            aria-label={t.title}
                         >
-                            <!-- Card text -->
-                            <div
-                                class="absolute inset-0 flex items-center justify-center"
-                            >
-                                <h2
-                                    class="text-lg font-bold text-center px-4"
-                                    class:text-white={tcc.colors.get(t.id) ===
-                                        "white"}
-                                    class:text-black={tcc.colors.get(t.id) ===
-                                        "black"}
-                                >
-                                    {t.title}
-                                </h2>
-                            </div>
+                            <enhanced:img
+                                src={t.background}
+                                class="absolute inset-0 w-full h-full object-cover"
+                                alt={t.title}
+                            />
 
+                            <!-- Optional overlay content -->
                             <div
-                                class="absolute top-3 right-3 w-3 h-3 bg-white/30
-                                rounded-full opacity-0 group-hover:opacity-100
-                                transition-opacity duration-300"
+                                class="absolute top-3 right-3 w-3 h-3 bg-white/30 rounded-full"
                             ></div>
                         </button>
                     </li>
