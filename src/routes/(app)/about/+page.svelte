@@ -3,7 +3,7 @@
     import { fade, fly, scale } from "svelte/transition";
     import { goto } from "$app/navigation";
     import Loader from "$lib/components/Loader.svelte";
-    import "../../app.css";
+    import "../../../app.css";
 
     let mounted = false;
     let activeCard: number | null = null;
