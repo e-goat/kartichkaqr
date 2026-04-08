@@ -59,14 +59,13 @@
             border border-dashed rounded-xl overflow-hidden shadow-xl"
             onclick={clickHandler}
         >
-            {#if !isFrontView}
+            {#if cardState === 0}
                 <enhanced:img
                     src={cardFront}
                     class="absolute inset-0 w-full h-full object-cover"
                     alt={title}
                 />
-            {/if}
-            {#if isOpened}
+            {:else if cardState === 1}
                 <div
                     class="h-full flex flex-col lg:flex-row items-center z-10 p-6 bg-white"
                 >
@@ -118,8 +117,7 @@
                         </p>
                     </div>
                 </div>
-            {/if}
-            {#if isBackView}
+            {:else}
                 <enhanced:img
                     src={paperTexture}
                     class="absolute inset-0 w-full h-full object-cover mask-y-from-70% mask-y-to-90%"
