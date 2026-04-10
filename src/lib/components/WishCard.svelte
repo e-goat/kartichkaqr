@@ -77,7 +77,7 @@
                         class="left flex flex-col max-w-35 md:max-w-1xl justify-center items-center"
                     >
                         {#if cardPageUrl}
-                            <enhanced:img
+                            <img
                                 src={qrCodeUrl}
                                 alt="QR code"
                                 class="w-24 h-24"
@@ -86,7 +86,7 @@
                                 Сканирайте за да чуете вашият аудио поздрав.
                             </p>
                         {:else}
-                            <enhanced:img
+                            <img
                                 src={QrCodeExample}
                                 alt="QR code"
                                 class="w-24 h-24"
@@ -114,7 +114,7 @@
                 </div>
             </div>
         {:else}
-            <enhanced:img
+            <img
                 src={paperTexture}
                 class="absolute inset-0 w-full h-full object-cover mask-y-from-70% mask-y-to-90%"
                 alt="Paper texture background"
