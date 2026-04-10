@@ -89,12 +89,13 @@ export const actions: Actions = {
                 card.audioUrl = storeResponse.url;
             }
             const createdCard: Card = await createCard(card);
-            console.log(createdCard);
 
             /**
              * Send email to admin if a physical copy is requested
              */
-            if (formData.get("physical-copy-requested-value")) {
+            const isRequested =
+                formData.get("physical-copy-requested-value") === "true";
+            if (isRequested) {
                 // Get sender information from form data
                 const senderName =
                     (formData.get("physical-copy-name") as string) || "";
@@ -106,16 +107,8 @@ export const actions: Actions = {
                     (formData.get("physical-copy-address") as string) || "";
                 const senderComment =
                     (formData.get("physical-copy-comment") as string) || "";
-
-                // Construct card URL
                 const origin = url.origin;
                 const cardUrl = `${origin}/card/${cardMeta.slug}`;
-
-                console.log(
-                    "Sending email to " + ADMIN_EMAIL,
-                    "From: " + APP_EMAIL,
-                );
-
                 const template: Template = await db.getTemplateById(
                     createdCard.templateId,
                 );

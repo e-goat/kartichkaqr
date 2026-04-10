@@ -79,9 +79,7 @@
     }
 </script>
 
-<div
-    class="px-px text-3xl font-medium max-w-[381px] text-zinc-800 mx-auto mb-6"
->
+<div class="px-px text-3xl font-medium max-w-95.25 text-zinc-800 mx-auto mb-6">
     <div class="flex flex-col justify-center">
         <div class="self-center" data-name="Създаване на картичка">
             Създаване на картичка
@@ -113,7 +111,7 @@
                 {@render children()}
             </div>
         </div>
-        <div class="flex justify-between px-8 pb-8 flex-shrink-0">
+        <div class="flex justify-between px-8 pb-8 shrink-0">
             <Button
                 ariaLabel="Предишна стъпка"
                 text={"Назад"}
