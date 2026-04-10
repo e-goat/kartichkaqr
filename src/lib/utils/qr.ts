@@ -8,9 +8,13 @@ export async function buildQR(
     url: string,
     qr_width: number = 24,
 ): Promise<string> {
+    if (!url || typeof url !== "string") {
+        throw new Error("Invalid URL for QR");
+    }
+
     const opts = {
         errorCorrectionLevel: "H",
-        type: "image/avif",
+        type: "image/png",
         quality: 0.3,
         margin: 1,
         width: qr_width,
