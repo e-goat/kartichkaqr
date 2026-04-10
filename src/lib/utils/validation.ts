@@ -6,7 +6,7 @@ import {
     designStepSchema,
     recordStepSchema,
     physicalCopySchema,
-    type IntroStepData,
+    type CardInfoStepSchema,
     type DesignStepData,
     type PhysicalCopyData,
 } from "$lib/schemas/card.schema";
@@ -51,10 +51,10 @@ function validateSchema<T>(
 }
 
 /**
- * Validate Step 1 (Intro) data
+ * Validate Step 1 data
  */
-export function validateIntroStep(): ValidationResult {
-    const data: IntroStepData = {
+export function validateCardInfoStep(): ValidationResult {
+    const data: CardInfoStepSchema = {
         receiver: cs.receiver,
         sender: cs.sender,
         description: cs.description || "",
@@ -136,9 +136,9 @@ export function validateStep(
 ): ValidationResult {
     switch (stepNumber) {
         case 1:
-            return validateIntroStep();
-        case 2:
             return validateDesignStep();
+        case 2:
+            return validateCardInfoStep();
         case 3:
             return validateRecordStep();
         case 4:

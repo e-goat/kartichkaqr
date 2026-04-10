@@ -8,6 +8,7 @@
             title: string;
             description: string;
             background: string;
+            recipient: string;
             font: string;
             type: string;
         }>;
@@ -81,7 +82,6 @@
                             selectedTemplate?.description ||
                             ""}
                         sender={cs.sender ?? undefined}
-                        receiver={cs.receiver ?? undefined}
                         previewMode={true}
                         titlePosition={ts.titlePosition}
                     />

@@ -84,7 +84,7 @@ export const completeCardSchema = introStepSchema.extend({
     recordStepSchema,
 });
 
-export type IntroStepData = z.infer<typeof introStepSchema>;
+export type CardInfoStepSchema = z.infer<typeof introStepSchema>;
 export type DesignStepData = z.infer<typeof designStepSchema>;
 export type RecordStepData = z.infer<typeof recordStepSchema>;
 export type PhysicalCopyData = z.infer<typeof physicalCopySchema>;
