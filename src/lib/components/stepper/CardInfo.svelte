@@ -6,7 +6,6 @@
     cs.cardUuid = helpers.generateCardUuid();
 
     $effect(() => {
-        // Clear validation errors when user starts typing
         if (cs.receiver && ss.validationErrors.receiver) {
             delete ss.validationErrors.receiver;
         }

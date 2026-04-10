@@ -9,8 +9,8 @@
     export let steps: number = 0;
 
     const stepLabels = [
-        "Базова информация",
         "Изберете дизайн",
+        "Базова информация",
         "Добавете съдържание",
         "Добавете гласово съобщение",
     ];
@@ -31,7 +31,7 @@
                 {@const isCompleted = stepNum < ss.currentStep}
 
                 <div
-                    class="w-full flex-shrink-0 flex gap-3 items-center justify-center text-base font-medium text-zinc-800"
+                    class="w-full shrink-0 flex gap-3 items-center justify-center text-base font-medium text-zinc-800"
                 >
                     <enhanced:img
                         src={stepIcons[index]}
@@ -39,10 +39,10 @@
                         class="object-contain shrink-0 {index === 0
                             ? 'w-8 aspect-square'
                             : index === 1
-                              ? 'aspect-[0.93] w-[30px]'
+                              ? 'aspect-[0.93] w-7.5'
                               : index === 2
                                 ? 'w-9 aspect-[1.1]'
-                                : 'aspect-[1.05] w-[34px]'} {isActive
+                                : 'aspect-[1.05] w-8.5'} {isActive
                             ? 'opacity-100'
                             : isCompleted
                               ? 'opacity-100'
@@ -102,10 +102,10 @@
                 class="object-contain shrink-0 self-stretch my-auto {index === 0
                     ? 'w-10 aspect-square'
                     : index === 1
-                      ? 'aspect-[0.93] w-[37px]'
+                      ? 'aspect-[0.93] w-9.25'
                       : index === 2
                         ? 'w-11 aspect-[1.1]'
-                        : 'aspect-[1.05] w-[42px]'} {isActive
+                        : 'aspect-[1.05] w-10.5'} {isActive
                     ? 'opacity-100'
                     : isCompleted
                       ? 'opacity-100'
@@ -127,7 +127,7 @@
             <enhanced:img
                 src={ConnectorIcon}
                 alt="Step connector"
-                class="object-contain shrink-0 self-stretch my-auto aspect-[20.83] w-[42px] {isCompleted
+                class="object-contain shrink-0 self-stretch my-auto aspect-[20.83] w-10.5 {isCompleted
                     ? 'opacity-100'
                     : 'opacity-30'}"
             />
