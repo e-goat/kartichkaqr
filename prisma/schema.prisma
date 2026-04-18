@@ -44,6 +44,7 @@ model Template {
   categoryId     Int
   createdAt      DateTime      @default(now())
 
+  @@index([categoryId])
   @@map("templates")
 }
 
