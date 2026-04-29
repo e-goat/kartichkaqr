@@ -3,10 +3,15 @@
     import { buildQR } from "$lib/utils/qr";
     import paperTexture from "$lib/assets/paper-texture.avif";
     import QrCodeExample from "$lib/assets/qr-code-example.svg";
+    import logo from "$lib/assets/logo.jpg";
+    import { onMount, onDestroy } from "svelte";
+    import EmblaCarousel from "embla-carousel";
+    import type { EmblaCarouselType } from "embla-carousel";
 
     interface Props {
         cardFront?: string;
         fontColor?: string;
+        font?: string;
         cardBack?: string;
         title?: string;
         description?: string;
@@ -20,6 +25,7 @@
     let {
         cardFront = "",
         fontColor = "black",
+        font = "",
         cardBack = "",
         title = "",
         description = "",
@@ -31,97 +37,250 @@
     }: Props = $props();
 
     const displayTitle = $derived(cs.title || title);
-    const descriptionLength = $derived(description.length);
     const displaySender = $derived(sender ?? cs.sender ?? "—");
-    let cardState = $state(0);
-    let isFrontView = $derived(!!cardState);
-    let isOpened = $derived(cardState === 1);
-    let isBackView = $derived(cardState === 2);
+
+    const titlePositionClass = $derived(
+        titlePosition === "top"
+            ? "absolute top-4 left-4 right-4 text-center"
+            : titlePosition === "bottom"
+              ? "absolute bottom-4 left-4 right-4 text-center"
+              : "absolute top-[calc(50%-var(--card-title-center-offset))] -translate-y-1/2 left-4 right-4 text-center",
+    );
+
     let qrCodeUrl = $state("");
+    let emblaNode = $state<HTMLElement | null>(null);
+    let emblaApi: EmblaCarouselType | null = null;
+    let selectedIndex = $state(0);
 
-    async function clickHandler(): Promise<void> {
-        cardState = (cardState + 1) % 3;
+    const slideLabels = ["Лице", "Вляво", "Вдясно", "Гръб"];
 
-        if (cardPageUrl && !qrCodeUrl) {
-            const qrCode = await buildQR(cardPageUrl, 24);
-            qrCodeUrl = qrCode;
+    onMount(async () => {
+        if (cardPageUrl) {
+            qrCodeUrl = await buildQR(cardPageUrl, 24);
         }
+
+        if (emblaNode) {
+            emblaApi = EmblaCarousel(emblaNode, { loop: false });
+            emblaApi.on("select", () => {
+                selectedIndex = emblaApi?.selectedScrollSnap() ?? 0;
+            });
+        }
+    });
+
+    onDestroy(() => {
+        emblaApi?.destroy();
+    });
+
+    function scrollPrev() {
+        emblaApi?.scrollPrev();
+    }
+
+    function scrollNext() {
+        emblaApi?.scrollNext();
     }
 </script>
 
-<div class="w-full flex justify-center">
-    <button
-        type="button"
-        class="main-card-wrapper relative cursor-pointer
-        {isOpened ? 'h-140' : 'h-57.5'} w-65 md:w-85 {isOpened
-            ? 'lg:w-190'
-            : 'lg:w-95'} lg:h-155
-        border border-dashed rounded-xl overflow-hidden shadow-xl"
-        onclick={clickHandler}
-    >
-        {#if cardState === 0}
-            <enhanced:img
-                src={cardFront}
-                class="absolute inset-0 w-full h-full object-cover"
-                alt={title}
-            />
-        {:else if cardState === 1}
-            <div
-                class="h-full flex flex-col lg:flex-row items-center z-10 p-6 bg-white"
+<div class="w-full flex flex-col items-center gap-3">
+    <!-- Slide indicator dots -->
+    <div class="flex gap-2">
+        {#each slideLabels as label, i}
+            <span
+                class="text-xs px-2 py-0.5 rounded-full transition-colors"
+                class:bg-custom-orange-600={selectedIndex === i}
+                class:text-white={selectedIndex === i}
+                class:bg-gray-200={selectedIndex !== i}
+                class:text-gray-500={selectedIndex !== i}
             >
-                <!-- Left inner section -->
-                <div
-                    class="flex justify-center items-center h-full w-full flex-1 border-r border-dotted rotate-90 lg:rotate-none"
-                >
-                    <div
-                        class="left flex flex-col max-w-35 md:max-w-1xl justify-center items-center"
-                    >
-                        {#if cardPageUrl}
-                            <img
-                                src={qrCodeUrl}
-                                alt="QR code"
-                                class="w-24 h-24"
-                            />
-                            <p class="mt-2.5 text-xs md:text-sm lg:text-base">
-                                Сканирайте за да чуете вашият аудио поздрав.
-                            </p>
-                        {:else}
-                            <img
-                                src={QrCodeExample}
-                                alt="QR code"
-                                class="w-24 h-24"
-                            />
-                            <span class="text-xs text-gray-400"
-                                >(Примерен QR код)</span
-                            >
-                            <p class="mt-2.5 text-xs md:text-sm lg:text-base">
-                                Сканирайте за да чуете вашият аудио поздрав.
-                            </p>
-                        {/if}
-                    </div>
+                {label}
+            </span>
+        {/each}
+    </div>
+
+    <div class="relative w-full flex items-center justify-center">
+        <!-- Prev button -->
+        <button
+            type="button"
+            onclick={scrollPrev}
+            class="absolute left-0 z-10 bg-white/80 hover:bg-white rounded-full p-1.5 shadow transition-colors"
+            aria-label="Предишен слайд"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5 text-gray-700"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M15 19l-7-7 7-7"
+                />
+            </svg>
+        </button>
+
+        <!-- Embla viewport -->
+        <div
+            bind:this={emblaNode}
+            class="overflow-hidden w-65 md:w-85 lg:w-95 h-[25rem] md:h-[32rem] lg:h-[39rem] rounded-xl shadow-xl border border-dashed"
+        >
+            <div class="flex h-full">
+                <!-- Slide 1: Front -->
+                <div class="flex-[0_0_100%] min-w-0 relative h-full">
+                    <enhanced:img
+                        src={cardFront}
+                        class="absolute inset-0 w-full h-full object-cover"
+                        alt={displayTitle}
+                    />
+                    {#if displayTitle}
+                        <div
+                            class={titlePositionClass}
+                            style="color: {fontColor}; font-family: var(--font-family-{font}); font-size: 1.35rem; line-height: 1.4;"
+                        >
+                            {displayTitle}
+                        </div>
+                    {/if}
                 </div>
 
-                <!-- Right inner section -->
+                <!-- Slide 2: Left inner (audio / QR) -->
                 <div
-                    class="p-2 h-full flex flex-col justify-between flex-1 rotate-90 lg:rotate-none"
+                    class="flex-[0_0_100%] min-w-0 h-full bg-white flex flex-col items-center justify-center gap-3 p-6"
                 >
-                    <p class="mt-2.5 text-xs md:text-sm lg:text-base">
+                    {#if audioUrlProp}
+                        <div
+                            class="flex flex-col items-center gap-3 text-center w-full"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="w-10 h-10 text-custom-orange-600"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="1.5"
+                                    d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
+                                />
+                            </svg>
+                            <p class="text-sm font-medium text-gray-700">
+                                Аудио поздрав
+                            </p>
+                            <audio
+                                controls
+                                src={audioUrlProp}
+                                class="w-full max-w-xs mt-1"
+                            >
+                                <track kind="captions" />
+                            </audio>
+                        </div>
+                    {:else if previewMode}
+                        <img
+                            src={QrCodeExample}
+                            alt="QR код"
+                            class="w-24 h-24 opacity-40"
+                        />
+                        <span class="text-xs text-gray-400"
+                            >(Примерен QR код)</span
+                        >
+                        <p class="text-xs text-center text-gray-500">
+                            Сканирайте за да чуете вашият аудио поздрав.
+                        </p>
+                    {:else}
+                        <div
+                            class="flex flex-col items-center gap-3 text-center"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="w-10 h-10 text-gray-300"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="1.5"
+                                    d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
+                                />
+                            </svg>
+                            <p class="text-sm text-gray-500 italic">
+                                Няма записано аудио съобщение за тази картичка.
+                            </p>
+                        </div>
+                    {/if}
+                </div>
+
+                <!-- Slide 3: Right inner (message) -->
+                <div
+                    class="flex-[0_0_100%] min-w-0 h-full bg-white flex flex-col justify-between p-6"
+                >
+                    <p
+                        class="text-sm md:text-base text-gray-800 leading-relaxed"
+                    >
                         {description}
                     </p>
-                    <p class="w-full text-xs text-end underline">
+                    <p class="text-xs text-end underline text-gray-600">
                         От: {displaySender}
                     </p>
                 </div>
+
+                <!-- Slide 4: Back -->
+                <div
+                    class="flex-[0_0_100%] min-w-0 h-full relative overflow-hidden"
+                >
+                    <img
+                        src={paperTexture}
+                        class="absolute inset-0 w-full h-full object-cover"
+                        alt="Текстура"
+                    />
+                    <div class="absolute inset-0 bg-amber-950/10"></div>
+                    <div
+                        class="absolute bottom-0 left-0 right-0 flex flex-col items-center pb-8 gap-2 z-10"
+                    >
+                        <img
+                            src={logo}
+                            alt="Kartichka QR"
+                            class="w-14 h-14 rounded-2xl shadow-lg border-2 border-white/60"
+                        />
+                        <div class="text-center">
+                            <p
+                                class="text-amber-900 font-bold text-sm tracking-widest uppercase drop-shadow-sm"
+                            >
+                                Kartichka QR
+                            </p>
+                            <p class="text-amber-700 text-xs mt-0.5 opacity-80">
+                                {new Date().getFullYear()}
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
-        {:else}
-            <img
-                src={paperTexture}
-                class="absolute inset-0 w-full h-full object-cover mask-y-from-70% mask-y-to-90%"
-                alt="Paper texture background"
-            />
-            <div class="relative z-10 p-4 text-amber-950">
-                Kartichka QR {new Date().getFullYear()}
-            </div>
-        {/if}
-    </button>
+        </div>
+
+        <!-- Next button -->
+        <button
+            type="button"
+            onclick={scrollNext}
+            class="absolute right-0 z-10 bg-white/80 hover:bg-white rounded-full p-1.5 shadow transition-colors"
+            aria-label="Следващ слайд"
+        >
+            <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5 text-gray-700"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+            >
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 5l7 7-7 7"
+                />
+            </svg>
+        </button>
+    </div>
 </div>

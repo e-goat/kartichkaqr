@@ -6,6 +6,9 @@
     cs.cardUuid = helpers.generateCardUuid();
 
     $effect(() => {
+        if (cs.title && ss.validationErrors.title) {
+            delete ss.validationErrors.title;
+        }
         if (cs.receiver && ss.validationErrors.receiver) {
             delete ss.validationErrors.receiver;
         }
@@ -34,6 +37,37 @@
             <div
                 class="mt-3 sm:mt-4 md:mt-6 flex flex-col gap-2 sm:gap-3 md:gap-4 w-full max-w-full"
             >
+                <div class="flex flex-col w-full mb-2 sm:mb-3 md:mb-4">
+                    <label
+                        class="mb-1 text-sm font-medium text-gray-700"
+                        for="title-input"
+                    >
+                        Заглавие
+                        <span class="text-gray-400 font-normal text-xs ml-1"
+                            >(по избор)</span
+                        >
+                    </label>
+                    <input
+                        id="title-input"
+                        name="title"
+                        type="text"
+                        class="rounded-xl border px-4 py-3 text-base shadow focus:outline-none focus:ring-2 transition-colors w-full"
+                        class:border-red-300={!!ss.validationErrors.title}
+                        class:border-gray-200={!ss.validationErrors.title}
+                        class:focus:border-red-500={!!ss.validationErrors.title}
+                        class:focus:ring-red-200={!!ss.validationErrors.title}
+                        class:focus:border-blue-500={!ss.validationErrors.title}
+                        class:focus:ring-blue-200={!ss.validationErrors.title}
+                        placeholder="Заглавие на картичката"
+                        autocomplete="off"
+                        bind:value={cs.title}
+                    />
+                    {#if ss.validationErrors.title}
+                        <p class="mt-1 text-sm text-red-600">
+                            {ss.validationErrors.title}
+                        </p>
+                    {/if}
+                </div>
                 <div class="flex flex-col w-full mb-2 sm:mb-3 md:mb-4">
                     <label
                         class="mb-1 text-sm font-medium text-gray-700"
@@ -102,6 +136,9 @@
                         for="desc-input"
                     >
                         Описание
+                        <span class="text-gray-400 font-normal text-xs ml-1"
+                            >(по избор)</span
+                        >
                     </label>
                     <textarea
                         id="desc-input"

@@ -78,6 +78,8 @@
                     <WishCard
                         cardFront={selectedTemplate?.background || ""}
                         cardBack={ts.backgroundBack}
+                        font={ts.font}
+                        fontColor={selectedTemplate?.fontColor || ""}
                         title={cs.title || selectedTemplate?.title || ""}
                         description={cs.description ||
                             selectedTemplate?.description ||
@@ -91,26 +93,59 @@
                     id="additional-info"
                     class="flex flex-col gap-2 sm:gap-3 md:gap-4 mt-6"
                 >
-                    <div class="flex items-center gap-3">
-                        <input
-                            type="checkbox"
+                    <div class="flex flex-col gap-2">
+                        <button
+                            type="button"
                             id="physical-copy-checkbox"
-                            name="physical-copy-requested"
-                            class="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-2 focus:ring-blue-200 cursor-pointer"
-                            bind:checked={pcs.requested}
-                            onchange={handlePhysicalCopyToggle}
-                        />
+                            onclick={() => {
+                                pcs.requested = !pcs.requested;
+                                handlePhysicalCopyToggle();
+                            }}
+                            class="flex items-center gap-4 px-5 py-4 rounded-xl border-2 transition-colors duration-200 text-left w-full"
+                            class:border-custom-orange-600={pcs.requested}
+                            class:bg-custom-orange-200={pcs.requested}
+                            class:border-gray-200={!pcs.requested}
+                            class:bg-white={!pcs.requested}
+                        >
+                            <div
+                                class="flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors"
+                                class:border-custom-orange-600={pcs.requested}
+                                class:bg-custom-orange-600={pcs.requested}
+                                class:border-gray-400={!pcs.requested}
+                            >
+                                {#if pcs.requested}
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        class="w-4 h-4 text-white"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2.5"
+                                            d="M5 13l4 4L19 7"
+                                        />
+                                    </svg>
+                                {/if}
+                            </div>
+                            <div>
+                                <p
+                                    class="font-semibold text-sm sm:text-base text-gray-800"
+                                >
+                                    Желаете ли да изготвим картичката за вас?
+                                </p>
+                                <p class="text-xs text-gray-500 mt-0.5">
+                                    Щракнете за да поръчате физическа картичка
+                                </p>
+                            </div>
+                        </button>
                         <input
                             type="hidden"
                             name="physical-copy-requested-value"
                             value={pcs.requested ? "true" : "false"}
                         />
-                        <label
-                            for="physical-copy-checkbox"
-                            class="text-sm sm:text-base font-medium text-gray-700 cursor-pointer select-none"
-                        >
-                            Желаете ли да изготвим картичката за вас?
-                        </label>
                     </div>
 
                     {#if pcs.requested}

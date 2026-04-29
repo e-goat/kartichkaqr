@@ -4,6 +4,12 @@ import { z } from "zod";
  * Validation schema for Step 1 (Intro) - Basic card information
  */
 export const introStepSchema = z.object({
+    title: z
+        .string()
+        .max(100, "Заглавието не може да бъде повече от 100 символа")
+        .trim()
+        .optional()
+        .default(""),
     receiver: z
         .string()
         .min(1, "Име на получателя е задължително")

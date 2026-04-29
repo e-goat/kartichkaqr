@@ -11,7 +11,11 @@ const prisma = new PrismaClient({ adapter });
 export async function getCardBySlug(slug: string) {
     return prisma.card.findUnique({
         where: { slug },
-        include: { template: true },
+        include: {
+            template: {
+                include: { font: true },
+            },
+        },
     });
 }
 

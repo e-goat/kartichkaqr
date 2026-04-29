@@ -32,6 +32,8 @@
                 const cardUrl = form.cardUrl || "";
                 const physicalCopyRequested = form.physicalCopyRequested;
 
+                const cardPath = new URL(cardUrl).pathname;
+
                 if (physicalCopyRequested) {
                     // Physical copy requested - user will receive email
                     Swal.fire({
@@ -45,39 +47,31 @@
                         `,
                         icon: "success",
                         showCancelButton: true,
-                        confirmButtonText: "Към началната страница",
-                        cancelButtonText: "Копирай линк",
+                        showDenyButton: true,
+                        confirmButtonText: "Към картичката",
+                        denyButtonText: "Копирай линк",
+                        cancelButtonText: "Към началната страница",
                         customClass: {
-                            confirmButton: "swal-confirm-button",
-                            cancelButton: "swal-copy-button",
+                            confirmButton: "swal-navigate-button",
+                            denyButton: "swal-copy-button",
+                            cancelButton: "swal-cancel-button",
                         },
                         buttonsStyling: false,
                     }).then(async (result) => {
                         if (result.isConfirmed) {
                             resetCardState();
+                            goto(cardPath);
+                        } else if (result.isDenied) {
+                            await copyToClipboard(cardUrl);
+                            resetCardState();
                             goto("/");
-                        } else if (
-                            result.dismiss === Swal.DismissReason.cancel
-                        ) {
-                            const copied = await copyToClipboard(cardUrl);
-                            if (copied) {
-                                await Swal.fire({
-                                    title: "Копирано!",
-                                    text: "Линкът е копиран в клипборда.",
-                                    icon: "success",
-                                    confirmButtonText: "Към началната страница",
-                                    customClass: {
-                                        confirmButton: "swal-confirm-button",
-                                    },
-                                    buttonsStyling: false,
-                                });
-                            }
+                        } else {
                             resetCardState();
                             goto("/");
                         }
                     });
                 } else {
-                    // No physical copy - show link directly with warning
+                    // No physical copy - warn user to save the link
                     Swal.fire({
                         title: "Успех!",
                         html: `
@@ -93,10 +87,13 @@
                         `,
                         icon: "warning",
                         showCancelButton: true,
-                        confirmButtonText: "Копирай линк",
+                        showDenyButton: true,
+                        confirmButtonText: "Към картичката",
+                        denyButtonText: "Копирай линк",
                         cancelButtonText: "Към началната страница",
                         customClass: {
-                            confirmButton: "swal-confirm-button",
+                            confirmButton: "swal-navigate-button",
+                            denyButton: "swal-copy-button",
                             cancelButton: "swal-cancel-button",
                         },
                         buttonsStyling: false,
@@ -104,19 +101,10 @@
                         allowEscapeKey: false,
                     }).then(async (result) => {
                         if (result.isConfirmed) {
-                            const copied = await copyToClipboard(cardUrl);
-                            if (copied) {
-                                await Swal.fire({
-                                    title: "Копирано!",
-                                    text: "Линкът е копиран в клипборда. Запазете го на сигурно място!",
-                                    icon: "success",
-                                    confirmButtonText: "Към началната страница",
-                                    customClass: {
-                                        confirmButton: "swal-confirm-button",
-                                    },
-                                    buttonsStyling: false,
-                                });
-                            }
+                            resetCardState();
+                            goto(cardPath);
+                        } else if (result.isDenied) {
+                            await copyToClipboard(cardUrl);
                             resetCardState();
                             goto("/");
                         } else {
@@ -164,9 +152,9 @@
 
 <Stepper steps={4} {form}>
     {#if ss.currentStep == 1}
-        <Design {data} />
-    {:else if ss.currentStep == 2}
         <CardInfo />
+    {:else if ss.currentStep == 2}
+        <Design {data} />
     {:else if ss.currentStep == 3}
         <Record />
     {:else if ss.currentStep == 4}

@@ -45,6 +45,9 @@ interface TemplateState {
     title: string;
     titlePosition: "top" | "bottom" | "center";
     backgroundBack: string;
+    font: string;
+    templateDescription: string;
+    templateTitle: string;
 }
 
 // UNITED STATES
@@ -82,6 +85,9 @@ export const ts: TemplateState = $state({
     title: "",
     titlePosition: "center",
     backgroundBack: "",
+    font: "",
+    templateDescription: "",
+    templateTitle: "",
 });
 
 export const pcs: PhysicalCopyState = $state({

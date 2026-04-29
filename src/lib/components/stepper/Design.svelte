@@ -96,15 +96,28 @@
             );
         }
         cs.templateId = parseInt(target?.dataset.templateId ?? "0");
-        cs.title = target?.dataset.templateTitle ?? "";
-        cs.description = target?.dataset.templateDescription ?? "";
         ts.backgroundBack = target?.dataset.templateBackgroundBack ?? "";
-        ts.titlePosition = target?.dataset.titlePosition;
+        ts.titlePosition = (target?.dataset.titlePosition ?? "center") as
+            | "top"
+            | "bottom"
+            | "center";
         ts.font = target?.dataset.font ?? "";
 
-        if (!cs.description) {
-            cs.description = target?.dataset.templateDescription ?? "";
+        const newTemplateTitle = target?.dataset.templateTitle ?? "";
+        const newTemplateDescription =
+            target?.dataset.templateDescription ?? "";
+
+        // Only update title if user hasn't entered their own (or it still matches previous template's)
+        if (!cs.title || cs.title === ts.templateTitle) {
+            cs.title = newTemplateTitle;
         }
+        // Only update description if user hasn't entered their own (or it still matches previous template's)
+        if (!cs.description || cs.description === ts.templateDescription) {
+            cs.description = newTemplateDescription;
+        }
+
+        ts.templateTitle = newTemplateTitle;
+        ts.templateDescription = newTemplateDescription;
 
         target?.classList.remove("border", "border-transparent");
         target?.classList.add(
@@ -203,7 +216,7 @@
                     <li>
                         <button
                             type="button"
-                            class="wish-card border-4 w-full h-60 rounded-xl overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:cursor-pointer relative"
+                            class="wish-card border-4 w-full rounded-xl overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:cursor-pointer relative aspect-[3/4] bg-gray-50"
                             class:border-custom-orange-600={t.id ==
                                 cs.templateId}
                             class:border-red-500={ss.validationErrors
@@ -221,14 +234,9 @@
                         >
                             <enhanced:img
                                 src={t.background}
-                                class="absolute inset-0 w-full h-full object-cover"
+                                class="absolute inset-0 w-full h-full object-contain"
                                 alt={t.title}
                             />
-
-                            <!-- Optional overlay content -->
-                            <div
-                                class="absolute top-3 right-3 w-3 h-3 bg-white/30 rounded-full"
-                            ></div>
                         </button>
                     </li>
                 {/each}

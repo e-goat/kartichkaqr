@@ -55,6 +55,7 @@ function validateSchema<T>(
  */
 export function validateCardInfoStep(): ValidationResult {
     const data: CardInfoStepSchema = {
+        title: cs.title || "",
         receiver: cs.receiver,
         sender: cs.sender,
         description: cs.description || "",
@@ -136,9 +137,9 @@ export function validateStep(
 ): ValidationResult {
     switch (stepNumber) {
         case 1:
-            return validateDesignStep();
-        case 2:
             return validateCardInfoStep();
+        case 2:
+            return validateDesignStep();
         case 3:
             return validateRecordStep();
         case 4:
