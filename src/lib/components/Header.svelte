@@ -348,12 +348,14 @@
         right: -100%;
         width: 280px;
         max-width: 80vw;
-        height: 100vh;
+        height: 100vh; /* fallback for browsers without dvh */
+        height: 100dvh; /* dynamic viewport height — excludes system nav bar */
         background-color: #fff;
         border-left: 1px solid #eed9b0;
         z-index: 50;
         transition: right 0.3s ease-out;
         box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+        overflow-y: auto;
     }
 
     .mobile-nav-open {
@@ -363,8 +365,9 @@
     .mobile-nav-content {
         display: flex;
         flex-direction: column;
-        height: 100%;
+        min-height: 100%;
         padding: 80px 24px 24px;
+        padding-bottom: max(24px, calc(24px + env(safe-area-inset-bottom)));
         gap: 32px;
     }
 
