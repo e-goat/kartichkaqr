@@ -11,6 +11,7 @@
         background: string;
         backgroundBack: string;
         titlePos: string;
+        font: string;
     };
 
     type Category = {
@@ -98,7 +99,8 @@
         cs.title = target?.dataset.templateTitle ?? "";
         cs.description = target?.dataset.templateDescription ?? "";
         ts.backgroundBack = target?.dataset.templateBackgroundBack ?? "";
-        ts.titlePosition = target?.dataset.titlePosition ?? "center";
+        ts.titlePosition = target?.dataset.titlePosition;
+        ts.font = target?.dataset.font ?? "";
 
         if (!cs.description) {
             cs.description = target?.dataset.templateDescription ?? "";
@@ -214,6 +216,7 @@
                             data-template-description={t.description}
                             data-template-background-back={t.backgroundBack}
                             data-title-position={t.titlePos}
+                            data-font={t.font.name}
                             aria-label={t.title}
                         >
                             <enhanced:img

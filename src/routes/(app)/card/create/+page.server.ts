@@ -1,7 +1,7 @@
 import type { PageServerLoad } from "./$types";
 import type { Actions } from "@sveltejs/kit";
 import type { Card, Template } from "$lib/db";
-import { cs, ts, ss } from "$lib/state.svelte";
+import { ts, ss } from "$lib/state.svelte";
 import { VercelStorageController } from "$lib/controller/VercelStorage";
 import { MailController } from "$lib/controller/Mail";
 import { APP_EMAIL, ADMIN_EMAIL, APP_NAME } from "$lib/server/secrets";
@@ -16,7 +16,7 @@ export const load: PageServerLoad = async ({ url }) => {
     const currentPage: number = Math.floor(skip / limit) + 1;
 
     const categoryId = url.searchParams.get("categoryId");
-    let result = categoryId
+    const result = categoryId
         ? await db.getAllTemplatesByCategory(limit, skip, Number(categoryId))
         : await db.getAllTemplates(limit, skip);
 
@@ -32,7 +32,7 @@ export const load: PageServerLoad = async ({ url }) => {
 };
 
 export const actions: Actions = {
-    create: async ({ request, fetch, url }) => {
+    create: async ({ request, url }) => {
         const formData = await request.formData();
         const cardMeta = JSON.parse(formData.get("card") as string);
 

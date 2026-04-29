@@ -5,9 +5,11 @@
     import Footer from "$lib/components/Footer.svelte";
     import Header from "$lib/components/Header.svelte";
     import CookieModal from "$lib/components/CookieModal.svelte";
+    import { register as registerSwiper } from "swiper/element/bundle";
 
     let { children, data } = $props();
     injectAnalytics();
+    registerSwiper();
 </script>
 
 <main class="min-h-screen flex flex-col">

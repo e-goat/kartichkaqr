@@ -43,7 +43,7 @@ interface PhysicalCopyState {
 interface TemplateState {
     description: string;
     title: string;
-    titlePosition: string;
+    titlePosition: "top" | "bottom" | "center";
     backgroundBack: string;
 }
 

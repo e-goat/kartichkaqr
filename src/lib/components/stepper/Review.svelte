@@ -11,6 +11,7 @@
             recipient: string;
             font: string;
             type: string;
+            fontColor?: string;
         }>;
     }
 

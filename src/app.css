@@ -3,6 +3,7 @@
 @import "tailwindcss";
 
 @theme {
+    --card-title-center-offset: 2rem;
     --color-amber-111: #ffede4;
     --color-custom-teal-200: #f4f2ee;
     --color-custom-teal-300: #92da9f;
@@ -15,10 +16,19 @@
     --default-font-family: "Chiron Sung HK", serif;
     /* --default-font-family: 'Roboto', sans-serif; */
     --default-font-variation-settings: "wght" 550;
-    --font-family-roboto: "Roboto", sans-serif;
-    --font-family-csh: "Chiron Sung HK", serif;
-    --font-family-bebas: "Bebas Neue", sans-serif;
-    --font-family-montserrat: "Montserrat", sans-serif;
+    --font-family-Roboto: "Roboto", sans-serif;
+    --font-family-ChironSungHK: "Chiron Sung HK", serif;
+    --font-family-BebasNeue: "Bebas Neue", sans-serif;
+    --font-family-Montserrat: "Montserrat", sans-serif;
+    --font-family-Allura: "Allura", sans-serif;
+    --font-family-Caveat: "Caveat", sans-serif;
+    --font-family-DancingScript: "DancingScript", sans-serif;
+    --font-family-GreatVibes: "GreatVibes", sans-serif;
+    --font-family-Oswald: "Oswald", sans-serif;
+    --font-family-Pacifico: "Pacifico", sans-serif;
+    --font-family-PlayfairDisplay: "PlayfairDisplay", sans-serif;
+    --font-family-Raleway: "Raleway", sans-serif;
+    --font-family-Sacramento: "Sacramento", sans-serif;
 }
 
 .disable {

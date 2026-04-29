@@ -27,13 +27,23 @@ export async function getAllTemplates(limit: number, skip: number) {
     }
     const [templates, total] = await Promise.all([
         prisma.template.findMany({
+            select: {
+                id: true,
+                title: true,
+                titlePos: true,
+                description: true,
+                background: true,
+                backgroundBack: true,
+                font: true,
+                fontColor: true,
+                categoryId: true,
+            },
             take: limit,
             skip: skip,
             orderBy: { createdAt: "desc" },
         }),
         prisma.template.count(),
     ]);
-
     return { templates, total };
 }
 
@@ -48,18 +58,39 @@ export async function getAllTemplatesByCategory(
     const [templates, total] = await Promise.all([
         prisma.template.findMany({
             take: limit,
+            select: {
+                id: true,
+                title: true,
+                titlePos: true,
+                description: true,
+                background: true,
+                backgroundBack: true,
+                font: true,
+                fontColor: true,
+                categoryId: true,
+            },
             skip,
             where: { categoryId },
             orderBy: { createdAt: "desc" },
         }),
         prisma.template.count({ where: { categoryId } }),
     ]);
-
     return { templates, total };
 }
 
 export async function getTemplateById(templateId: number) {
     return prisma.template.findUniqueOrThrow({
+        select: {
+            id: true,
+            title: true,
+            titlePos: true,
+            description: true,
+            background: true,
+            backgroundBack: true,
+            font: true,
+            fontColor: true,
+            categoryId: true,
+        },
         where: { id: templateId },
     });
 }
