@@ -24,6 +24,7 @@ interface StepperState {
 
 interface RecorderState {
     blob: Blob | null;
+    finalTimeLeft: number | null;
 }
 
 interface TemplateColorCache {
@@ -74,6 +75,7 @@ export const ss: StepperState = $state({
 
 export const rs: RecorderState = $state({
     blob: null,
+    finalTimeLeft: null,
 });
 
 export const tcc: TemplateColorCache = $state({
@@ -115,6 +117,7 @@ export function resetCardState() {
     ss.validationErrors = {};
 
     rs.blob = null;
+    rs.finalTimeLeft = null;
 
     pcs.requested = false;
     pcs.name = "";

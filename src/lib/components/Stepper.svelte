@@ -79,9 +79,12 @@
     }
 </script>
 
-<div class="px-px text-3xl font-medium max-w-95.25 text-zinc-800 mx-auto mb-6">
+<div class="px-px max-w-95.25 text-zinc-800 mx-auto mb-6">
     <div class="flex flex-col justify-center">
-        <div class="self-center" data-name="Създаване на картичка">
+        <div
+            class="text-center text-lg sm:text-2xl md:text-3xl font-medium whitespace-nowrap"
+            data-name="Създаване на картичка"
+        >
             Създаване на картичка
         </div>
         <enhanced:img

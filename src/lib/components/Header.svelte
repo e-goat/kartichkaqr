@@ -264,32 +264,34 @@
 
     .mobile-cta-button {
         display: flex;
-        padding: 12px 24px;
+        padding: 14px 20px;
         justify-content: center;
         align-items: center;
-        gap: 16px;
-        border-radius: 360px;
+        gap: 12px;
+        border-radius: 14px;
         position: relative;
         cursor: pointer;
         background-color: #229e32;
-        border: none;
+        border: 2px solid #1a7a27;
+        outline: 3px solid rgba(34, 158, 50, 0.25);
+        outline-offset: 2px;
+        box-shadow: 0 2px 8px rgba(34, 158, 50, 0.2);
         transition:
             background-color 0.2s ease,
-            transform 0.1s ease;
+            transform 0.1s ease,
+            box-shadow 0.2s ease;
+        box-sizing: border-box;
+        width: 100%;
     }
 
     .mobile-cta-button:hover {
         background-color: #1e8a2c;
+        box-shadow: 0 4px 12px rgba(34, 158, 50, 0.3);
     }
 
     .mobile-cta-button:active {
         transform: scale(0.98);
-    }
-
-    @media (max-width: 991px) {
-        .mobile-cta-button {
-            padding: 10px 20px;
-        }
+        box-shadow: 0 1px 4px rgba(34, 158, 50, 0.2);
     }
 
     .desktop-cta {
@@ -403,8 +405,6 @@
 
     .mobile-cta-button {
         margin-top: auto;
-        width: 100%;
-        padding: 16px 24px;
     }
 
     /* Prevent body scroll when mobile menu is open */

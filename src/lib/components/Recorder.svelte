@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { onMount, tick } from "svelte";
     import Swal from "sweetalert2";
     import { cs, rs } from "$lib/state.svelte";
     interface Props {
@@ -34,6 +34,7 @@
             intervalId = setInterval(() => {
                 timeLeft -= 1;
                 if (timeLeft <= 0) {
+                    rs.finalTimeLeft = 0;
                     if (intervalId) clearInterval(intervalId);
                     if (mediaRecorder && mediaRecorder.state === "recording") {
                         mediaRecorder.stop();
@@ -64,6 +65,7 @@
         recording = false;
         timeLeft = MAX_TIME;
         rs.blob = null;
+        rs.finalTimeLeft = null;
         cs.audioUrl = null;
 
         const form = document.getElementById("step-form") as HTMLFormElement;
@@ -170,6 +172,7 @@
         event?.preventDefault();
 
         if (recording) {
+            rs.finalTimeLeft = timeLeft;
             if (mediaRecorder && mediaRecorder.state === "recording") {
                 mediaRecorder.stop();
             }
@@ -180,7 +183,37 @@
         }
     };
 
+    async function reattachBlobToForm() {
+        await tick();
+        if (!rs.blob) return;
+        const form = document.getElementById("step-form") as HTMLFormElement;
+        if (!form) return;
+        const existing = form.querySelector('input[name="record"]');
+        if (existing) existing.remove();
+        const blobInput = document.createElement("input");
+        blobInput.type = "file";
+        blobInput.name = "record";
+        blobInput.style.display = "none";
+        const file = new File([rs.blob], cs.cardUuid.trim() + ".webm", {
+            type: rs.blob.type,
+        });
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        blobInput.files = dataTransfer.files;
+        form.appendChild(blobInput);
+    }
+
     onMount(async () => {
+        // Restore state if a recording already exists from a previous visit to this step
+        if (rs.blob) {
+            hasStarted = true;
+            isRecordingComplete = true;
+            timeLeft = rs.finalTimeLeft ?? 0;
+            audioUrl = URL.createObjectURL(rs.blob);
+            cs.audioUrl = audioUrl;
+            await reattachBlobToForm();
+        }
+
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices
                 .getUserMedia({
