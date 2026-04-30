@@ -8,7 +8,7 @@
     };
 
     let {
-        pageSize = 10,
+        pageSize = 9,
         url = "",
         amount,
         currentPage = 1,

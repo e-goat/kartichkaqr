@@ -11,7 +11,7 @@ import { createCard } from "$lib/server/database";
 import { Prisma } from "$lib/db";
 
 export const load: PageServerLoad = async ({ url }) => {
-    const limit: number = Number(url.searchParams.get("limit")) || 10;
+    const limit: number = Number(url.searchParams.get("limit")) || 9;
     const skip: number = Number(url.searchParams.get("skip")) || 0;
     const currentPage: number = Math.floor(skip / limit) + 1;
 

@@ -129,6 +129,33 @@
     function handlePageChange(page: number) {
         fetchTemplates(selectedCategory, page);
     }
+
+    function lazyReveal(node: HTMLElement) {
+        node.style.opacity = "0";
+        node.style.transform = "translateY(8px)";
+        node.style.transition = "opacity 0.3s ease, transform 0.3s ease";
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                for (const entry of entries) {
+                    if (entry.isIntersecting) {
+                        node.style.opacity = "1";
+                        node.style.transform = "translateY(0)";
+                        observer.unobserve(node);
+                    }
+                }
+            },
+            { threshold: 0.05 },
+        );
+
+        observer.observe(node);
+
+        return {
+            destroy() {
+                observer.unobserve(node);
+            },
+        };
+    }
 </script>
 
 <section>
@@ -191,7 +218,7 @@
                 class="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
             >
                 {#each templates as t (t.id)}
-                    <li>
+                    <li use:lazyReveal>
                         <button
                             type="button"
                             class="wish-card border-4 w-full rounded-xl overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:cursor-pointer relative aspect-3/4 bg-gray-50"
@@ -214,6 +241,7 @@
                                 src={t.background}
                                 class="absolute inset-0 w-full h-full object-contain"
                                 alt={t.title}
+                                loading="lazy"
                             />
                         </button>
                     </li>
