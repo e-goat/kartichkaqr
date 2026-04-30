@@ -1,5 +1,5 @@
 // IN YOUR INTERFACE
-
+//
 interface CardState {
     title: string;
     sender: string;

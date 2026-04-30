@@ -1,6 +1,6 @@
 <script lang="ts">
     import WishCard from "$lib/components/WishCard.svelte";
-    import { cs, ss, pcs, ts } from "$lib/state.svelte.js";
+    import { cs, ss, pcs, ts } from "$lib/state.svelte";
 
     interface Props {
         templates?: Array<{

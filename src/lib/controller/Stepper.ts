@@ -1,4 +1,4 @@
-import { ss, pcs } from "$lib/state";
+import { ss, pcs } from "$lib/state.svelte";
 import { error } from "@sveltejs/kit";
 import {
     validateStep,

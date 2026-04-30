@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { ZodType } from "zod";
-import { cs } from "$lib/state";
+import { cs } from "$lib/state.svelte";
 import {
     introStepSchema,
     designStepSchema,
