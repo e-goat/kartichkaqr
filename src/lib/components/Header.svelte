@@ -349,7 +349,7 @@
         width: 280px;
         max-width: 80vw;
         height: 100vh; /* fallback for browsers without dvh */
-        height: 100dvh; /* dynamic viewport height — excludes system nav bar */
+        height: 100dvh; /* dynamic viewport height - excludes system nav bar */
         background-color: #fff;
         border-left: 1px solid #eed9b0;
         z-index: 50;

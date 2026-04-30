@@ -33,7 +33,7 @@
 
     const displayTitle = $derived(cs.title || title);
     const descriptionLength = $derived(description.length);
-    const displaySender = $derived(sender ?? cs.sender ?? "—");
+    const displaySender = $derived(sender ?? cs.sender ?? "-");
     let cardState = $state(0);
     let isFrontView = $derived(!!cardState);
     let isOpened = $derived(cardState === 1);

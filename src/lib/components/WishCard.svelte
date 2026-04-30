@@ -37,7 +37,7 @@
     }: Props = $props();
 
     const displayTitle = $derived(cs.title || title);
-    const displaySender = $derived(sender ?? cs.sender ?? "—");
+    const displaySender = $derived(sender ?? cs.sender ?? "-");
 
     const titlePositionClass = $derived(
         titlePosition === "top"
