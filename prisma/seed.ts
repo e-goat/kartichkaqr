@@ -8,9 +8,11 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
-    await prisma.font.deleteMany();
-    await prisma.category.deleteMany();
-    console.log("Cleared all seeded tables.");
+    // Only remove rows not referenced by any template to avoid FK violations.
+    // Fonts/categories still in use are left in place; new ones are added below.
+    await prisma.font.deleteMany({ where: { templates: { none: {} } } });
+    await prisma.category.deleteMany({ where: { templates: { none: {} } } });
+    console.log("Cleared unreferenced fonts and categories.");
 
     const categories = [
         { name: "Благодарност" },
@@ -20,7 +22,7 @@ async function main() {
         { name: "Специални дни" },
     ];
 
-    await prisma.category.createMany({ data: categories });
+    await prisma.category.createMany({ data: categories, skipDuplicates: true });
     console.log("Seeded categories successfully.");
 
     // Font names must match CSS variable suffixes (--font-family-<name>)
@@ -56,7 +58,7 @@ async function main() {
         { name: "Satisfy" },
     ];
 
-    await prisma.font.createMany({ data: fonts });
+    await prisma.font.createMany({ data: fonts, skipDuplicates: true });
     console.log("Seeded fonts successfully.");
 }
 
