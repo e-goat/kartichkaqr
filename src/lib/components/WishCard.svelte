@@ -37,7 +37,7 @@
     }: Props = $props();
 
     const displayTitle = $derived(cs.title || title);
-    const displaySender = $derived(sender ?? cs.sender ?? "-");
+    const displaySender = $derived(sender ?? cs.sender ?? "");
 
     const titlePositionClass = $derived(
         titlePosition === "top"
@@ -222,9 +222,11 @@
                     >
                         {description}
                     </p>
-                    <p class="text-xs text-end underline text-gray-600">
-                        От: {displaySender}
-                    </p>
+                    {#if displaySender}
+                        <p class="text-xs text-end underline text-gray-600">
+                            От: {displaySender}
+                        </p>
+                    {/if}
                 </div>
 
                 <!-- Slide 4: Back -->

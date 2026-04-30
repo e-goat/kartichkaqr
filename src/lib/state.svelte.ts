@@ -3,7 +3,6 @@
 interface CardState {
     title: string;
     sender: string;
-    receiver: string;
     tel?: string | null;
     email?: string | null;
     description: string;
@@ -56,7 +55,6 @@ interface TemplateState {
 export const cs: CardState = $state({
     title: "",
     sender: "",
-    receiver: "",
     description: "",
     templateId: 0,
     slug: "",
@@ -106,7 +104,6 @@ export const pcs: PhysicalCopyState = $state({
 export function resetCardState() {
     cs.title = "";
     cs.sender = "";
-    cs.receiver = "";
     cs.description = "";
     cs.templateId = 0;
     cs.slug = "";

@@ -10,16 +10,12 @@ export const introStepSchema = z.object({
         .trim()
         .optional()
         .default(""),
-    receiver: z
-        .string()
-        .min(1, "Име на получателя е задължително")
-        .max(100, "Име на получателя не може да бъде повече от 100 символа")
-        .trim(),
     sender: z
         .string()
-        .min(1, "Вашето име е задължително")
         .max(100, "Вашето име не може да бъде повече от 100 символа")
-        .trim(),
+        .trim()
+        .optional()
+        .default(""),
     description: z
         .string()
         .max(500, "Описанието не може да бъде повече от 500 символа")

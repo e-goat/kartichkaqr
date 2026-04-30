@@ -10,8 +10,16 @@
         background: string;
         backgroundBack: string;
         titlePos: string;
-        font: string;
+        font: { id: number; name: string };
+        fontColor?: string;
     };
+
+    function getTitleStyle(t: Template): string {
+        const base = `color: ${t.fontColor ?? "#ffffff"}; font-family: var(--font-family-${t.font.name}); font-size: 8.31cqw; line-height: 1.4; left: 6%; right: 6%;`;
+        if (t.titlePos === "top") return base + " top: 6%;";
+        if (t.titlePos === "bottom") return base + " bottom: 6%;";
+        return base + " top: 50%; transform: translateY(-50%);";
+    }
 
     type Category = {
         id: number;
@@ -92,14 +100,17 @@
         const newTemplateDescription =
             target?.dataset.templateDescription ?? "";
 
-        // Only update title if user hasn't entered their own (or it still matches previous template's)
-        if (!cs.title) {
+        // Update title/description if the user hasn't customized them
+        // (empty or still matching the previous template's auto-populated value)
+        if (!cs.title || cs.title === ts.templateTitle) {
             cs.title = newTemplateTitle;
         }
-        // Only update description if user hasn't entered their own (or it still matches previous template's)
-        if (!cs.description) {
+        if (!cs.description || cs.description === ts.templateDescription) {
             cs.description = newTemplateDescription;
         }
+
+        ts.templateTitle = newTemplateTitle;
+        ts.templateDescription = newTemplateDescription;
 
         target?.classList.remove("border", "border-transparent");
         target?.classList.add(
@@ -247,6 +258,7 @@
                             data-title-position={t.titlePos}
                             data-font={t.font.name}
                             aria-label={t.title}
+                            style="container-type: inline-size"
                         >
                             {#if !loadedImages.has(t.id)}
                                 <div
@@ -262,6 +274,20 @@
                                 loading="lazy"
                                 onload={() => handleImageLoad(t.id)}
                             />
+                            {#if loadedImages.has(t.id)}
+                                {@const displayTitle =
+                                    cs.title && cs.title !== ts.templateTitle
+                                        ? cs.title
+                                        : t.title}
+                                {#if displayTitle}
+                                    <div
+                                        class="absolute text-center"
+                                        style={getTitleStyle(t)}
+                                    >
+                                        {displayTitle}
+                                    </div>
+                                {/if}
+                            {/if}
                         </button>
                     </li>
                 {/each}

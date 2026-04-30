@@ -41,17 +41,6 @@ export const actions: Actions = {
         ss.isSubmitting = true;
 
         try {
-            // Page 1 validations
-            if (!cardMeta.receiver?.trim() || !cardMeta.sender?.trim()) {
-                ss.isSubmitting = false;
-                return fail(400, {
-                    cardMeta,
-                    error: "Моля, попълнете всички полета.",
-                    errorStep: 1,
-                    missing: true,
-                });
-            }
-
             // Page 2 validations
             if (!cardMeta.templateId) {
                 ss.isSubmitting = false;
@@ -70,7 +59,6 @@ export const actions: Actions = {
             card = {
                 sender: cardMeta.sender,
                 description: cardMeta.description ?? ts.description,
-                receiver: cardMeta.receiver,
                 slug: cardMeta.slug,
                 audioUrl: cardMeta.audioUrl,
                 cardUuid: cardMeta.cardUuid,
@@ -116,7 +104,7 @@ export const actions: Actions = {
                 MailController.send({
                     to: ADMIN_EMAIL || "duchevmartin@gmail.com",
                     from: APP_EMAIL,
-                    name: cardMeta.receiver,
+                    name: cardMeta.sender || "",
                     title: APP_NAME + " Нова карта",
                     cardTitle: template.title,
                     senderName: senderName || cardMeta.sender,

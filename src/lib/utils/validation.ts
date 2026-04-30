@@ -54,8 +54,7 @@ function validateSchema<T>(
 export function validateCardInfoStep(): ValidationResult {
     const data: CardInfoStepSchema = {
         title: cs.title || "",
-        receiver: cs.receiver,
-        sender: cs.sender,
+        sender: cs.sender || "",
         description: cs.description || "",
     };
 

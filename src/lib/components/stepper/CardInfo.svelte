@@ -9,9 +9,6 @@
         if (cs.title && ss.validationErrors.title) {
             delete ss.validationErrors.title;
         }
-        if (cs.receiver && ss.validationErrors.receiver) {
-            delete ss.validationErrors.receiver;
-        }
         if (cs.sender && ss.validationErrors.sender) {
             delete ss.validationErrors.sender;
         }
@@ -71,41 +68,12 @@
                 <div class="flex flex-col w-full mb-2 sm:mb-3 md:mb-4">
                     <label
                         class="mb-1 text-sm font-medium text-gray-700"
-                        for="to-input"
-                    >
-                        До
-                    </label>
-                    <input
-                        id="to-input"
-                        name="receiver"
-                        type="text"
-                        class="rounded-xl border px-4 py-3 text-base shadow focus:outline-none focus:ring-2 transition-colors w-full"
-                        class:border-red-300={!!ss.validationErrors.receiver}
-                        class:border-gray-200={!ss.validationErrors.receiver}
-                        class:focus:border-red-500={!!ss.validationErrors
-                            .receiver}
-                        class:focus:ring-red-200={!!ss.validationErrors
-                            .receiver}
-                        class:focus:border-blue-500={!ss.validationErrors
-                            .receiver}
-                        class:focus:ring-blue-200={!ss.validationErrors
-                            .receiver}
-                        placeholder="Име на получателя"
-                        autocomplete="off"
-                        bind:value={cs.receiver}
-                    />
-                    {#if ss.validationErrors.receiver}
-                        <p class="mt-1 text-sm text-red-600">
-                            {ss.validationErrors.receiver}
-                        </p>
-                    {/if}
-                </div>
-                <div class="flex flex-col w-full mb-2 sm:mb-3 md:mb-4">
-                    <label
-                        class="mb-1 text-sm font-medium text-gray-700"
                         for="from-input"
                     >
                         От
+                        <span class="text-gray-400 font-normal text-xs ml-1"
+                            >(по избор)</span
+                        >
                     </label>
                     <input
                         id="from-input"

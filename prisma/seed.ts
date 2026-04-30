@@ -8,6 +8,10 @@ const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
+    await prisma.font.deleteMany();
+    await prisma.category.deleteMany();
+    console.log("Cleared all seeded tables.");
+
     const categories = [
         { name: "Благодарност" },
         { name: "Любов" },
@@ -16,24 +20,43 @@ async function main() {
         { name: "Специални дни" },
     ];
 
-    await prisma.category.createMany({
-        data: categories,
-        skipDuplicates: true,
-    });
+    await prisma.category.createMany({ data: categories });
     console.log("Seeded categories successfully.");
 
+    // Font names must match CSS variable suffixes (--font-family-<name>)
+    // Spaces are invalid in CSS custom property names, so CamelCase is required.
     const fonts = [
-        { name: "Arial" },
-        { name: "Times New Roman" },
-        { name: "Courier New" },
-        { name: "Verdana" },
-        { name: "Georgia" },
+        { name: "Roboto" },
+        { name: "ChironSungHK" },
+        { name: "BebasNeue" },
+        { name: "Montserrat" },
+        { name: "Allura" },
+        { name: "Caveat" },
+        { name: "DancingScript" },
+        { name: "GreatVibes" },
+        { name: "Oswald" },
+        { name: "Pacifico" },
+        { name: "PlayfairDisplay" },
+        { name: "Raleway" },
+        { name: "Sacramento" },
+        { name: "Poppins" },
+        { name: "Nunito" },
+        { name: "Cinzel" },
+        { name: "CormorantGaramond" },
+        { name: "Lora" },
+        { name: "AlexBrush" },
+        { name: "Tangerine" },
+        { name: "PinyonScript" },
+        { name: "Lobster" },
+        { name: "AbrilFatface" },
+        { name: "JosefinSans" },
+        { name: "Quicksand" },
+        { name: "Merriweather" },
+        { name: "PermanentMarker" },
+        { name: "Satisfy" },
     ];
 
-    await prisma.font.createMany({
-        data: fonts,
-        skipDuplicates: true,
-    });
+    await prisma.font.createMany({ data: fonts });
     console.log("Seeded fonts successfully.");
 }
 
