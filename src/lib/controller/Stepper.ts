@@ -1,4 +1,4 @@
-import { ss, pcs } from "$lib/state.svelte";
+import { ss, pcs } from "$lib/state";
 import { error } from "@sveltejs/kit";
 import {
     validateStep,
@@ -18,7 +18,7 @@ export async function defineStepperEvent(
     initialStep: number,
 ): Promise<StepperEventResult> {
     switch (stepEvent) {
-        case "next":
+        case "next": {
             // Validate current step before proceeding
             const validationResult = validateStep(ss.currentStep);
 
@@ -37,6 +37,7 @@ export async function defineStepperEvent(
                 ss.currentStep += 1;
             }
             return { success: true };
+        }
 
         case "prev":
             // No validation needed for going back
@@ -45,7 +46,7 @@ export async function defineStepperEvent(
             }
             return { success: true };
 
-        case "submit":
+        case "submit": {
             // Validate current step before submission
             const finalValidation = validateStep(ss.currentStep);
             if (!finalValidation.success) {
@@ -81,12 +82,9 @@ export async function defineStepperEvent(
             }
 
             return { success: true };
+        }
 
         default:
             error(406, `Wrong event: ${stepEvent}`);
-            return {
-                success: false,
-                errorMessage: `Wrong event: ${stepEvent}`,
-            };
     }
 }

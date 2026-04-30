@@ -1,7 +1,6 @@
 <script lang="ts">
     import { cs, ss, tcc, ts } from "$lib/state.svelte";
     import Pagination from "../Pagination.svelte";
-    import { getContrastingColorFromImage } from "$lib/utils/helpers";
     import { onMount, tick } from "svelte";
 
     type Template = {
@@ -32,10 +31,10 @@
     let { data }: PageProp = $props();
 
     // Local reactive state for templates (initialized from server data)
-    let templates = $state<Template[]>(data.templates);
-    let total = $state(data.total);
-    let currentPage = $state(data.currentPage);
-    let pageSize = $state(data.pageSize);
+    let templates = $derived<Template[]>(data.templates);
+    let total = $derived(data.total);
+    let currentPage = $derived(data.currentPage);
+    let pageSize = $derived(data.pageSize);
     let selectedCategory = $state<number | null>(null);
     let isLoading = $state(false);
 
@@ -63,25 +62,11 @@
             currentPage = result.currentPage;
 
             await tick();
-            calculateTemplateColors();
         } catch (error) {
             console.error("Error fetching templates:", error);
         } finally {
             isLoading = false;
         }
-    }
-
-    function calculateTemplateColors() {
-        const cards = document.querySelectorAll(".wish-card");
-        cards.forEach(async (card, index) => {
-            const template = templates[index];
-            if (template && !tcc.colors.has(template.id)) {
-                const color = await getContrastingColorFromImage(
-                    card as HTMLElement,
-                );
-                tcc.colors = new Map(tcc.colors.set(template.id, color));
-            }
-        });
     }
 
     function handleClickEvent(event: MouseEvent) {
@@ -108,16 +93,13 @@
             target?.dataset.templateDescription ?? "";
 
         // Only update title if user hasn't entered their own (or it still matches previous template's)
-        if (!cs.title || cs.title === ts.templateTitle) {
+        if (!cs.title) {
             cs.title = newTemplateTitle;
         }
         // Only update description if user hasn't entered their own (or it still matches previous template's)
-        if (!cs.description || cs.description === ts.templateDescription) {
+        if (!cs.description) {
             cs.description = newTemplateDescription;
         }
-
-        ts.templateTitle = newTemplateTitle;
-        ts.templateDescription = newTemplateDescription;
 
         target?.classList.remove("border", "border-transparent");
         target?.classList.add(
@@ -147,10 +129,6 @@
     function handlePageChange(page: number) {
         fetchTemplates(selectedCategory, page);
     }
-
-    onMount(() => {
-        calculateTemplateColors();
-    });
 </script>
 
 <section>
@@ -216,7 +194,7 @@
                     <li>
                         <button
                             type="button"
-                            class="wish-card border-4 w-full rounded-xl overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:cursor-pointer relative aspect-[3/4] bg-gray-50"
+                            class="wish-card border-4 w-full rounded-xl overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:cursor-pointer relative aspect-3/4 bg-gray-50"
                             class:border-custom-orange-600={t.id ==
                                 cs.templateId}
                             class:border-red-500={ss.validationErrors

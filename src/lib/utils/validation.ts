@@ -1,11 +1,9 @@
 import { z } from "zod";
-import type { ZodType, ZodError } from "zod";
-import { cs } from "$lib/state.svelte";
+import type { ZodType } from "zod";
+import { cs } from "$lib/state";
 import {
     introStepSchema,
     designStepSchema,
-    recordStepSchema,
-    physicalCopySchema,
     type CardInfoStepSchema,
     type DesignStepData,
     type PhysicalCopyData,

@@ -1,12 +1,10 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { fade, fly, scale } from "svelte/transition";
+    import { fly } from "svelte/transition";
     import { goto } from "$app/navigation";
     import Loader from "$lib/components/Loader.svelte";
-    import "../../../app.css";
 
     let mounted = false;
-    let activeCard: number | null = null;
     let isNavigating = false;
 
     onMount(() => {
@@ -31,30 +29,64 @@
     />
 </svelte:head>
 
-<div class="bg-transparent relative z-10">
+<div
+    class="flex flex-col gap-8 px-5 py-12 mx-auto w-full max-w-[1203px] max-sm:px-4 max-sm:py-8"
+>
     {#if mounted}
-        <section>
-            <div class="p-4" in:fly={{ y: 50, duration: 800, delay: 200 }}>
-                <h1
-                    class="text-4xl md:text-5xl lg:text-6xl text-gray-900 text-center"
-                >
-                    За нашата компания
-                </h1>
-            </div>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- За нас -->
+        <!-- Page heading -->
+        <div
+            class="flex flex-col gap-3 items-center"
+            in:fly={{ y: 30, duration: 500, delay: 100 }}
+        >
+            <h1 class="text-3xl md:text-4xl text-zinc-800 text-center">
+                За нашата компания
+            </h1>
+            <svg
+                width="991"
+                height="2"
+                viewBox="0 0 991 2"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-[2px] w-full max-w-[500px]"
+            >
+                <path
+                    d="M1 1H990"
+                    stroke="#E7B85C"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                ></path>
+            </svg>
+        </div>
+
+        <!-- Three info cards -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <!-- За нас -->
+            <div
+                class="flex flex-col gap-5 p-6 bg-white rounded-2xl border border-amber-200 shadow-sm hover:shadow-md hover:border-amber-300 transition-all duration-200"
+                in:fly={{ y: 40, duration: 500, delay: 200 }}
+            >
                 <div
-                    class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-green-100 hover:shadow-xl transition-shadow duration-300"
-                    in:fly={{ y: 50, duration: 600, delay: 400 }}
+                    class="w-14 h-14 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0"
                 >
-                    <div class="text-5xl mb-6 text-center">🏠</div>
-                    <h3
-                        class="text-3xl font-bold text-slate-800 mb-6 text-center"
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="w-7 h-7 text-amber-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="1.5"
                     >
-                        За нас
-                    </h3>
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                    </svg>
+                </div>
+                <div class="flex flex-col gap-3">
+                    <h3 class="text-xl font-semibold text-zinc-800">За нас</h3>
                     <div
-                        class="text-slate-700 leading-relaxed space-y-4 text-base"
+                        class="text-sm text-zinc-500 leading-relaxed space-y-3"
                     >
                         <p>
                             Ние сме малък български екип с една проста, но добре
@@ -63,47 +95,57 @@
                         </p>
                         <p>
                             В мига, в който някой чуе любим за него глас в
-                            картичка, емоцията оживява – и това е нашият принос
-                            към това дигиталният свят да изпълнява истинското си
-                            предназначение: да събира хората заедно.
+                            картичка, емоцията оживява — и това е нашият принос
+                            към дигиталния свят.
                         </p>
                         <p>
                             Започнахме през 2025 година с вярата, че
                             технологията трябва да служи на човешките емоции, а
-                            не да ги заменя. Всяка картичка, която създаваме,
-                            носи частичка от сърцето на подателя.
+                            не да ги заменя.
                         </p>
                     </div>
                 </div>
+            </div>
 
-                <!-- Нашата мисия -->
+            <!-- Нашата мисия -->
+            <div
+                class="flex flex-col gap-5 p-6 bg-white rounded-2xl border border-rose-200 shadow-sm hover:shadow-md hover:border-rose-300 transition-all duration-200"
+                in:fly={{ y: 40, duration: 500, delay: 300 }}
+            >
                 <div
-                    class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-green-100 hover:shadow-xl transition-shadow duration-300"
-                    in:fly={{ y: 50, duration: 600, delay: 500 }}
+                    class="w-14 h-14 rounded-xl bg-rose-50 flex items-center justify-center flex-shrink-0"
                 >
-                    <div class="text-5xl mb-6 text-center">🎯</div>
-                    <h3
-                        class="text-3xl font-bold text-slate-800 mb-6 text-center"
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="w-7 h-7 text-rose-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="1.5"
                     >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                    </svg>
+                </div>
+                <div class="flex flex-col gap-3">
+                    <h3 class="text-xl font-semibold text-zinc-800">
                         Нашата мисия
                     </h3>
                     <div
-                        class="text-slate-700 leading-relaxed space-y-4 text-base"
+                        class="text-sm text-zinc-500 leading-relaxed space-y-3"
                     >
                         <p>
                             KartichkaQR прави персоналните поздравителни
-                            картички прости и значими. Създаваме уникални
-                            картички за подаръци, които оставят траен спомен.
+                            картички прости и значими. Създаваме картички, които
+                            оставят траен спомен.
                         </p>
                         <p>
                             Записвате гласовото си съобщение, избирате красив
-                            дизайн, а ние отпечатваме и доставяме
-                            висококачествена картичка с QR код. Перфектни
-                            картички за подаръци за всички поводи.
-                        </p>
-                        <p>
-                            Когато се сканира, получателите чуват вашето лично
-                            съобщение — създавайки трайни емоционални връзки.
+                            дизайн, а ние доставяме картичка с QR код. Перфектни
+                            за всички поводи.
                         </p>
                         <p>
                             Без акаунти, без сложности — просто сърдечна
@@ -111,23 +153,40 @@
                         </p>
                     </div>
                 </div>
+            </div>
 
-                <!-- Нашата философия -->
+            <!-- Нашата философия -->
+            <div
+                class="flex flex-col gap-5 p-6 bg-white rounded-2xl border border-purple-200 shadow-sm hover:shadow-md hover:border-purple-300 transition-all duration-200"
+                in:fly={{ y: 40, duration: 500, delay: 400 }}
+            >
                 <div
-                    class="bg-white/70 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-green-100 hover:shadow-xl transition-shadow duration-300"
-                    in:fly={{ y: 50, duration: 600, delay: 600 }}
+                    class="w-14 h-14 rounded-xl bg-purple-50 flex items-center justify-center flex-shrink-0"
                 >
-                    <div class="text-5xl mb-6 text-center">💭</div>
-                    <h3
-                        class="text-3xl font-bold text-slate-800 mb-6 text-center"
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="w-7 h-7 text-purple-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="1.5"
                     >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 01.865-.501 48.172 48.172 0 003.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z"
+                        />
+                    </svg>
+                </div>
+                <div class="flex flex-col gap-3">
+                    <h3 class="text-xl font-semibold text-zinc-800">
                         Нашата философия
                     </h3>
                     <div
-                        class="text-slate-700 leading-relaxed space-y-4 text-base"
+                        class="text-sm text-zinc-500 leading-relaxed space-y-3"
                     >
                         <p
-                            class="italic text-center font-medium text-green-700 text-lg"
+                            class="italic font-medium text-zinc-600 text-base border-l-2 border-purple-300 pl-3"
                         >
                             "Най-важните думи не се четат — те се чуват."
                         </p>
@@ -136,110 +195,87 @@
                             разстоянието.
                         </p>
                         <p>
-                            Един прост жест — картичка с глас — се превръща в
-                            спомен, който може да се слуша отново и отново, дори
-                            след години.
+                            Вярваме, че в света на бързите съобщения, истинската
+                            емоция се предава най-добре чрез човешкия глас.
                         </p>
                         <p>
-                            Вярваме, че в света на бързите съобщения и
-                            емотикони, истинската емоция се предава най-добре
-                            чрез човешкия глас.
-                        </p>
-                        <p>
-                            Затова създаваме продукт, който съчетава
-                            традиционната красота на хартиените картички с
-                            магията на съвременните технологии.
+                            Затова съчетаваме традиционната красота на
+                            хартиените картички с магията на съвременните
+                            технологии.
                         </p>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
 
-        <section class="pt-8">
-            <div
-                class="bg-gradient-to-br from-green-400/50 to-emerald-500/30 rounded-2xl sm:rounded-3xl p-6 sm:p-8 lg:p-12 backdrop-blur-sm border border-green-200/50 shadow-xl"
-                in:scale={{ duration: 800, delay: 300 }}
-            >
-                <div class="text-center mb-8 sm:mb-10">
-                    <h2
-                        class="text-2xl sm:text-3xl lg:text-4xl font-bold text-black mb-4 sm:mb-6"
-                    >
-                        Нашата визия
-                    </h2>
-                    <p
-                        class="text-base sm:text-lg lg:text-xl text-black/95 leading-relaxed"
-                    >
-                        "Да революционизираме начина, по който хората се
-                        свързват, като направим всяка поздравителна картичка
-                        уникално, лично преживяване, което преодолява разстояния
-                        и докосва сърца. Ние не просто създаваме картички за
-                        подаръци – ние изграждаме моменти, които имат значение."
-                    </p>
-                </div>
-
-                <div
-                    class="bg-white/90 backdrop-blur-sm rounded-xl sm:rounded-2xl p-6 sm:p-8 lg:p-10 shadow-lg border border-white/30"
-                    in:fly={{ y: 30, duration: 600, delay: 200 }}
+        <!-- Vision & CTA -->
+        <div
+            class="flex flex-col gap-6 p-6 sm:p-8 bg-white rounded-2xl border border-amber-200 shadow-sm"
+            in:fly={{ y: 40, duration: 500, delay: 500 }}
+        >
+            <div class="flex flex-col gap-3 items-center text-center">
+                <h2 class="text-2xl sm:text-3xl text-zinc-800">Нашата визия</h2>
+                <svg
+                    width="991"
+                    height="2"
+                    viewBox="0 0 991 2"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-[2px] w-full max-w-[300px]"
                 >
-                    <div class="text-center">
-                        <h3
-                            class="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-800 mb-3 sm:mb-4 lg:mb-6"
-                        >
-                            Готови да създадете магия?
-                        </h3>
-                        <p
-                            class="text-slate-600 mb-6 sm:mb-8 lg:mb-10 text-sm sm:text-base lg:text-lg leading-relaxed"
-                        >
-                            Присъединете се към хилядите потребители, които вече
-                            са открили радостта от персонализираните
-                            поздравителни картички за подаръци.
-                        </p>
-                        <div class="space-y-3 sm:space-y-0">
-                            <button
-                                class="inline-flex items-center justify-center w-full sm:w-auto bg-gradient-to-r from-green-500 to-emerald-600 text-white px-6 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-5 rounded-full font-semibold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-transform duration-300 text-sm sm:text-base lg:text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-                                on:click={handleCreateCard}
-                                disabled={isNavigating}
-                            >
-                                {#if isNavigating}
-                                    <div class="flex items-center">
-                                        <div class="mr-2">
-                                            <Loader size="sm" color="white" />
-                                        </div>
-                                        <span>Зареждане...</span>
-                                    </div>
-                                {:else}
-                                    <span>Започни да създаваш сега</span>
-                                    <svg
-                                        class="w-4 h-4 sm:w-5 sm:h-5 ml-2"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M13 7l5 5m0 0l-5 5m5-5H6"
-                                        />
-                                    </svg>
-                                {/if}
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                    <path
+                        d="M1 1H990"
+                        stroke="#E7B85C"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                    ></path>
+                </svg>
+                <p
+                    class="text-sm sm:text-base text-zinc-500 leading-relaxed max-w-2xl italic mt-1"
+                >
+                    "Да революционизираме начина, по който хората се свързват,
+                    като направим всяка поздравителна картичка уникално, лично
+                    преживяване. Ние не просто създаваме картички за подаръци —
+                    ние изграждаме моменти, които имат значение."
+                </p>
             </div>
-        </section>
+
+            <div
+                class="flex flex-col items-center gap-4 p-6 bg-amber-50 rounded-xl border border-amber-100 text-center"
+            >
+                <h3 class="text-lg sm:text-xl font-semibold text-zinc-800">
+                    Готови да създадете магия?
+                </h3>
+                <p class="text-sm text-zinc-500 leading-relaxed max-w-md">
+                    Присъединете се към потребителите, които вече са открили
+                    радостта от персонализираните поздравителни картички.
+                </p>
+                <button
+                    onclick={handleCreateCard}
+                    disabled={isNavigating}
+                    class="flex items-center gap-2 px-6 py-3 bg-green-600 text-white text-sm font-medium rounded-full hover:bg-green-700 hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
+                >
+                    {#if isNavigating}
+                        <Loader size="sm" color="white" />
+                        <span>Зареждане...</span>
+                    {:else}
+                        <span>Започни да създаваш сега</span>
+                        <svg
+                            class="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M13 7l5 5m0 0l-5 5m5-5H6"
+                            />
+                        </svg>
+                    {/if}
+                </button>
+            </div>
+        </div>
     {/if}
 </div>
-
-<style>
-    @keyframes float {
-        0%,
-        100% {
-            transform: translateY(0px);
-        }
-        50% {
-            transform: translateY(-20px);
-        }
-    }
-</style>

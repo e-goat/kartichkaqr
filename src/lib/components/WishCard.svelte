@@ -123,7 +123,7 @@
         <!-- Embla viewport -->
         <div
             bind:this={emblaNode}
-            class="overflow-hidden w-65 md:w-85 lg:w-95 h-[25rem] md:h-[32rem] lg:h-[39rem] rounded-xl shadow-xl border border-dashed"
+            class="overflow-hidden w-65 md:w-85 lg:w-95 h-100 md:h-128 lg:h-156 rounded-xl shadow-xl border border-dashed"
         >
             <div class="flex h-full">
                 <!-- Slide 1: Front -->
@@ -243,15 +243,15 @@
                         <img
                             src={logo}
                             alt="Kartichka QR"
-                            class="w-14 h-14 rounded-2xl shadow-lg border-2 border-white/60"
+                            class="w-14 h-14 rounded-2xl border-2 border-white/60"
                         />
                         <div class="text-center">
                             <p
-                                class="text-amber-900 font-bold text-sm tracking-widest uppercase drop-shadow-sm"
+                                class="text-black font-bold text-sm tracking-widest uppercase"
                             >
                                 Kartichka QR
                             </p>
-                            <p class="text-amber-700 text-xs mt-0.5 opacity-80">
+                            <p class="text-gray-900 text-xs mt-0.5 opacity-80">
                                 {new Date().getFullYear()}
                             </p>
                         </div>

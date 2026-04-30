@@ -38,7 +38,10 @@
                 Към началото
             </a>
             <button
-                onclick={() => history.back()}
+                onclick={() => {
+                    /*global history*/
+                    history.back();
+                }}
                 class="bg-white border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-xl font-semibold hover:bg-gray-50 hover:border-gray-400 hover:shadow-lg transform hover:-translate-y-1 transition-link-border"
             >
                 Назад
