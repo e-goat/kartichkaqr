@@ -130,6 +130,17 @@
         fetchTemplates(selectedCategory, page);
     }
 
+    let loadedImages = $state(new Set<number>());
+
+    $effect(() => {
+        templates;
+        loadedImages = new Set();
+    });
+
+    function handleImageLoad(id: number) {
+        loadedImages = new Set([...loadedImages, id]);
+    }
+
     function lazyReveal(node: HTMLElement) {
         node.style.opacity = "0";
         node.style.transform = "translateY(8px)";
@@ -237,11 +248,19 @@
                             data-font={t.font.name}
                             aria-label={t.title}
                         >
+                            {#if !loadedImages.has(t.id)}
+                                <div
+                                    class="absolute inset-0 animate-pulse bg-gray-200 rounded-lg"
+                                ></div>
+                            {/if}
                             <enhanced:img
                                 src={t.background}
-                                class="absolute inset-0 w-full h-full object-contain"
+                                class="absolute inset-0 w-full h-full object-contain transition-opacity duration-500"
+                                class:opacity-0={!loadedImages.has(t.id)}
+                                class:opacity-100={loadedImages.has(t.id)}
                                 alt={t.title}
                                 loading="lazy"
+                                onload={() => handleImageLoad(t.id)}
                             />
                         </button>
                     </li>
