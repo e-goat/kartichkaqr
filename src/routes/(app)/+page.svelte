@@ -1,14 +1,6 @@
 <script lang="ts">
-    import { goto } from "$app/navigation";
-    import Loader from "$lib/components/Loader.svelte";
+    import CardCreate from "$lib/components/CardCreate.svelte";
     import openerLogo from "$lib/assets/opener-logo.svg";
-
-    let isLoading = false;
-
-    function handleCreateCard() {
-        isLoading = true;
-        goto("/card/create");
-    }
 </script>
 
 <svelte:head>
@@ -164,36 +156,7 @@
                 <p class="text-base font-semibold text-center text-zinc-800">
                     Създайте персонализирана картичка за подаръци за секунди.
                 </p>
-                <button
-                    onclick={handleCreateCard}
-                    disabled={isLoading}
-                    class="flex gap-3 justify-center items-center px-6 py-3 bg-green-600 transition-button cursor-pointer rounded-full hover:bg-green-700 hover:scale-105 active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed w-full"
-                >
-                    <div
-                        class="flex items-center justify-center w-5 h-5 flex-shrink-0"
-                    >
-                        {#if isLoading}
-                            <Loader size="sm" color="black" />
-                        {:else}
-                            <svg
-                                width="20"
-                                height="21"
-                                viewBox="0 0 20 21"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-5 h-5"
-                            >
-                                <path
-                                    d="M11 14.2709L18 14.2239V4.25687L12.83 4.26387L11.016 6.07787L11 14.2709ZM9 6.07787L7.179 4.30287L2 4.26787V14.2239L9 14.2709V6.07787ZM8 2.30787L10 4.26487L12 2.26487L17.997 2.25687C18.2596 2.25647 18.5198 2.30782 18.7626 2.40796C19.0054 2.50811 19.2261 2.65509 19.4121 2.84053C19.5981 3.02597 19.7457 3.24623 19.8466 3.48873C19.9475 3.73123 19.9996 3.99122 20 4.25387V14.2239C20 14.7519 19.7912 15.2585 19.4192 15.6332C19.0471 16.0078 18.542 16.2202 18.014 16.2239L12 16.2649L10.004 18.2649L8 16.2649L1.986 16.2239C1.458 16.2202 0.952878 16.0078 0.580828 15.6332C0.208778 15.2585 -1.2936e-05 14.7519 6.01176e-10 14.2239V4.26787C6.01176e-10 3.73744 0.210714 3.22873 0.585786 2.85366C0.960859 2.47858 1.46957 2.26787 2 2.26787L8 2.30787Z"
-                                    fill="black"
-                                ></path>
-                            </svg>
-                        {/if}
-                    </div>
-                    <span class="text-base font-medium text-black">
-                        {isLoading ? "Зареждане..." : "Създай картичка"}
-                    </span>
-                </button>
+                <CardCreate fullWidth />
             </div>
         </div>
     </div>

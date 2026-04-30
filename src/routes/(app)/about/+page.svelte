@@ -1,24 +1,13 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { fly } from "svelte/transition";
-    import { goto } from "$app/navigation";
-    import Loader from "$lib/components/Loader.svelte";
+    import CardCreate from "$lib/components/CardCreate.svelte";
 
     let mounted = false;
-    let isNavigating = false;
 
     onMount(() => {
         mounted = true;
     });
-
-    async function handleCreateCard() {
-        isNavigating = true;
-        try {
-            await goto("/card/create");
-        } finally {
-            isNavigating = false;
-        }
-    }
 </script>
 
 <svelte:head>
@@ -38,7 +27,9 @@
             class="flex flex-col gap-3 items-center"
             in:fly={{ y: 30, duration: 500, delay: 100 }}
         >
-            <h1 class="text-3xl md:text-4xl text-zinc-800 text-center">
+            <h1
+                class="text-3xl md:text-4xl font-medium text-zinc-800 text-center"
+            >
                 За нашата компания
             </h1>
             <svg
@@ -214,7 +205,9 @@
             in:fly={{ y: 40, duration: 500, delay: 500 }}
         >
             <div class="flex flex-col gap-3 items-center text-center">
-                <h2 class="text-2xl sm:text-3xl text-zinc-800">Нашата визия</h2>
+                <h2 class="text-2xl sm:text-3xl font-medium text-zinc-800">
+                    Нашата визия
+                </h2>
                 <svg
                     width="991"
                     height="2"
@@ -250,32 +243,16 @@
                     Присъединете се към потребителите, които вече са открили
                     радостта от персонализираните поздравителни картички.
                 </p>
-                <button
-                    onclick={handleCreateCard}
-                    disabled={isNavigating}
-                    class="flex items-center gap-2 px-6 py-3 bg-green-600 text-white text-sm font-medium rounded-full hover:bg-green-700 hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed disabled:transform-none"
-                >
-                    {#if isNavigating}
-                        <Loader size="sm" color="white" />
-                        <span>Зареждане...</span>
-                    {:else}
-                        <span>Започни да създаваш сега</span>
-                        <svg
-                            class="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M13 7l5 5m0 0l-5 5m5-5H6"
-                            />
-                        </svg>
-                    {/if}
-                </button>
+                <CardCreate label="Започни да създаваш сега" />
             </div>
         </div>
     {/if}
 </div>
+
+<style>
+    h1,
+    h2,
+    h3 {
+        font-family: "Montserrat", sans-serif;
+    }
+</style>
