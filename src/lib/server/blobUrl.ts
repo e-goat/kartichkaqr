@@ -1,29 +1,20 @@
 /**
  * Helpers for converting raw Vercel Blob URLs (private store, not directly
  * accessible by the browser) into proxy URLs that route through our own
- * `/api/asset/[...path]` endpoint.
+ * `/api/asset` endpoint, which fetches the blob with the bearer token and
+ * streams it back. Per Vercel docs there is no "unlocked URL" for a private
+ * blob — the only ways to read it are `get()` from a server function or a
+ * direct curl with the token. This proxy is the SDK route, packaged as a URL.
  */
-
-import { createHash } from "node:crypto";
 
 const VERCEL_BLOB_HOST_SUFFIX = ".blob.vercel-storage.com";
-const ASSET_PROXY_PREFIX = "/api/asset/";
+const ASSET_PROXY_PATH = "/api/asset";
 
 /**
- * Per Vercel docs, append a `?v=<version>` query param to blob URLs so that
- * browser/CDN caches refresh when the underlying content changes. We derive
- * the version deterministically from the pathname: blobs in this app use
- * UUIDed paths and are never overwritten, so the hash is stable per blob and
- * naturally bumps when the DB row points at a new upload.
- */
-function versionFromPath(pathname: string): string {
-    return createHash("sha1").update(pathname).digest("base64url").slice(0, 10);
-}
-
-/**
- * Convert a Vercel Blob URL into a proxy URL that streams the asset through
- * our server. Non-Vercel URLs (e.g. legacy paths or hex colors) pass through
- * unchanged.
+ * Convert a Vercel Blob URL into a proxy URL the browser can use. The full
+ * blob URL is passed through as the `u` query param; the proxy validates it
+ * and fetches the blob server-side. Non-Vercel values (hex colors, legacy
+ * paths, empty strings) pass through unchanged.
  */
 export function toAssetProxyUrl(blobUrl: string): string;
 export function toAssetProxyUrl(
@@ -45,13 +36,13 @@ export function toAssetProxyUrl(
         return blobUrl;
     }
 
-    const pathname = url.pathname.replace(/^\//, "");
-    return `${ASSET_PROXY_PREFIX}${pathname}?v=${versionFromPath(pathname)}`;
+    const params = new URLSearchParams({ u: blobUrl });
+    return `${ASSET_PROXY_PATH}?${params.toString()}`;
 }
 
 /**
- * Apply `toAssetProxyUrl` to selected fields on an object without mutating the
- * original. Useful for rewriting DB rows before they leave the server.
+ * Apply `toAssetProxyUrl` to selected fields on an object without mutating
+ * the original. Useful for rewriting DB rows before they leave the server.
  */
 export function rewriteAssetFields<T extends Record<string, unknown>>(
     row: T,

@@ -130,16 +130,22 @@ class VercelStorage {
     }
 
     /**
-     * Fetch a private blob by its pathname or URL. Returns the response stream
-     * and metadata so callers can stream it back to the browser. Returns null
-     * when the blob does not exist.
+     * Fetch a private blob by its URL (or pathname). Returns the response
+     * stream and metadata so callers can stream it back to the browser, or
+     * `null` when the blob does not exist (404).
      *
-     * The headers object comes from undici and is structurally compatible with
-     * the standard Headers interface (has `get(name)`), so it's exposed via a
-     * minimal contract rather than the full DOM Headers type.
+     * Forward `ifNoneMatch` from the browser's `If-None-Match` header to get
+     * a `304 Not Modified` response (no stream) when the blob is unchanged.
+     *
+     * The headers object comes from undici and is structurally compatible
+     * with the standard Headers interface (has `get(name)`), so it's exposed
+     * via a minimal contract rather than the full DOM Headers type.
      */
-    async getAsset(pathnameOrUrl: string): Promise<{
-        stream: ReadableStream;
+    async getAsset(
+        pathnameOrUrl: string,
+        options: { ifNoneMatch?: string } = {},
+    ): Promise<{
+        stream: ReadableStream | null;
         headers: { get(name: string): string | null };
         status: number;
     } | null> {
@@ -149,12 +155,13 @@ class VercelStorage {
         const result = await get(pathnameOrUrl, {
             access: "private",
             token: BLOB_SECRET,
+            ifNoneMatch: options.ifNoneMatch,
         });
 
-        if (!result || !result.stream) return null;
+        if (!result) return null;
 
         return {
-            stream: result.stream as unknown as ReadableStream,
+            stream: result.stream as unknown as ReadableStream | null,
             headers: result.headers,
             status: result.statusCode,
         };
