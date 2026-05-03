@@ -267,7 +267,7 @@
                             {/if}
                             <enhanced:img
                                 src={t.background}
-                                class="absolute inset-0 w-full h-full object-contain transition-opacity duration-500"
+                                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
                                 class:opacity-0={!loadedImages.has(t.id)}
                                 class:opacity-100={loadedImages.has(t.id)}
                                 alt={t.title}

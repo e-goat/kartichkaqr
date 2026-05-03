@@ -59,6 +59,10 @@ h6 {
     border: none;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     scrollbar-width: thin;
 }
