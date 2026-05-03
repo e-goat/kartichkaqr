@@ -1,6 +1,9 @@
 import { json } from "@sveltejs/kit";
 import type { RequestHandler } from "./$types";
 import * as db from "$lib/server/database";
+import { rewriteAssetFields } from "$lib/server/blobUrl";
+
+const TEMPLATE_ASSET_FIELDS = ["background", "backgroundBack"] as const;
 
 export const GET: RequestHandler = async ({ url }) => {
     const limit = Math.min(Number(url.searchParams.get("limit")) || 9, 100);
@@ -13,7 +16,9 @@ export const GET: RequestHandler = async ({ url }) => {
         : await db.getAllTemplates(limit, skip);
 
     return json({
-        templates: result.templates,
+        templates: result.templates.map((t) =>
+            rewriteAssetFields(t, TEMPLATE_ASSET_FIELDS),
+        ),
         total: result.total,
         currentPage,
         pageSize: limit,

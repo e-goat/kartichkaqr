@@ -6,9 +6,12 @@ import { VercelStorageController } from "$lib/controller/VercelStorage";
 import { MailController } from "$lib/controller/Mail";
 import { APP_EMAIL, ADMIN_EMAIL, APP_NAME } from "$lib/server/secrets";
 import * as db from "$lib/server/database";
+import { rewriteAssetFields } from "$lib/server/blobUrl";
 import { fail } from "@sveltejs/kit";
 import { createCard } from "$lib/server/database";
 import { Prisma } from "$lib/db";
+
+const TEMPLATE_ASSET_FIELDS = ["background", "backgroundBack"] as const;
 
 export const load: PageServerLoad = async ({ url }) => {
     const limit: number = Number(url.searchParams.get("limit")) || 9;
@@ -23,7 +26,9 @@ export const load: PageServerLoad = async ({ url }) => {
     const categories = await db.getAllCategories();
 
     return {
-        templates: result.templates,
+        templates: result.templates.map((t) =>
+            rewriteAssetFields(t, TEMPLATE_ASSET_FIELDS),
+        ),
         categories,
         total: result.total,
         currentPage,

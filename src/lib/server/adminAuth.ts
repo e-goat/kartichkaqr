@@ -1,7 +1,5 @@
 import { ADMIN_DASHBOARD_KEY } from "$lib/server/secrets";
 
-const UNAUTHORIZED_JSON = { success: false, message: "Unauthorized" } as const;
-
 /**
  * Validates the admin key from the request.
  * Reads from `Authorization: Bearer <key>` or `X-Admin-Key: <key>`.
@@ -11,10 +9,17 @@ const UNAUTHORIZED_JSON = { success: false, message: "Unauthorized" } as const;
 export function validateAdminAuth(request: Request): Response | null {
     const key = getAdminKeyFromRequest(request);
     if (!ADMIN_DASHBOARD_KEY || key !== ADMIN_DASHBOARD_KEY) {
-        return new Response(JSON.stringify(UNAUTHORIZED_JSON), {
-            status: 401,
-            headers: { "Content-Type": "application/json" },
-        });
+        return new Response(
+            JSON.stringify({
+                success: false,
+                message: "Unauthorized Key: " + key,
+                body: request.body,
+            }),
+            {
+                status: 401,
+                headers: { "Content-Type": "application/json" },
+            },
+        );
     }
     return null;
 }

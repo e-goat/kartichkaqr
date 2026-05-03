@@ -1,14 +1,15 @@
-import { put, del } from "@vercel/blob";
+import { put, del, get } from "@vercel/blob";
 import type { PutBlobResult } from "@vercel/blob";
-import { BLOB_READ_WRITE_TOKEN } from "$lib/server/secrets";
+import appConfig from "$lib/config/app";
 
-/** Derive file extension from mime type (e.g. image/png → png). If no "/", use value as extension. */
-function extensionFromMimeType(mimeType: string): string {
-    const slash = mimeType.indexOf("/");
-    return slash >= 0 ? mimeType.slice(slash + 1).trim() : mimeType.trim();
-}
+const BLOB_SECRET = appConfig.blob;
 
 class VercelStorage {
+    #extensionFromMimeType(mimeType: string): string {
+        const slash = mimeType.indexOf("/");
+        return slash >= 0 ? mimeType.slice(slash + 1).trim() : mimeType.trim();
+    }
+
     async storeAudio({
         file,
         mimeType,
@@ -31,13 +32,13 @@ class VercelStorage {
                 throw new Error("Missing filename");
             }
 
-            if (!BLOB_READ_WRITE_TOKEN) {
+            if (!BLOB_SECRET) {
                 throw new Error("Missing vercel storage token");
             }
 
             const result = await put(`${uuid}.${mimeType}`, file, {
-                access: "public",
-                token: BLOB_READ_WRITE_TOKEN,
+                access: "private",
+                token: BLOB_SECRET,
             });
 
             console.log("Recording stored successfully", result);
@@ -71,16 +72,16 @@ class VercelStorage {
                 throw new Error("Missing filename");
             }
 
-            if (!BLOB_READ_WRITE_TOKEN) {
+            if (!BLOB_SECRET) {
                 throw new Error("Missing vercel storage token");
             }
-
+            console.log("SECRET", BLOB_SECRET);
             const result = await put(
                 `${category}/${file.name}.${mimeType}`,
                 file,
                 {
-                    access: "public",
-                    token: BLOB_READ_WRITE_TOKEN,
+                    access: "private",
+                    token: BLOB_SECRET,
                 },
             );
 
@@ -109,16 +110,15 @@ class VercelStorage {
         if (!file) throw new Error("Missing file");
         if (!mimeType?.trim()) throw new Error("Missing mime type");
         if (!category?.trim()) throw new Error("Missing category");
-        if (!BLOB_READ_WRITE_TOKEN)
-            throw new Error("Missing vercel storage token");
+        if (!BLOB_SECRET) throw new Error("Missing vercel storage token");
 
-        const ext = extensionFromMimeType(mimeType) || "bin";
+        const ext = this.#extensionFromMimeType(mimeType) || "bin";
         const uuid = crypto.randomUUID();
         const path = `${category}/${uuid}.${ext}`;
 
         const result = await put(path, file, {
-            access: "public",
-            token: BLOB_READ_WRITE_TOKEN,
+            access: "private",
+            token: BLOB_SECRET,
         });
         return result;
     }
@@ -126,7 +126,38 @@ class VercelStorage {
     /** Delete a blob by its URL (from store/storeWithCategory). */
     async deleteByUrl(url: string): Promise<void> {
         if (!url?.trim()) throw new Error("Missing url");
-        await del([url], { token: BLOB_READ_WRITE_TOKEN });
+        await del([url], { token: BLOB_SECRET });
+    }
+
+    /**
+     * Fetch a private blob by its pathname or URL. Returns the response stream
+     * and metadata so callers can stream it back to the browser. Returns null
+     * when the blob does not exist.
+     *
+     * The headers object comes from undici and is structurally compatible with
+     * the standard Headers interface (has `get(name)`), so it's exposed via a
+     * minimal contract rather than the full DOM Headers type.
+     */
+    async getAsset(pathnameOrUrl: string): Promise<{
+        stream: ReadableStream;
+        headers: { get(name: string): string | null };
+        status: number;
+    } | null> {
+        if (!pathnameOrUrl?.trim()) throw new Error("Missing pathname or url");
+        if (!BLOB_SECRET) throw new Error("Missing vercel storage token");
+
+        const result = await get(pathnameOrUrl, {
+            access: "private",
+            token: BLOB_SECRET,
+        });
+
+        if (!result || !result.stream) return null;
+
+        return {
+            stream: result.stream as unknown as ReadableStream,
+            headers: result.headers,
+            status: result.statusCode,
+        };
     }
 }
 

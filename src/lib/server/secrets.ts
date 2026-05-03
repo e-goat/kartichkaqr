@@ -4,7 +4,9 @@ export const RESEND_API_KEY = env.RESEND_API_KEY;
 
 export const GOOGLE_CLOUD_STORAGE_JSON = {};
 
-export const BLOB_READ_WRITE_TOKEN = env.BLOB_READ_WRITE_TOKEN;
+export const BLOB_PROD_READ_WRITE_TOKEN = env.BLOB_PROD_READ_WRITE_TOKEN;
+
+export const BLOB_DEV_READ_WRITE_TOKEN = env.BLOB_DEV_READ_WRITE_TOKEN;
 
 export const OPTIMIZE_API_KEY = env.OPTIMIZE_API_KEY;
 
@@ -15,3 +17,5 @@ export const APP_EMAIL = env.APP_EMAIL;
 export const APP_NAME = env.APP_NAME;
 
 export const ADMIN_DASHBOARD_KEY = env.ADMIN_DASHBOARD_KEY;
+
+export const APP_ENV = env.APP_ENV;
