@@ -13,6 +13,9 @@
     --color-brand-purple: #de8cfc;
     --default-font-family: "Montserrat", sans-serif;
     --default-font-variation-settings: normal;
+}
+
+:root {
     --font-family-Roboto: "Roboto", sans-serif;
     --font-family-ChironSungHK: "Chiron Sung HK", serif;
     --font-family-BebasNeue: "Bebas Neue", sans-serif;
