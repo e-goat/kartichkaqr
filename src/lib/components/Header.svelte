@@ -35,26 +35,15 @@
         if (typeof window === "undefined") return;
 
         let lastScrollY = window.scrollY;
-        const scrollThreshold = 50; // Start shrinking after 50px scroll
+        const scrollThreshold = 50;
 
         function handleScroll() {
             const currentScrollY = window.scrollY;
-
-            // Shrink when scrolled down past threshold
-            // Expand when scrolled back to top
-            if (currentScrollY > scrollThreshold) {
-                isScrolled = true;
-            } else {
-                isScrolled = false;
-            }
-
+            isScrolled = currentScrollY > scrollThreshold;
             lastScrollY = currentScrollY;
         }
 
-        // Use passive listener for better performance
         window.addEventListener("scroll", handleScroll, { passive: true });
-
-        // Initial check
         handleScroll();
 
         return () => {
@@ -68,30 +57,31 @@
     href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;700&family=Montserrat:wght@400;500&display=swap"
 />
 
-<header class="header-container" bind:this={headerElement}>
-    <div class="header-content">
-        <button
-            class="logo-link flex items-center gap-2 text-amber-600 font-bold text-lg hover:text-amber-800 transition-colors"
-            aria-label="Начало"
-            onclick={handleHome}
-        >
+<header
+    class="flex py-4 justify-center items-center border-b border-[#eed9b0] w-full relative bg-white z-50"
+    bind:this={headerElement}
+>
+    <div
+        class="flex w-full max-w-7xl justify-between items-center px-3 sm:px-4 lg:px-5 relative"
+    >
+        <button class="z-[60]" aria-label="Начало" onclick={handleHome}>
             <enhanced:img
                 alt="KartichkaQR"
                 src={logo}
-                class="logo-image"
-                class:logo-shrunk={isScrolled}
+                class="logo-img w-10 h-10 rounded-xl object-cover shadow-sm outline outline-2 outline-amber-400/60 outline-offset-2 transition-transform duration-300 ease-out"
+                class:scale-90={isScrolled}
             />
         </button>
 
         <!-- Desktop Navigation -->
-        <nav class="desktop-nav">
+        <nav class="hidden sm:flex items-center gap-5 lg:gap-6 relative">
             <NavItem target="/">Начало</NavItem>
             <NavItem target="/about">За нас</NavItem>
         </nav>
 
         <!-- Desktop CTA Button -->
         <button
-            class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-[#229e32] hover:bg-[#1e8a2c] active:scale-95 transition-[background-color,transform] duration-200 ease-out hover:scale-110 desktop-cta"
+            class="hidden sm:inline-flex items-center justify-center w-8 h-8 rounded-lg bg-[#229e32] hover:bg-[#1e8a2c] active:scale-95 hover:scale-110 transition-[background-color,transform] duration-200 ease-out"
             class:opacity-50={isLoading || ss.isRendering}
             class:pointer-events-none={isLoading || ss.isRendering}
             aria-label="Създай картичка"
@@ -126,16 +116,23 @@
     {#if mobileMenuOpen}
         <button
             type="button"
-            class="mobile-overlay"
+            class="fixed inset-0 bg-black/50 z-40 animate-[fadeIn_0.2s_ease-out]"
             onclick={closeMobileMenu}
             aria-label="Затвори меню"
         ></button>
     {/if}
 
     <!-- Mobile Menu -->
-    <nav class="mobile-nav" class:mobile-nav-open={mobileMenuOpen}>
-        <div class="mobile-nav-content">
-            <div class="mobile-nav-items">
+    <nav
+        class="fixed top-0 right-0 w-[280px] max-w-[80vw] h-dvh bg-white border-l border-[#eed9b0] z-50 overflow-y-auto shadow-[-4px_0_20px_rgba(0,0,0,0.1)] transition-transform duration-300 ease-out"
+        class:translate-x-full={!mobileMenuOpen}
+        class:translate-x-0={mobileMenuOpen}
+        class:mobile-nav-open={mobileMenuOpen}
+    >
+        <div
+            class="mobile-nav-content flex flex-col min-h-full pt-20 px-6 gap-8"
+        >
+            <div class="flex flex-col gap-2">
                 <NavItem
                     target="/"
                     class="mobile-nav-item"
@@ -154,15 +151,16 @@
 
             <!-- Mobile CTA Button -->
             <button
-                class="mobile-cta-button"
-                class:loading={isLoading || ss.isRendering}
+                class="mt-auto flex w-full px-5 py-3.5 justify-center items-center gap-3 rounded-[14px] cursor-pointer bg-[#229e32] border-2 border-[#1a7a27] outline outline-[3px] outline-[rgba(34,158,50,0.25)] outline-offset-2 shadow-[0_2px_8px_rgba(34,158,50,0.2)] hover:bg-[#1e8a2c] hover:shadow-[0_4px_12px_rgba(34,158,50,0.3)] active:scale-[0.98] active:shadow-[0_1px_4px_rgba(34,158,50,0.2)] transition-[background-color,transform,box-shadow] duration-200"
+                class:opacity-50={isLoading || ss.isRendering}
+                class:pointer-events-none={isLoading || ss.isRendering}
                 aria-label="Създай картичка"
                 onclick={handleCreateCard}
             >
                 {#if isLoading}
                     <Loader size="sm" color="black" />
                 {:else}
-                    <div class="cta-icon">
+                    <div class="w-5 h-5">
                         <svg
                             width="20"
                             height="20"
@@ -177,160 +175,29 @@
                         </svg>
                     </div>
                 {/if}
-                <span class="cta-text text-white">Създай картичка</span>
+                <span class="text-white font-medium text-base lg:text-lg"
+                    >Създай картичка</span
+                >
             </button>
         </div>
     </nav>
 </header>
 
 <style>
-    .header-container {
-        display: flex;
-        padding: 16px 0;
-        justify-content: center;
-        align-items: center;
-        border-bottom: 1px solid #eed9b0;
-        width: 100%;
-        position: relative;
-        background-color: #fff;
-        z-index: 50;
-    }
-
-    .header-content {
-        display: flex;
-        width: 100%;
-        max-width: 1280px;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0 20px;
-        position: relative;
-    }
-
-    @media (max-width: 991px) {
-        .header-content {
-            padding: 0 16px;
+    @keyframes logo-glow {
+        0%,
+        100% {
+            outline-color: rgba(251, 191, 36, 0.65);
+            outline-offset: 2px;
+        }
+        50% {
+            outline-color: rgba(251, 191, 36, 0.1);
+            outline-offset: 6px;
         }
     }
 
-    @media (max-width: 640px) {
-        .header-content {
-            padding: 0 12px;
-        }
-    }
-
-    .logo-link {
-        text-decoration: none;
-        z-index: 60;
-    }
-
-    .logo-image {
-        width: 2.5rem;
-        height: 2.5rem;
-        border-radius: 9999px;
-        object-fit: cover;
-        box-shadow:
-            0 1px 3px 0 rgba(0, 0, 0, 0.1),
-            0 1px 2px 0 rgba(0, 0, 0, 0.06);
-        transition:
-            transform 0.3s ease-out,
-            width 0.3s ease-out,
-            height 0.3s ease-out;
-    }
-
-    .logo-shrunk {
-        transform: scale(0.9);
-        width: 2.25rem;
-        height: 2.25rem;
-    }
-
-    .desktop-nav {
-        display: flex;
-        align-items: center;
-        gap: 24px;
-        position: relative;
-    }
-
-    @media (max-width: 991px) {
-        .desktop-nav {
-            gap: 20px;
-        }
-    }
-
-    @media (max-width: 640px) {
-        .desktop-nav {
-            display: none;
-        }
-    }
-
-    .mobile-cta-button {
-        display: flex;
-        padding: 14px 20px;
-        justify-content: center;
-        align-items: center;
-        gap: 12px;
-        border-radius: 14px;
-        position: relative;
-        cursor: pointer;
-        background-color: #229e32;
-        border: 2px solid #1a7a27;
-        outline: 3px solid rgba(34, 158, 50, 0.25);
-        outline-offset: 2px;
-        box-shadow: 0 2px 8px rgba(34, 158, 50, 0.2);
-        transition:
-            background-color 0.2s ease,
-            transform 0.1s ease,
-            box-shadow 0.2s ease;
-        box-sizing: border-box;
-        width: 100%;
-    }
-
-    .mobile-cta-button:hover {
-        background-color: #1e8a2c;
-        box-shadow: 0 4px 12px rgba(34, 158, 50, 0.3);
-    }
-
-    .mobile-cta-button:active {
-        transform: scale(0.98);
-        box-shadow: 0 1px 4px rgba(34, 158, 50, 0.2);
-    }
-
-    .desktop-cta {
-        @media (max-width: 640px) {
-            display: none;
-        }
-    }
-
-    .mobile-cta-button .cta-icon {
-        width: 20px;
-        height: 20px;
-    }
-
-    .mobile-cta-button .cta-text {
-        font:
-            500 18px Montserrat,
-            -apple-system,
-            Roboto,
-            Helvetica,
-            sans-serif;
-    }
-
-    @media (max-width: 991px) {
-        .mobile-cta-button .cta-text {
-            font-size: 16px;
-        }
-    }
-
-    /* Hamburger component styles are now in Hamburger.svelte */
-
-    .mobile-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 40;
-        animation: fadeIn 0.2s ease-out;
+    .logo-img {
+        animation: logo-glow 3s ease-in-out infinite;
     }
 
     @keyframes fadeIn {
@@ -342,43 +209,15 @@
         }
     }
 
-    .mobile-nav {
-        position: fixed;
-        top: 0;
-        right: -100%;
-        width: 280px;
-        max-width: 80vw;
-        height: 100vh; /* fallback for browsers without dvh */
-        height: 100dvh; /* dynamic viewport height - excludes system nav bar */
-        background-color: #fff;
-        border-left: 1px solid #eed9b0;
-        z-index: 50;
-        transition: right 0.3s ease-out;
-        box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
-        overflow-y: auto;
-    }
-
-    .mobile-nav-open {
-        right: 0;
-    }
-
     .mobile-nav-content {
-        display: flex;
-        flex-direction: column;
-        min-height: 100%;
-        padding: 80px 24px 24px;
         padding-bottom: max(24px, calc(24px + env(safe-area-inset-bottom)));
-        gap: 32px;
     }
 
-    .mobile-nav-items {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+    :global(body:has(.mobile-nav-open)) {
+        overflow: hidden;
     }
 
-    /* Override NavItem styles for mobile */
-    .mobile-nav-items :global(.nav-item.mobile-nav-item) {
+    :global(.nav-item.mobile-nav-item) {
         display: flex;
         align-items: center;
         padding: 16px 20px;
@@ -397,37 +236,12 @@
         min-height: 44px;
     }
 
-    .mobile-nav-items :global(.nav-item.mobile-nav-item:hover) {
+    :global(.nav-item.mobile-nav-item:hover) {
         background-color: rgba(48, 48, 48, 0.05);
         color: rgba(48, 48, 48, 0.8);
     }
 
-    .mobile-nav-items :global(.nav-item.mobile-nav-item:active) {
+    :global(.nav-item.mobile-nav-item:active) {
         background-color: rgba(48, 48, 48, 0.1);
-    }
-
-    .mobile-cta-button {
-        margin-top: auto;
-    }
-
-    /* Prevent body scroll when mobile menu is open */
-    :global(body:has(.mobile-nav-open)) {
-        overflow: hidden;
-    }
-
-    @media (max-width: 320px) {
-        .header-content {
-            padding: 0 8px;
-        }
-
-        .mobile-nav {
-            width: 100%;
-            max-width: 100vw;
-        }
-    }
-
-    .loading {
-        opacity: 0.5;
-        pointer-events: none;
     }
 </style>

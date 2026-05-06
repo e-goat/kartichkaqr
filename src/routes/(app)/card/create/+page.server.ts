@@ -62,6 +62,7 @@ export const actions: Actions = {
             const cardUrl = `${origin}/card/${cardMeta.slug}`;
 
             card = {
+                title: cardMeta.title ?? ts.title,
                 sender: cardMeta.sender,
                 description: cardMeta.description ?? ts.description,
                 slug: cardMeta.slug,
