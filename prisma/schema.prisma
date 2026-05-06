@@ -25,6 +25,7 @@ model Card {
   audioUrl    String?
   cardUuid    String   @unique @default(uuid())
   description String?
+  title       String?
 
   @@map("cards")
 }
