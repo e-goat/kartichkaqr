@@ -10,12 +10,14 @@
         background: string;
         backgroundBack: string;
         titlePos: string;
+        titleFontSize: number;
         font: { id: number; name: string };
         fontColor?: string;
     };
 
     function getTitleStyle(t: Template): string {
-        const base = `color: ${t.fontColor ?? "#ffffff"}; font-family: var(--font-family-${t.font.name}); font-size: 8.31cqw; line-height: 1.4; left: 6%; right: 6%;`;
+        const cqw = ((t.titleFontSize ?? 24) / 340) * 100;
+        const base = `color: ${t.fontColor ?? "#ffffff"}; font-family: var(--font-family-${t.font.name}); font-size: ${cqw.toFixed(2)}cqw; line-height: 1.4; left: 6%; right: 6%;`;
         if (t.titlePos === "top") return base + " top: 6%;";
         if (t.titlePos === "bottom") return base + " bottom: 6%;";
         return base + " top: 50%; transform: translateY(-50%);";
@@ -94,6 +96,7 @@
             | "top"
             | "bottom"
             | "center";
+        ts.titleFontSize = parseInt(target?.dataset.titleFontSize ?? "24");
         ts.font = target?.dataset.font ?? "";
 
         const newTemplateTitle = target?.dataset.templateTitle ?? "";
@@ -256,6 +259,7 @@
                             data-template-description={t.description}
                             data-template-background-back={t.backgroundBack}
                             data-title-position={t.titlePos}
+                            data-title-font-size={t.titleFontSize}
                             data-font={t.font.name}
                             aria-label={t.title}
                             style="container-type: inline-size"

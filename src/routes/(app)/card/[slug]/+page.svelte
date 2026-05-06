@@ -11,7 +11,8 @@
     font={data.template.font?.name ?? ""}
     fontColor={data.template.fontColor}
     titlePosition={data.template.titlePos}
-    title={data.template.title}
+    titleFontSize={data.template.titleFontSize}
+    title={data.title !== "" ? data.title : (data.template.title ?? "")}
     description={data.description !== ""
         ? data.description
         : (data.template.description ?? "")}

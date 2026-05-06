@@ -87,6 +87,7 @@
                         sender={cs.sender ?? undefined}
                         previewMode={true}
                         titlePosition={ts.titlePosition}
+                        titleFontSize={ts.titleFontSize}
                     />
                 </aside>
                 <aside

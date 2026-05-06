@@ -20,6 +20,7 @@
         previewMode?: boolean;
         cardPageUrl?: string | null;
         titlePosition?: string | "center";
+        titleFontSize?: number;
     }
 
     let {
@@ -34,10 +35,12 @@
         previewMode = false,
         cardPageUrl = null,
         titlePosition = "center",
+        titleFontSize = 24,
     }: Props = $props();
 
     const displayTitle = $derived(cs.title || title);
     const displaySender = $derived(sender ?? cs.sender ?? "");
+    const titleFontSizeCqw = $derived(((titleFontSize ?? 24) / 340) * 100);
 
     const titlePositionClass = $derived(
         titlePosition === "top"
@@ -127,7 +130,10 @@
         >
             <div class="flex h-full">
                 <!-- Slide 1: Front -->
-                <div class="flex-[0_0_100%] min-w-0 relative h-full">
+                <div
+                    class="flex-[0_0_100%] min-w-0 relative h-full"
+                    style="container-type: inline-size"
+                >
                     <enhanced:img
                         src={cardFront}
                         class="absolute inset-0 w-full h-full object-cover"
@@ -136,7 +142,9 @@
                     {#if displayTitle}
                         <div
                             class={titlePositionClass}
-                            style="color: {fontColor}; font-family: var(--font-family-{font}); font-size: 1.35rem; line-height: 1.4;"
+                            style="color: {fontColor}; font-family: var(--font-family-{font}); font-size: {titleFontSizeCqw.toFixed(
+                                2,
+                            )}cqw; line-height: 1.4;"
                         >
                             {displayTitle}
                         </div>

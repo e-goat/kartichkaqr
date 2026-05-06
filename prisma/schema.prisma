@@ -35,6 +35,7 @@ model Template {
   cards          Card[]
   title          String
   titlePos       TitlePosition @default(top)
+  titleFontSize  Int           @default(24) // Font size in pixels for the card title
   description    String?
   background     String
   backgroundBack String        @default("#ffffff")

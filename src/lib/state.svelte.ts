@@ -45,6 +45,7 @@ interface TemplateState {
     description: string;
     title: string;
     titlePosition: "top" | "bottom" | "center";
+    titleFontSize: number;
     backgroundBack: string;
     font: string;
     templateDescription: string;
@@ -85,6 +86,7 @@ export const ts: TemplateState = $state({
     description: "",
     title: "",
     titlePosition: "center",
+    titleFontSize: 24,
     backgroundBack: "",
     font: "",
     templateDescription: "",
