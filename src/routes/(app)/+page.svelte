@@ -219,7 +219,7 @@
         class="scroll-reveal w-full bg-[#FEF3DA] rounded-3xl border border-[#E7B85C]/35 px-10 py-12 flex flex-col gap-8 max-md:px-7 max-md:py-10 max-sm:px-5 max-sm:py-8"
     >
         <!-- Header -->
-        <div class="flex items-center justify-between w-full gap-3">
+        <div class="flex items-center justify-center w-full gap-3">
             <divw
                 class="shrink-0 w-10 h-10 rounded-xl bg-[#E7B85C]/20 flex items-center justify-center"
             >
