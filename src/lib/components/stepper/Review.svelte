@@ -109,7 +109,7 @@
                             class:bg-white={!pcs.requested}
                         >
                             <div
-                                class="flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors"
+                                class="shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors"
                                 class:border-custom-orange-600={pcs.requested}
                                 class:bg-custom-orange-600={pcs.requested}
                                 class:border-gray-400={!pcs.requested}

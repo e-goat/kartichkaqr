@@ -5,7 +5,7 @@
 
 <div class="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg mt-4">
     <div class="flex">
-        <div class="flex-shrink-0">
+        <div class="shrink-0">
             <span class="text-amber-400 text-xl">⚠️</span>
         </div>
         <div class="ml-3">

@@ -34,7 +34,7 @@
 </svelte:head>
 
 <div
-    class="flex flex-col mx-auto my-0 w-full max-w-[1203px] px-5 py-12 max-md:px-5 max-md:py-10 max-sm:px-4 max-sm:py-8"
+    class="flex flex-col mx-auto my-0 w-full max-w-300.75 px-5 py-12 max-md:px-5 max-md:py-10 max-sm:px-4 max-sm:py-8"
 >
     <!-- Section A: Features & Preview -->
     <section
@@ -76,7 +76,7 @@
                     class="card-enter card-enter-1 flex items-center gap-4 p-5 bg-white rounded-2xl border border-amber-200 shadow-sm hover:shadow-md hover:border-amber-300 transition-all duration-200"
                 >
                     <div
-                        class="flex-shrink-0 w-14 h-14 rounded-xl bg-amber-50 flex items-center justify-center"
+                        class="shrink-0 w-14 h-14 rounded-xl bg-amber-50 flex items-center justify-center"
                     >
                         <svg
                             width="28"
@@ -106,7 +106,7 @@
                     class="card-enter card-enter-2 flex items-center gap-4 p-5 bg-white rounded-2xl border border-rose-200 shadow-sm hover:shadow-md hover:border-rose-300 transition-all duration-200"
                 >
                     <div
-                        class="flex-shrink-0 w-14 h-14 rounded-xl bg-rose-50 flex items-center justify-center"
+                        class="shrink-0 w-14 h-14 rounded-xl bg-rose-50 flex items-center justify-center"
                     >
                         <svg
                             width="28"
@@ -135,7 +135,7 @@
                     class="card-enter card-enter-3 flex items-center gap-4 p-5 bg-white rounded-2xl border border-purple-200 shadow-sm hover:shadow-md hover:border-purple-300 transition-all duration-200"
                 >
                     <div
-                        class="flex-shrink-0 w-14 h-14 rounded-xl bg-purple-50 flex items-center justify-center"
+                        class="shrink-0 w-14 h-14 rounded-xl bg-purple-50 flex items-center justify-center"
                     >
                         <svg
                             width="28"
@@ -201,7 +201,7 @@
             viewBox="0 0 56 60"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            class="flex-shrink-0 opacity-80"
+            class="shrink-0 opacity-80"
         >
             <path
                 d="M20.1361 16.531C7.27151 -5.51033 48.7285 -5.51033 35.8639 16.531C48.7285 -5.51033 69.4582 30 43.7266 30C69.4582 30 48.7285 65.5103 35.8639 43.469C48.7285 65.5103 7.27151 65.5103 20.1361 43.469C7.27151 65.5103 -13.4582 30 12.2734 30C-13.4582 30 7.27151 -5.51033 20.1361 16.531Z"
@@ -219,9 +219,9 @@
         class="scroll-reveal w-full bg-[#FEF3DA] rounded-3xl border border-[#E7B85C]/35 px-10 py-12 flex flex-col gap-8 max-md:px-7 max-md:py-10 max-sm:px-5 max-sm:py-8"
     >
         <!-- Header -->
-        <div class="flex items-center gap-3">
-            <div
-                class="flex-shrink-0 w-10 h-10 rounded-xl bg-[#E7B85C]/20 flex items-center justify-center"
+        <div class="flex items-center justify-between w-full gap-3">
+            <divw
+                class="shrink-0 w-10 h-10 rounded-xl bg-[#E7B85C]/20 flex items-center justify-center"
             >
                 <svg
                     width="22"
@@ -245,7 +245,7 @@
                         stroke-linejoin="round"
                     />
                 </svg>
-            </div>
+            </divw>
             <p class="text-base font-semibold text-zinc-700">
                 Съхранение на вашата картичка
             </p>
@@ -290,7 +290,7 @@
         </div>
 
         <!-- Description -->
-        <p class="text-sm text-zinc-500 leading-relaxed max-w-2xl">
+        <p class="text-sm text-zinc-500 leading-relaxed">
             Вашата картичка със звукозапис ще бъде запазена в базата данни до <strong
                 class="text-zinc-700">3 години</strong
             >

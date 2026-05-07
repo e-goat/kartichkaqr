@@ -57,7 +57,7 @@
                 in:fly={{ y: 40, duration: 500, delay: 200 }}
             >
                 <div
-                    class="w-14 h-14 rounded-xl bg-amber-50 flex items-center justify-center flex-shrink-0"
+                    class="w-14 h-14 rounded-xl bg-amber-50 flex items-center justify-center shrink-0"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -104,7 +104,7 @@
                 in:fly={{ y: 40, duration: 500, delay: 300 }}
             >
                 <div
-                    class="w-14 h-14 rounded-xl bg-rose-50 flex items-center justify-center flex-shrink-0"
+                    class="w-14 h-14 rounded-xl bg-rose-50 flex items-center justify-center shrink-0"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -152,7 +152,7 @@
                 in:fly={{ y: 40, duration: 500, delay: 400 }}
             >
                 <div
-                    class="w-14 h-14 rounded-xl bg-purple-50 flex items-center justify-center flex-shrink-0"
+                    class="w-14 h-14 rounded-xl bg-purple-50 flex items-center justify-center shrink-0"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
