@@ -196,10 +196,10 @@
             {"Моля, изберете един от показаните шаблони"}
         </p>
 
-        <section class="flex flex-wrap w-full gap-2 mt-12">
+        <section class="flex flex-wrap gap-2 mt-6 sm:mt-10">
             <button
                 type="button"
-                class="text-white text-sm md:text-base lg:text-lg px-2.5 py-0.5 rounded-full p-5 cursor-pointer transition-colors duration-200"
+                class="text-white text-sm md:text-base px-4 py-1.5 rounded-full cursor-pointer transition-colors duration-200"
                 class:bg-custom-orange-600={selectedCategory === null}
                 class:bg-gray-500={selectedCategory !== null}
                 onclick={handleClickEventAll}
@@ -209,7 +209,7 @@
             {#each data.categories as c}
                 <button
                     type="button"
-                    class="text-white text-sm md:text-base lg:text-lg px-2.5 py-0.5 rounded-full p-5 cursor-pointer transition-colors duration-200"
+                    class="text-white text-sm md:text-base px-4 py-1.5 rounded-full cursor-pointer transition-colors duration-200"
                     class:bg-custom-orange-600={selectedCategory === c.id}
                     class:bg-gray-500={selectedCategory !== c.id}
                     onclick={(e) => handleClickEventCategory(e, c.id)}
@@ -240,7 +240,7 @@
             </div>
         {:else}
             <ul
-                class="mt-6 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+                class="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4"
             >
                 {#each templates as t (t.id)}
                     <li use:lazyReveal>
