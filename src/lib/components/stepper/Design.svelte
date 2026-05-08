@@ -196,15 +196,17 @@
             {"Моля, изберете един от показаните шаблони"}
         </p>
 
-        <div class="relative mt-6 sm:mt-10">
+        <div
+            class="relative mt-6 sm:mt-10 border border-gray-200 rounded-xl bg-gray-50 px-3 py-2.5 sm:px-4 sm:py-3"
+        >
             <section
-                class="flex gap-2 overflow-x-auto sm:flex-wrap pb-2 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+                class="flex gap-1.5 sm:gap-2 overflow-x-auto sm:flex-wrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             >
                 <button
                     type="button"
-                    class="shrink-0 text-white text-sm px-4 py-1.5 rounded-full cursor-pointer transition-colors duration-200"
+                    class="shrink-0 text-white text-xs sm:text-sm px-3 py-1 sm:px-4 sm:py-1.5 rounded-md cursor-pointer transition-colors duration-200"
                     class:bg-custom-orange-600={selectedCategory === null}
-                    class:bg-gray-500={selectedCategory !== null}
+                    class:bg-gray-400={selectedCategory !== null}
                     onclick={handleClickEventAll}
                 >
                     Всички
@@ -212,9 +214,9 @@
                 {#each data.categories as c}
                     <button
                         type="button"
-                        class="shrink-0 text-white text-sm px-4 py-1.5 rounded-full cursor-pointer transition-colors duration-200"
+                        class="shrink-0 text-white text-xs sm:text-sm px-3 py-1 sm:px-4 sm:py-1.5 rounded-md cursor-pointer transition-colors duration-200"
                         class:bg-custom-orange-600={selectedCategory === c.id}
-                        class:bg-gray-500={selectedCategory !== c.id}
+                        class:bg-gray-400={selectedCategory !== c.id}
                         onclick={(e) => handleClickEventCategory(e, c.id)}
                     >
                         {c.name}
@@ -222,7 +224,7 @@
                 {/each}
             </section>
             <div
-                class="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none sm:hidden"
+                class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-50 to-transparent pointer-events-none rounded-r-xl sm:hidden"
             ></div>
         </div>
         {#if ss.validationErrors.templateId}
