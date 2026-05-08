@@ -196,28 +196,35 @@
             {"Моля, изберете един от показаните шаблони"}
         </p>
 
-        <section class="flex flex-wrap gap-2 mt-6 sm:mt-10">
-            <button
-                type="button"
-                class="text-white text-sm md:text-base px-4 py-1.5 rounded-full cursor-pointer transition-colors duration-200"
-                class:bg-custom-orange-600={selectedCategory === null}
-                class:bg-gray-500={selectedCategory !== null}
-                onclick={handleClickEventAll}
+        <div class="relative mt-6 sm:mt-10">
+            <section
+                class="flex gap-2 overflow-x-auto sm:flex-wrap pb-2 sm:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
             >
-                Всички
-            </button>
-            {#each data.categories as c}
                 <button
                     type="button"
-                    class="text-white text-sm md:text-base px-4 py-1.5 rounded-full cursor-pointer transition-colors duration-200"
-                    class:bg-custom-orange-600={selectedCategory === c.id}
-                    class:bg-gray-500={selectedCategory !== c.id}
-                    onclick={(e) => handleClickEventCategory(e, c.id)}
+                    class="shrink-0 text-white text-sm px-4 py-1.5 rounded-full cursor-pointer transition-colors duration-200"
+                    class:bg-custom-orange-600={selectedCategory === null}
+                    class:bg-gray-500={selectedCategory !== null}
+                    onclick={handleClickEventAll}
                 >
-                    {c.name}
+                    Всички
                 </button>
-            {/each}
-        </section>
+                {#each data.categories as c}
+                    <button
+                        type="button"
+                        class="shrink-0 text-white text-sm px-4 py-1.5 rounded-full cursor-pointer transition-colors duration-200"
+                        class:bg-custom-orange-600={selectedCategory === c.id}
+                        class:bg-gray-500={selectedCategory !== c.id}
+                        onclick={(e) => handleClickEventCategory(e, c.id)}
+                    >
+                        {c.name}
+                    </button>
+                {/each}
+            </section>
+            <div
+                class="absolute right-0 top-0 bottom-2 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none sm:hidden"
+            ></div>
+        </div>
         {#if ss.validationErrors.templateId}
             <div class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
                 <p class="text-sm text-red-600">
