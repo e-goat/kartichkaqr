@@ -10,13 +10,18 @@ export const load: PageServerLoad = async ({ params, url }) => {
         throw error(404, "Картичката не е намерена.");
     }
 
+    const template = rewriteAssetFields(data.template, [
+        "background",
+        "backgroundBack",
+    ]);
+    const bg = template.background ?? "";
+    const ogImageUrl = bg.startsWith("http") ? bg : `${url.origin}${bg}`;
+
     return {
         ...data,
         audioUrl: toAssetProxyUrl(data.audioUrl),
-        template: rewriteAssetFields(data.template, [
-            "background",
-            "backgroundBack",
-        ]),
+        template,
         cardPageUrl: `${url.origin}/card/${params.slug}`,
+        ogImageUrl,
     };
 };

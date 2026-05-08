@@ -7,7 +7,24 @@
     import CookieModal from "$lib/components/CookieModal.svelte";
     let { children, data } = $props();
     injectAnalytics();
+
+    const organizationSchema = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        name: "KartichkaQR",
+        url: "https://kartichkaqr.com",
+        logo: "https://kartichkaqr.com/favicon.ico",
+        description:
+            "Персонализирани поздравителни картички с QR кодове и гласови съобщения.",
+        foundingDate: "2025",
+        areaServed: "BG",
+        inLanguage: "bg",
+    });
 </script>
+
+<svelte:head>
+    {@html `<script type="application/ld+json">${organizationSchema}<\/script>`}
+</svelte:head>
 
 <main class="min-h-screen flex flex-col">
     <Header logo={Logo} />

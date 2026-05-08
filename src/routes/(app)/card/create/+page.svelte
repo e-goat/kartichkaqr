@@ -143,10 +143,26 @@
 </script>
 
 <svelte:head>
-    <title>{"Картичка QR - Създаи Картичка"}</title>
+    <title>{"Картичка QR - Създай Картичка"}</title>
     <meta
         name="description"
         content="Създайте персонализирана поздравителна картичка с вашия почерк и глас. Изберете дизайн, запишете съобщение и споделете с близките си. Перфектни картички за подаръци за всички поводи. Create personalized greeting cards with handwriting and voice messages."
+    />
+    <meta name="robots" content="noindex, follow" />
+    <link rel="canonical" href="https://kartichkaqr.com/card/create" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="KartichkaQR" />
+    <meta property="og:title" content="Картичка QR - Създай Картичка" />
+    <meta
+        property="og:description"
+        content="Създайте персонализирана поздравителна картичка с вашия почерк и глас. Изберете дизайн, запишете съобщение и споделете с близките си."
+    />
+    <meta property="og:url" content="https://kartichkaqr.com/card/create" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Картичка QR - Създай Картичка" />
+    <meta
+        name="twitter:description"
+        content="Създайте персонализирана поздравителна картичка с вашия почерк и глас. Изберете дизайн, запишете съобщение и споделете с близките си."
     />
 </svelte:head>
 

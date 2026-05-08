@@ -2,6 +2,23 @@
     import CardCreate from "$lib/components/CardCreate.svelte";
     import openerLogo from "$lib/assets/opener-logo.svg";
 
+    const webAppSchema = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        name: "KartichkaQR",
+        url: "https://kartichkaqr.com/card/create",
+        applicationCategory: "LifestyleApplication",
+        operatingSystem: "Web",
+        offers: {
+            "@type": "Offer",
+            price: "0",
+            priceCurrency: "BGN",
+        },
+        description:
+            "Създайте персонализирана поздравителна картичка с вашия почерк и глас. Изберете дизайн, запишете съобщение и споделете с близките си.",
+        inLanguage: "bg",
+    });
+
     function revealOnScroll(node: HTMLElement) {
         if (typeof IntersectionObserver === "undefined") {
             node.classList.add("in-view");
@@ -31,6 +48,28 @@
         name="description"
         content="Създайте персонализирана поздравителна картичка с вашия почерк и глас. Перфектни картички за подаръци - изберете дизайн, запишете съобщение и споделете с близките си. Create personalized greeting cards with handwriting and voice messages. KartichkaQR - български екип, който революционизира поздравителните картички с QR кодове и гласови съобщения. Идеални картички за подаръци за всички поводи."
     />
+    <link rel="canonical" href="https://kartichkaqr.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="KartichkaQR" />
+    <meta
+        property="og:title"
+        content="Картичка QR - Поздравителна картичка с вашия личен почерк"
+    />
+    <meta
+        property="og:description"
+        content="Създайте персонализирана поздравителна картичка с вашия почерк и глас. Перфектни картички за подаръци за всички поводи."
+    />
+    <meta property="og:url" content="https://kartichkaqr.com/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+        name="twitter:title"
+        content="Картичка QR - Поздравителна картичка с вашия личен почерк"
+    />
+    <meta
+        name="twitter:description"
+        content="Създайте персонализирана поздравителна картичка с вашия почерк и глас. Перфектни картички за подаръци за всички поводи."
+    />
+    {@html `<script type="application/ld+json">${webAppSchema}<\/script>`}
 </svelte:head>
 
 <div

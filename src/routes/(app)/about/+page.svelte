@@ -16,6 +16,21 @@
         name="description"
         content="Научете за KartichkaQR - български екип, който революционизира поздравителните картички с QR кодове и гласови съобщения. Създаваме уникални картички за подаръци, които свързват хората чрез технологии. Мисия, ценности и визия за свързване на хората чрез персонализирани картички. Learn about KartichkaQR - Bulgarian team revolutionizing greeting cards with QR codes and voice messages."
     />
+    <link rel="canonical" href="https://kartichkaqr.com/about" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="KartichkaQR" />
+    <meta property="og:title" content="Картичка QR - За нас" />
+    <meta
+        property="og:description"
+        content="Научете за KartichkaQR - български екип, който революционизира поздравителните картички с QR кодове и гласови съобщения."
+    />
+    <meta property="og:url" content="https://kartichkaqr.com/about" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Картичка QR - За нас" />
+    <meta
+        name="twitter:description"
+        content="Научете за KartichkaQR - български екип, който революционизира поздравителните картички с QR кодове и гласови съобщения."
+    />
 </svelte:head>
 
 <div
