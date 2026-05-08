@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@variant dark (&:where(.dark, .dark *));
 
 @theme {
     --card-title-center-offset: 2rem;
@@ -81,6 +82,27 @@ body::-webkit-scrollbar-track {
 body::-webkit-scrollbar-thumb {
     background: #10b981;
     border-radius: 4px;
+}
+
+.dark body::-webkit-scrollbar-thumb {
+    background: #6b7280;
+}
+
+.dark input[type="text"],
+.dark input[type="email"],
+.dark input[type="tel"],
+.dark textarea {
+    background-color: #1f2937;
+    color: #f3f4f6;
+    border-color: #4b5563;
+}
+
+.dark input[type="text"]:focus,
+.dark input[type="email"]:focus,
+.dark input[type="tel"]:focus,
+.dark textarea:focus {
+    border-color: #60a5fa;
+    outline-color: #60a5fa;
 }
 
 .swal-confirm-button {

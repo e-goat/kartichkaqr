@@ -31,7 +31,7 @@
                 {@const isCompleted = stepNum < ss.currentStep}
 
                 <div
-                    class="w-full shrink-0 flex gap-3 items-center justify-center text-base font-medium text-zinc-800"
+                    class="w-full shrink-0 flex gap-3 items-center justify-center text-base font-medium text-zinc-800 dark:text-zinc-200"
                 >
                     <enhanced:img
                         src={stepIcons[index]}
@@ -50,10 +50,10 @@
                     />
                     <div
                         class={isActive
-                            ? "text-zinc-800"
+                            ? "text-zinc-800 dark:text-zinc-200"
                             : isCompleted
-                              ? "text-zinc-800"
-                              : "text-zinc-400"}
+                              ? "text-zinc-800 dark:text-zinc-200"
+                              : "text-zinc-400 dark:text-zinc-500"}
                         data-name={stepLabels[index]}
                     >
                         {stepLabels[index]}
@@ -75,7 +75,7 @@
                     ? 'bg-custom-orange-400'
                     : isCompleted
                       ? 'bg-custom-orange-600'
-                      : 'bg-gray-300'}"
+                      : 'bg-gray-300 dark:bg-gray-600'}"
             ></div>
         {/each}
     </div>
@@ -83,7 +83,7 @@
 
 <!-- Desktop view: full horizontal layout -->
 <div
-    class="hidden lg:flex overflow-hidden gap-6 items-center text-xl font-medium text-zinc-800"
+    class="hidden lg:flex overflow-hidden gap-6 items-center text-xl font-medium text-zinc-800 dark:text-zinc-200"
 >
     {#each Array(steps) as _, index}
         {@const stepNum = index + 1}
@@ -113,10 +113,10 @@
             />
             <div
                 class="self-stretch my-auto {isActive
-                    ? 'text-zinc-800'
+                    ? 'text-zinc-800 dark:text-zinc-200'
                     : isCompleted
-                      ? 'text-zinc-800'
-                      : 'text-zinc-400'}"
+                      ? 'text-zinc-800 dark:text-zinc-200'
+                      : 'text-zinc-400 dark:text-zinc-500'}"
                 data-name={stepLabels[index]}
             >
                 {stepLabels[index]}

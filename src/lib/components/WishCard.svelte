@@ -92,7 +92,9 @@
                 class:bg-custom-orange-600={selectedIndex === i}
                 class:text-white={selectedIndex === i}
                 class:bg-gray-200={selectedIndex !== i}
+                class:dark:bg-gray-700={selectedIndex !== i}
                 class:text-gray-500={selectedIndex !== i}
+                class:dark:text-gray-400={selectedIndex !== i}
             >
                 {label}
             </span>
@@ -104,12 +106,12 @@
         <button
             type="button"
             onclick={scrollPrev}
-            class="absolute left-0 z-10 bg-white/80 hover:bg-white rounded-full p-1.5 shadow transition-colors"
+            class="absolute left-0 z-10 bg-white/80 dark:bg-gray-700/80 hover:bg-white dark:hover:bg-gray-700 rounded-full p-1.5 shadow transition-colors"
             aria-label="Предишен слайд"
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5 text-gray-700"
+                class="w-5 h-5 text-gray-700 dark:text-gray-100"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -274,12 +276,12 @@
         <button
             type="button"
             onclick={scrollNext}
-            class="absolute right-0 z-10 bg-white/80 hover:bg-white rounded-full p-1.5 shadow transition-colors"
+            class="absolute right-0 z-10 bg-white/80 dark:bg-gray-700/80 hover:bg-white dark:hover:bg-gray-700 rounded-full p-1.5 shadow transition-colors"
             aria-label="Следващ слайд"
         >
             <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5 text-gray-700"
+                class="w-5 h-5 text-gray-700 dark:text-gray-100"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"

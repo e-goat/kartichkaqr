@@ -186,7 +186,7 @@
 <section class="w-full">
     <aside>
         <h1
-            class="mb-2 sm:mb-3 md:mb-4 text-xl md:text-2xl lg:text-3xl leading-none text-gray-900 text-center"
+            class="mb-2 sm:mb-3 md:mb-4 text-xl md:text-2xl lg:text-3xl leading-none text-gray-900 dark:text-gray-100 text-center"
         >
             {"Изберете дизайн"}
         </h1>
@@ -197,7 +197,7 @@
         </p>
 
         <div
-            class="relative mt-6 sm:mt-10 border border-gray-200 rounded-xl bg-gray-50 px-3 py-2.5 sm:px-4 sm:py-3"
+            class="relative mt-6 sm:mt-10 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 px-3 py-2.5 sm:px-4 sm:py-3"
         >
             <section
                 class="flex gap-1.5 sm:gap-2 overflow-x-auto sm:flex-wrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
@@ -207,6 +207,7 @@
                     class="shrink-0 text-white text-xs sm:text-sm px-3 py-1 sm:px-4 sm:py-1.5 rounded-md cursor-pointer transition-colors duration-200"
                     class:bg-custom-orange-600={selectedCategory === null}
                     class:bg-gray-400={selectedCategory !== null}
+                    class:dark:bg-gray-600={selectedCategory !== null}
                     onclick={handleClickEventAll}
                 >
                     Всички
@@ -217,6 +218,7 @@
                         class="shrink-0 text-white text-xs sm:text-sm px-3 py-1 sm:px-4 sm:py-1.5 rounded-md cursor-pointer transition-colors duration-200"
                         class:bg-custom-orange-600={selectedCategory === c.id}
                         class:bg-gray-400={selectedCategory !== c.id}
+                        class:dark:bg-gray-600={selectedCategory !== c.id}
                         onclick={(e) => handleClickEventCategory(e, c.id)}
                     >
                         {c.name}
@@ -224,12 +226,14 @@
                 {/each}
             </section>
             <div
-                class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-50 to-transparent pointer-events-none rounded-r-xl sm:hidden"
+                class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-50 dark:from-gray-800 to-transparent pointer-events-none rounded-r-xl sm:hidden"
             ></div>
         </div>
         {#if ss.validationErrors.templateId}
-            <div class="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                <p class="text-sm text-red-600">
+            <div
+                class="mt-4 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg"
+            >
+                <p class="text-sm text-red-600 dark:text-red-400">
                     {ss.validationErrors.templateId}
                 </p>
             </div>
@@ -243,7 +247,7 @@
             </div>
         {:else if templates.length === 0}
             <div class="mt-6 flex justify-center items-center py-20">
-                <p class="text-gray-500 text-lg italic">
+                <p class="text-gray-500 dark:text-gray-400 text-lg italic">
                     Няма налични шаблони за тази категория.
                 </p>
             </div>
@@ -255,7 +259,7 @@
                     <li use:lazyReveal>
                         <button
                             type="button"
-                            class="wish-card border-4 w-full rounded-xl overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:cursor-pointer relative aspect-3/4 bg-gray-50"
+                            class="wish-card border-4 w-full rounded-xl overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:cursor-pointer relative aspect-3/4 bg-gray-50 dark:bg-gray-700"
                             class:border-custom-orange-600={t.id ==
                                 cs.templateId}
                             class:border-red-500={ss.validationErrors
@@ -275,7 +279,7 @@
                         >
                             {#if !loadedImages.has(t.id)}
                                 <div
-                                    class="absolute inset-0 animate-pulse bg-gray-200 rounded-lg"
+                                    class="absolute inset-0 animate-pulse bg-gray-200 dark:bg-gray-600 rounded-lg"
                                 ></div>
                             {/if}
                             <enhanced:img

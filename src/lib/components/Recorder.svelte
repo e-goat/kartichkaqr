@@ -324,7 +324,7 @@
                 stroke="currentColor"
                 stroke-width="8"
                 fill="none"
-                class="text-gray-200"
+                class="text-gray-200 dark:text-gray-700"
             />
             {#if hasStarted}
                 <circle
@@ -346,7 +346,7 @@
         </svg>
 
         <button
-            class="absolute inset-0 flex justify-center items-center border-4 bg-custom-teal-200/30 border-custom-orange-400 rounded-full text-center w-28 h-28 m-2 focus:outline-none focus:ring-4 focus:ring-custom-orange-400/50 hover:bg-custom-teal-200/50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-custom-teal-200/30"
+            class="absolute inset-0 flex justify-center items-center border-4 bg-custom-teal-200/30 dark:bg-gray-700/50 border-custom-orange-400 rounded-full text-center w-28 h-28 m-2 focus:outline-none focus:ring-4 focus:ring-custom-orange-400/50 hover:bg-custom-teal-200/50 dark:hover:bg-gray-600/50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-custom-teal-200/30 dark:disabled:hover:bg-gray-700/50"
             disabled={isRecordingComplete}
             onclick={handleStartStop}
         >
@@ -421,21 +421,25 @@
         </div>
 
         {#if isActive}
-            <div class="text-sm text-gray-600 flex items-center gap-2">
+            <div
+                class="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2"
+            >
                 <div
                     class="w-2 h-2 bg-red-500 rounded-full animate-pulse"
                 ></div>
                 Записване...
             </div>
         {:else if isRecordingComplete}
-            <div class="text-sm text-gray-600 flex items-center gap-2">
+            <div
+                class="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2"
+            >
                 <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
                 Записът е завършен
             </div>
         {:else}
-            <div class="text-sm text-gray-500 text-center">
+            <div class="text-sm text-gray-500 dark:text-gray-400 text-center">
                 Натиснете за започване на запис<br />
-                <span class="text-xs text-gray-400">
+                <span class="text-xs text-gray-400 dark:text-gray-500">
                     Максимално време за запис: {MAX_TIME} секунди</span
                 >
             </div>
@@ -445,29 +449,23 @@
     {#if isRecordingComplete}
         <div class="flex justify-center items-center gap-2">
             <button
-                class="cursor-pointer px-4 py-2 text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400"
+                class="cursor-pointer px-4 py-2 text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500"
                 onclick={handleReset}
             >
                 Отначало
             </button>
             {#if rs.blob && audioUrl}
                 <button
-                    class="cursor-pointer px-4 py-2 text-sm rounded-lg focus:outline-none focus:ring-2"
-                    class:bg-green-200={!isPlaying}
-                    class:hover:bg-green-300={!isPlaying}
-                    class:text-green-700={!isPlaying}
-                    class:focus:ring-green-400={!isPlaying}
-                    class:bg-red-200={isPlaying}
-                    class:hover:bg-red-300={isPlaying}
-                    class:text-red-700={isPlaying}
-                    class:focus:ring-red-400={isPlaying}
+                    class="cursor-pointer px-4 py-2 text-sm rounded-lg focus:outline-none focus:ring-2 {isPlaying
+                        ? 'bg-red-200 dark:bg-red-900/50 hover:bg-red-300 dark:hover:bg-red-800/60 text-red-700 dark:text-red-400 focus:ring-red-400'
+                        : 'bg-green-200 dark:bg-green-900/50 hover:bg-green-300 dark:hover:bg-green-800/60 text-green-700 dark:text-green-400 focus:ring-green-400'}"
                     onclick={handleMediaRecording}
                 >
                     {isPlaying ? "Спри" : "Пусни"}
                 </button>
             {:else}
                 <button
-                    class="cursor-not-allowed px-4 py-2 text-sm bg-gray-100 text-gray-400 rounded-lg"
+                    class="cursor-not-allowed px-4 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 rounded-lg"
                     disabled
                 >
                     Пусни

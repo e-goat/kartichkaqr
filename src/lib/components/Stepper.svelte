@@ -79,7 +79,7 @@
     }
 </script>
 
-<div class="px-px max-w-95.25 text-zinc-800 mx-auto mb-6">
+<div class="px-px max-w-95.25 text-zinc-800 dark:text-zinc-200 mx-auto mb-6">
     <div class="flex flex-col justify-center">
         <div
             class="text-center text-lg sm:text-2xl md:text-3xl font-medium whitespace-nowrap"
@@ -95,7 +95,9 @@
     </div>
 </div>
 
-<article class="shadow rounded-xl bg-white/70 w-full flex flex-col">
+<article
+    class="shadow rounded-xl bg-white/70 dark:bg-gray-800/80 w-full flex flex-col"
+>
     <form
         id="step-form"
         method="POST"
@@ -109,7 +111,7 @@
                 <Breadcrumb {steps} />
             </div>
             <div
-                class="flex-1 overflow-y-auto flex items-center justify-center bg-custom-orange-200/5 p-5 rounded-xl border border-gray-300"
+                class="flex-1 overflow-y-auto flex items-center justify-center bg-custom-orange-200/5 dark:bg-custom-orange-200/[0.02] p-5 rounded-xl border border-gray-300 dark:border-gray-600"
             >
                 {@render children()}
             </div>

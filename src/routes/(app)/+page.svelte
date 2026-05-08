@@ -77,12 +77,12 @@
 >
     <!-- Section A: Features & Preview -->
     <section
-        class="w-full bg-[#F9F7F2] rounded-3xl border border-[#EED9B0]/70 px-10 py-12 flex flex-col gap-16 max-md:px-7 max-md:py-10 max-md:gap-12 max-sm:px-5 max-sm:py-8 max-sm:gap-10"
+        class="w-full bg-[#F9F7F2] dark:bg-gray-800 rounded-3xl border border-[#EED9B0]/70 dark:border-gray-700 px-10 py-12 flex flex-col gap-16 max-md:px-7 max-md:py-10 max-md:gap-12 max-sm:px-5 max-sm:py-8 max-sm:gap-10"
     >
         <!-- Title -->
         <div class="flex flex-col gap-4 justify-center items-center w-full">
             <div
-                class="text-4xl font-medium text-center text-zinc-800 max-md:text-3xl max-sm:text-2xl"
+                class="text-4xl font-medium text-center text-zinc-800 dark:text-zinc-200 max-md:text-3xl max-sm:text-2xl"
             >
                 Поздравителна картичка с вашия личен почерк
             </div>
@@ -112,10 +112,10 @@
                 class="flex flex-col flex-1 gap-4 w-full max-w-[600px] max-md:max-w-full"
             >
                 <div
-                    class="card-enter card-enter-1 flex items-center gap-4 p-5 bg-white rounded-2xl border border-amber-200 shadow-sm hover:shadow-md hover:border-amber-300 transition-all duration-200"
+                    class="card-enter card-enter-1 flex items-center gap-4 p-5 bg-white dark:bg-gray-700 rounded-2xl border border-amber-200 dark:border-amber-800/50 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-700 transition-all duration-200"
                 >
                     <div
-                        class="shrink-0 w-14 h-14 rounded-xl bg-amber-50 flex items-center justify-center"
+                        class="shrink-0 w-14 h-14 rounded-xl bg-amber-50 dark:bg-amber-950/30 flex items-center justify-center"
                     >
                         <svg
                             width="28"
@@ -131,10 +131,14 @@
                         </svg>
                     </div>
                     <div class="flex flex-col gap-1 min-w-0">
-                        <p class="font-semibold text-base text-zinc-800">
+                        <p
+                            class="font-semibold text-base text-zinc-800 dark:text-zinc-200"
+                        >
                             Изберете дизайн
                         </p>
-                        <p class="text-sm text-zinc-500 leading-relaxed">
+                        <p
+                            class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed"
+                        >
                             Изберете от красиви шаблони по наш дизайн и създайте
                             вашата специална картичка.
                         </p>
@@ -142,10 +146,10 @@
                 </div>
 
                 <div
-                    class="card-enter card-enter-2 flex items-center gap-4 p-5 bg-white rounded-2xl border border-rose-200 shadow-sm hover:shadow-md hover:border-rose-300 transition-all duration-200"
+                    class="card-enter card-enter-2 flex items-center gap-4 p-5 bg-white dark:bg-gray-700 rounded-2xl border border-rose-200 dark:border-rose-900/50 shadow-sm hover:shadow-md hover:border-rose-300 dark:hover:border-rose-800 transition-all duration-200"
                 >
                     <div
-                        class="shrink-0 w-14 h-14 rounded-xl bg-rose-50 flex items-center justify-center"
+                        class="shrink-0 w-14 h-14 rounded-xl bg-rose-50 dark:bg-rose-950/30 flex items-center justify-center"
                     >
                         <svg
                             width="28"
@@ -161,20 +165,24 @@
                         </svg>
                     </div>
                     <div class="flex flex-col gap-1 min-w-0">
-                        <p class="font-semibold text-base text-zinc-800">
+                        <p
+                            class="font-semibold text-base text-zinc-800 dark:text-zinc-200"
+                        >
                             Добавете съобщението си
                         </p>
-                        <p class="text-sm text-zinc-500 leading-relaxed">
+                        <p
+                            class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed"
+                        >
                             Създавайте красиви картички за подаръци за секунди.
                         </p>
                     </div>
                 </div>
 
                 <div
-                    class="card-enter card-enter-3 flex items-center gap-4 p-5 bg-white rounded-2xl border border-purple-200 shadow-sm hover:shadow-md hover:border-purple-300 transition-all duration-200"
+                    class="card-enter card-enter-3 flex items-center gap-4 p-5 bg-white dark:bg-gray-700 rounded-2xl border border-purple-200 dark:border-purple-900/50 shadow-sm hover:shadow-md hover:border-purple-300 dark:hover:border-purple-800 transition-all duration-200"
                 >
                     <div
-                        class="shrink-0 w-14 h-14 rounded-xl bg-purple-50 flex items-center justify-center"
+                        class="shrink-0 w-14 h-14 rounded-xl bg-purple-50 dark:bg-purple-950/30 flex items-center justify-center"
                     >
                         <svg
                             width="28"
@@ -190,10 +198,14 @@
                         </svg>
                     </div>
                     <div class="flex flex-col gap-1 min-w-0">
-                        <p class="font-semibold text-base text-zinc-800">
+                        <p
+                            class="font-semibold text-base text-zinc-800 dark:text-zinc-200"
+                        >
                             Запишете гласов поздрав
                         </p>
-                        <p class="text-sm text-zinc-500 leading-relaxed">
+                        <p
+                            class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed"
+                        >
                             Добавете личен гласов поздрав, за да направите
                             картичката си наистина специална.
                         </p>
@@ -206,7 +218,7 @@
                 class="shrink-0 w-full lg:w-auto card-enter card-enter-preview"
             >
                 <div
-                    class="flex flex-col gap-6 justify-center items-center p-6 bg-white rounded-2xl border border-amber-200 shadow-sm hover:shadow-md hover:border-amber-300 transition-all duration-200"
+                    class="flex flex-col gap-6 justify-center items-center p-6 bg-white dark:bg-gray-700 rounded-2xl border border-amber-200 dark:border-amber-800/50 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-700 transition-all duration-200"
                 >
                     <div
                         class="relative w-full max-w-sm h-[220px] sm:h-[250px]"
@@ -218,7 +230,7 @@
                         />
                     </div>
                     <p
-                        class="text-base font-semibold text-center text-zinc-800"
+                        class="text-base font-semibold text-center text-zinc-800 dark:text-zinc-200"
                     >
                         Създайте персонализирана картичка за подаръци за
                         секунди.
@@ -255,7 +267,7 @@
     <!-- Section B: Storage Duration -->
     <section
         use:revealOnScroll
-        class="scroll-reveal w-full bg-[#FEF3DA] rounded-3xl border border-[#E7B85C]/35 px-10 py-12 flex flex-col gap-8 max-md:px-7 max-md:py-10 max-sm:px-5 max-sm:py-8"
+        class="scroll-reveal w-full bg-[#FEF3DA] dark:bg-amber-950/20 rounded-3xl border border-[#E7B85C]/35 dark:border-amber-800/25 px-10 py-12 flex flex-col gap-8 max-md:px-7 max-md:py-10 max-sm:px-5 max-sm:py-8"
     >
         <!-- Header -->
         <div class="flex items-center justify-center w-full gap-3">
@@ -285,7 +297,7 @@
                     />
                 </svg>
             </divw>
-            <p class="text-base font-semibold text-zinc-700">
+            <p class="text-base font-semibold text-zinc-700 dark:text-zinc-300">
                 Съхранение на вашата картичка
             </p>
         </div>
@@ -293,35 +305,35 @@
         <!-- Stat cards -->
         <div class="flex gap-4 flex-col sm:flex-row">
             <div
-                class="flex-1 flex flex-col items-center gap-2 px-6 py-5 bg-white rounded-2xl border border-[#E7B85C]/40 shadow-sm"
+                class="flex-1 flex flex-col items-center gap-2 px-6 py-5 bg-white dark:bg-gray-800 rounded-2xl border border-[#E7B85C]/40 dark:border-amber-700/30 shadow-sm"
             >
                 <span class="text-5xl font-bold text-[#C9943A] leading-none"
                     >3</span
                 >
                 <span
-                    class="text-sm font-semibold text-zinc-600 tracking-wide uppercase"
+                    class="text-sm font-semibold text-zinc-600 dark:text-zinc-400 tracking-wide uppercase"
                 >
                     години
                 </span>
                 <p
-                    class="text-xs text-zinc-400 text-center leading-relaxed mt-1"
+                    class="text-xs text-zinc-400 dark:text-zinc-500 text-center leading-relaxed mt-1"
                 >
                     При закупуване на физическа картичка
                 </p>
             </div>
             <div
-                class="flex-1 flex flex-col items-center gap-2 px-6 py-5 bg-white rounded-2xl border border-rose-200 shadow-sm"
+                class="flex-1 flex flex-col items-center gap-2 px-6 py-5 bg-white dark:bg-gray-800 rounded-2xl border border-rose-200 dark:border-rose-900/30 shadow-sm"
             >
                 <span class="text-5xl font-bold text-rose-400 leading-none"
                     >3</span
                 >
                 <span
-                    class="text-sm font-semibold text-zinc-600 tracking-wide uppercase"
+                    class="text-sm font-semibold text-zinc-600 dark:text-zinc-400 tracking-wide uppercase"
                 >
                     дни
                 </span>
                 <p
-                    class="text-xs text-zinc-400 text-center leading-relaxed mt-1"
+                    class="text-xs text-zinc-400 dark:text-zinc-500 text-center leading-relaxed mt-1"
                 >
                     За картички предназначени само за онлайн употреба
                 </p>
@@ -329,13 +341,13 @@
         </div>
 
         <!-- Description -->
-        <p class="text-sm text-zinc-500 leading-relaxed">
+        <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed">
             Вашата картичка със звукозапис ще бъде запазена в базата данни до <strong
-                class="text-zinc-700">3 години</strong
+                class="text-zinc-700 dark:text-zinc-300">3 години</strong
             >
             при закупуване на физическа картичка или до
-            <strong class="text-zinc-700">3 дни</strong> за картички, предназначени
-            само за онлайн употреба.
+            <strong class="text-zinc-700 dark:text-zinc-300">3 дни</strong> за картички,
+            предназначени само за онлайн употреба.
         </p>
     </section>
 </div>

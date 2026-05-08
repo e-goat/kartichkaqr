@@ -64,7 +64,7 @@
     <div class="flex flex-col gap-4 md:gap-2">
         <aside class="flex flex-col gap-2 sm:gap-3 md:gap-4">
             <h1
-                class="mb-2 sm:mb-3 md:mb-4 text-xl md:text-2xl lg:text-3xl leading-none text-gray-900 text-center"
+                class="mb-2 sm:mb-3 md:mb-4 text-xl md:text-2xl lg:text-3xl leading-none text-gray-900 dark:text-gray-100 text-center"
             >
                 {"Прегледайте картичката си"}
             </h1>
@@ -107,6 +107,8 @@
                             class:bg-custom-orange-200={pcs.requested}
                             class:border-gray-200={!pcs.requested}
                             class:bg-white={!pcs.requested}
+                            class:dark:bg-gray-800={!pcs.requested}
+                            class:dark:border-gray-600={!pcs.requested}
                         >
                             <div
                                 class="shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors"
@@ -133,12 +135,18 @@
                             </div>
                             <div>
                                 <p
-                                    class="font-semibold text-sm sm:text-base text-gray-800"
+                                    class="font-semibold text-sm sm:text-base text-gray-800 {!pcs.requested
+                                        ? 'dark:text-gray-200'
+                                        : ''}"
                                 >
                                     Готови ли сте? Ние ще отпечатаме и изпратим
                                     картичката веднага.
                                 </p>
-                                <p class="text-xs text-gray-500 mt-0.5">
+                                <p
+                                    class="text-xs mt-0.5 {pcs.requested
+                                        ? 'text-gray-600'
+                                        : 'text-gray-500 dark:text-gray-400'}"
+                                >
                                     Щракнете за да поръчате физическа картичка
                                 </p>
                             </div>
@@ -153,9 +161,11 @@
                     {#if pcs.requested}
                         <!-- Pricing Information -->
                         <div
-                            class="mt-2 p-3 bg-gray-50 border border-gray-200 rounded-lg"
+                            class="mt-2 p-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg"
                         >
-                            <p class="text-xs text-gray-600 leading-relaxed">
+                            <p
+                                class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed"
+                            >
                                 <strong>Ценообразуване:</strong> Изработката на една
                                 картичка на принтер 5 евро. Разходите за доставка
                                 се изчисляват според тарифите на българските превозвачи
@@ -167,7 +177,7 @@
                         >
                             <div class="flex flex-col w-full">
                                 <label
-                                    class="mb-1 text-sm font-medium text-gray-700"
+                                    class="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
                                     for="physical-copy-name"
                                 >
                                     Име
@@ -203,7 +213,7 @@
 
                             <div class="flex flex-col w-full">
                                 <label
-                                    class="mb-1 text-sm font-medium text-gray-700"
+                                    class="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
                                     for="physical-copy-email"
                                 >
                                     Имейл
@@ -239,7 +249,7 @@
 
                             <div class="flex flex-col w-full">
                                 <label
-                                    class="mb-1 text-sm font-medium text-gray-700"
+                                    class="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
                                     for="physical-copy-phone"
                                 >
                                     Телефон
@@ -275,7 +285,7 @@
 
                             <div class="flex flex-col w-full">
                                 <label
-                                    class="mb-1 text-sm font-medium text-gray-700"
+                                    class="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
                                     for="physical-copy-address"
                                 >
                                     Адрес до офис на доставчик
@@ -312,7 +322,7 @@
 
                             <div class="flex flex-col w-full">
                                 <label
-                                    class="mb-1 text-sm font-medium text-gray-700"
+                                    class="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
                                     for="physical-copy-comment"
                                 >
                                     Допълнителен коментар

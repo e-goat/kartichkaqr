@@ -25,6 +25,14 @@
         color: rgba(48, 48, 48, 0.8);
     }
 
+    :global(.dark) .nav-item {
+        color: #e4e4e4;
+    }
+
+    :global(.dark) .nav-item:hover {
+        color: rgba(228, 228, 228, 0.75);
+    }
+
     @media (max-width: 991px) {
         .nav-item {
             font-size: 16px;

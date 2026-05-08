@@ -6,7 +6,7 @@
     <div class="flex flex-col-reverse lg:flex-row">
         <aside class="flex flex-col gap-2 sm:gap-3 md:gap-4 md:w-full">
             <h1
-                class="mb-2 sm:mb-3 md:mb-4 text-xl md:text-2xl lg:text-3xl leading-none text-gray-900 text-center"
+                class="mb-2 sm:mb-3 md:mb-4 text-xl md:text-2xl lg:text-3xl leading-none text-gray-900 dark:text-gray-100 text-center"
             >
                 {"Запишете гласовата си поздрав"}
             </h1>

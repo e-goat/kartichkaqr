@@ -39,9 +39,11 @@
         aria-labelledby="cookie-modal-title"
     >
         <div
-            class="bg-white rounded-lg shadow-xl p-6 transform transition-transform duration-300"
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 transform transition-transform duration-300"
         >
-            <p class="text-gray-800 mb-6 text-base md:text-lg leading-relaxed">
+            <p
+                class="text-gray-800 dark:text-gray-200 mb-6 text-base md:text-lg leading-relaxed"
+            >
                 Нашият сайт използва бисквитки, за да подобри вашето изживяване,
                 анализира използването на сайта и подпомага нашите маркетингови
                 усилия.
@@ -49,14 +51,14 @@
             <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end">
                 <button
                     onclick={handleClose}
-                    class="px-6 py-2.5 border-2 border-green-600 text-green-600 bg-white rounded-lg font-medium hover:bg-green-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50"
+                    class="px-6 py-2.5 border-2 border-green-600 text-green-600 bg-white dark:bg-gray-700 dark:border-green-500 dark:text-green-400 rounded-lg font-medium hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50"
                     aria-label="Затвори известието за бисквитки"
                 >
                     Затвори
                 </button>
                 <button
                     onclick={handleAcceptAll}
-                    class="px-6 py-2.5 border-2 border-green-600 text-green-600 bg-white rounded-lg font-medium hover:bg-green-50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50"
+                    class="px-6 py-2.5 border-2 border-green-600 text-green-600 bg-white dark:bg-gray-700 dark:border-green-500 dark:text-green-400 rounded-lg font-medium hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50"
                     aria-label="Приемам всички бисквитки"
                 >
                     Приемам всички

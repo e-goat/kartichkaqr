@@ -13,11 +13,21 @@
             href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Chiron+Sung+HK:ital,wght@0,200..900;1,200..900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Allura&family=Caveat:wght@400..700&family=Dancing+Script:wght@400..700&family=Great+Vibes&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Oswald:wght@200..700&family=Pacifico&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Raleway:ital,wght@0,100..900;1,100..900&family=Sacramento&family=Poppins:ital,wght@0,100..900;1,100..900&family=Nunito:ital,wght@0,200..900;1,200..900&family=Cinzel:wght@400..900&family=Cormorant+Garamond:ital,wght@0,300..700;1,300..700&family=Lora:ital,wght@0,400..700;1,400..700&family=Alex+Brush&family=Tangerine:wght@400;700&family=Pinyon+Script&family=Lobster&family=Abril+Fatface&family=Josefin+Sans:ital,wght@0,100..700;1,100..700&family=Quicksand:wght@300..700&family=Merriweather:ital,wght@0,300..900;1,300..900&family=Permanent+Marker&family=Satisfy&display=swap"
             rel="stylesheet"
         />
+        <script>
+            (function () {
+                var s = localStorage.getItem("theme");
+                var p =
+                    window.matchMedia &&
+                    window.matchMedia("(prefers-color-scheme: dark)").matches;
+                if (s === "dark" || (!s && p))
+                    document.documentElement.classList.add("dark");
+            })();
+        </script>
         %sveltekit.head%
     </head>
     <body
         data-sveltekit-preload-data="hover"
-        class="antialiased bg-custom-teal-200 text-sm"
+        class="antialiased bg-custom-teal-200 dark:bg-gray-900 text-sm"
     >
         <section style="display: contents">%sveltekit.body%</section>
     </body>

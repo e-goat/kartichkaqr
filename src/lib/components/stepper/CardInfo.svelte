@@ -22,7 +22,7 @@
     <div class="flex flex-col-reverse lg:flex-row">
         <aside class="flex flex-col gap-2 sm:gap-3 md:gap-4 md:w-full">
             <h1
-                class="mb-2 sm:mb-3 md:mb-4 text-xl md:text-2xl lg:text-3xl leading-none text-gray-900 text-center"
+                class="mb-2 sm:mb-3 md:mb-4 text-xl md:text-2xl lg:text-3xl leading-none text-gray-900 dark:text-gray-100 text-center"
             >
                 {"Поздравителна картичка с вашия личен почерк"}
             </h1>
@@ -36,11 +36,12 @@
             >
                 <div class="flex flex-col w-full mb-2 sm:mb-3 md:mb-4">
                     <label
-                        class="mb-1 text-sm font-medium text-gray-700"
+                        class="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
                         for="title-input"
                     >
                         Заглавие
-                        <span class="text-gray-400 font-normal text-xs ml-1"
+                        <span
+                            class="text-gray-400 dark:text-gray-500 font-normal text-xs ml-1"
                             >(по избор)</span
                         >
                     </label>
@@ -67,11 +68,12 @@
                 </div>
                 <div class="flex flex-col w-full mb-2 sm:mb-3 md:mb-4">
                     <label
-                        class="mb-1 text-sm font-medium text-gray-700"
+                        class="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
                         for="from-input"
                     >
                         От
-                        <span class="text-gray-400 font-normal text-xs ml-1"
+                        <span
+                            class="text-gray-400 dark:text-gray-500 font-normal text-xs ml-1"
                             >(по избор)</span
                         >
                     </label>
@@ -100,11 +102,12 @@
                 </div>
                 <div class="flex flex-col w-full mb-2 sm:mb-3 md:mb-4">
                     <label
-                        class="mb-1 text-sm font-medium text-gray-700"
+                        class="mb-1 text-sm font-medium text-gray-700 dark:text-gray-300"
                         for="desc-input"
                     >
                         Описание
-                        <span class="text-gray-400 font-normal text-xs ml-1"
+                        <span
+                            class="text-gray-400 dark:text-gray-500 font-normal text-xs ml-1"
                             >(по избор)</span
                         >
                     </label>
@@ -132,7 +135,9 @@
                             {ss.validationErrors.description}
                         </p>
                     {:else}
-                        <p class="mt-1 text-sm text-gray-500">
+                        <p
+                            class="mt-1 text-sm text-gray-500 dark:text-gray-400"
+                        >
                             {cs.description?.length || 0} / 500 символа
                         </p>
                     {/if}

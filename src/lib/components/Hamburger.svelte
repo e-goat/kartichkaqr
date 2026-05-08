@@ -75,6 +75,18 @@
         background-color: rgba(48, 48, 48, 0.2);
     }
 
+    :global(.dark) .hamburger-button:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    :global(.dark) .hamburger-button:active {
+        background-color: rgba(255, 255, 255, 0.15);
+    }
+
+    :global(.dark) .hamburger-line {
+        background-color: #e4e4e4;
+    }
+
     .hamburger-container {
         display: flex;
         flex-direction: column;

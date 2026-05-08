@@ -73,7 +73,7 @@
         {#if currentPage > 1}
             <a
                 href={buildHref(currentPage - 1)}
-                class="flex items-center justify-center w-10 h-10 text-sm font-medium text-custom-orange-600 bg-white border border-custom-orange-200 rounded-lg hover:bg-custom-orange-200 hover:text-custom-orange-600 transition-colors duration-200"
+                class="flex items-center justify-center w-10 h-10 text-sm font-medium text-custom-orange-600 bg-white dark:bg-gray-800 border border-custom-orange-200 dark:border-custom-orange-600/40 rounded-lg hover:bg-custom-orange-200 dark:hover:bg-custom-orange-600/20 hover:text-custom-orange-600 transition-colors duration-200"
                 aria-label="Предишна страница"
                 onclick={(e) => handlePageClick(e, currentPage - 1)}
             >
@@ -93,7 +93,7 @@
             </a>
         {:else}
             <span
-                class="flex items-center justify-center w-10 h-10 text-sm font-medium text-black bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed"
+                class="flex items-center justify-center w-10 h-10 text-sm font-medium text-black dark:text-gray-400 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg cursor-not-allowed"
             >
                 <svg
                     class="w-4 h-4"
@@ -115,7 +115,7 @@
         {#each visiblePages as page}
             {#if page === "..."}
                 <span
-                    class="flex items-center justify-center w-10 h-10 text-sm font-medium text-gray-400"
+                    class="flex items-center justify-center w-10 h-10 text-sm font-medium text-gray-400 dark:text-gray-500"
                 >
                     ...
                 </span>
@@ -128,7 +128,7 @@
             {:else}
                 <a
                     href={buildHref(Number(page))}
-                    class="flex items-center justify-center w-10 h-10 text-sm font-medium text-custom-orange-600 bg-white border border-custom-orange-200 rounded-lg hover:bg-custom-orange-200 hover:text-custom-orange-600 hover:border-custom-orange-400 transition-colors duration-200"
+                    class="flex items-center justify-center w-10 h-10 text-sm font-medium text-custom-orange-600 bg-white dark:bg-gray-800 border border-custom-orange-200 dark:border-custom-orange-600/40 rounded-lg hover:bg-custom-orange-200 dark:hover:bg-custom-orange-600/20 hover:text-custom-orange-600 hover:border-custom-orange-400 transition-colors duration-200"
                     onclick={(e) => handlePageClick(e, Number(page))}
                 >
                     {page}
@@ -140,7 +140,7 @@
         {#if currentPage < totalPages}
             <a
                 href={buildHref(currentPage + 1)}
-                class="flex items-center justify-center w-10 h-10 text-sm font-medium text-black bg-white border border-custom-orange-200 rounded-lg hover:bg-custom-orange-200 hover:text-black transition-colors duration-200"
+                class="flex items-center justify-center w-10 h-10 text-sm font-medium text-black dark:text-gray-200 bg-white dark:bg-gray-800 border border-custom-orange-200 dark:border-custom-orange-600/40 rounded-lg hover:bg-custom-orange-200 dark:hover:bg-custom-orange-600/20 hover:text-black transition-colors duration-200"
                 aria-label="Следваща страница"
                 onclick={(e) => handlePageClick(e, currentPage + 1)}
             >
@@ -160,7 +160,7 @@
             </a>
         {:else}
             <span
-                class="flex items-center justify-center w-10 h-10 text-sm font-medium text-black bg-gray-100 border border-gray-200 rounded-lg cursor-not-allowed"
+                class="flex items-center justify-center w-10 h-10 text-sm font-medium text-black dark:text-gray-400 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg cursor-not-allowed"
             >
                 <svg
                     class="w-4 h-4"

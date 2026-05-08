@@ -26,7 +26,7 @@
     {@html `<script type="application/ld+json">${organizationSchema}<\/script>`}
 </svelte:head>
 
-<main class="min-h-screen flex flex-col">
+<main class="min-h-screen flex flex-col dark:text-gray-100">
     <Header logo={Logo} />
     <section class="flex justify-center flex-1 pt-4 mx-4">
         <div class="max-w-7xl w-full">
