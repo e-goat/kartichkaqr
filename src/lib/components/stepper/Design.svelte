@@ -16,7 +16,7 @@
     };
 
     function getTitleStyle(t: Template): string {
-        const cqw = ((t.titleFontSize ?? 24) / 340) * 100;
+        const cqw = ((t.titleFontSize ?? 24) / 340) * 100 - 2;
         const base = `color: ${t.fontColor ?? "#ffffff"}; font-family: var(--font-family-${t.font.name}); font-size: ${cqw.toFixed(2)}cqw; line-height: 1.4; left: 6%; right: 6%;`;
         if (t.titlePos === "top") return base + " top: 6%;";
         if (t.titlePos === "bottom") return base + " bottom: 6%;";
@@ -183,7 +183,7 @@
     }
 </script>
 
-<section>
+<section class="w-full">
     <aside>
         <h1
             class="mb-2 sm:mb-3 md:mb-4 text-xl md:text-2xl lg:text-3xl leading-none text-gray-900 text-center"
@@ -196,7 +196,7 @@
             {"Моля, изберете един от показаните шаблони"}
         </p>
 
-        <section class="flex flex-wrap gap-2 mt-12">
+        <section class="flex flex-wrap w-full gap-2 mt-12">
             <button
                 type="button"
                 class="text-white text-sm md:text-base lg:text-lg px-2.5 py-0.5 rounded-full p-5 cursor-pointer transition-colors duration-200"
@@ -240,7 +240,7 @@
             </div>
         {:else}
             <ul
-                class="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"
+                class="mt-6 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
             >
                 {#each templates as t (t.id)}
                     <li use:lazyReveal>
