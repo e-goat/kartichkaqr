@@ -26,6 +26,7 @@ model Card {
   cardUuid    String   @unique @default(uuid())
   description String?
   title       String?
+  physical    Boolean  @default(false)
 
   @@map("cards")
 }
