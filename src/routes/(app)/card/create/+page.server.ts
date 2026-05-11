@@ -14,7 +14,7 @@ import { Prisma } from "$lib/db";
 const TEMPLATE_ASSET_FIELDS = ["background", "backgroundBack"] as const;
 
 export const load: PageServerLoad = async ({ url }) => {
-    const limit: number = Number(url.searchParams.get("limit")) || 9;
+    const limit: number = Number(url.searchParams.get("limit")) || 10;
     const skip: number = Number(url.searchParams.get("skip")) || 0;
     const currentPage: number = Math.floor(skip / limit) + 1;
 
@@ -60,6 +60,8 @@ export const actions: Actions = {
 
             const origin = url.origin;
             const cardUrl = `${origin}/card/${cardMeta.slug}`;
+            const isRequested =
+                formData.get("physical-copy-requested-value") === "true";
 
             card = {
                 title: cardMeta.title ?? ts.title,
@@ -69,6 +71,7 @@ export const actions: Actions = {
                 audioUrl: cardMeta.audioUrl,
                 cardUuid: cardMeta.cardUuid,
                 qrCode: cardUrl,
+                physical: isRequested,
                 template: {
                     connect: { id: cardMeta.templateId },
                 },
@@ -87,8 +90,6 @@ export const actions: Actions = {
             /**
              * Send email to admin if a physical copy is requested
              */
-            const isRequested =
-                formData.get("physical-copy-requested-value") === "true";
             if (isRequested) {
                 // Get sender information from form data
                 const senderName =

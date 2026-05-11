@@ -76,10 +76,14 @@
             <div class="flex flex-col gap-2 sm:gap-3 md:gap-4">
                 <aside id="wish-card-preview" class="mt-6 wish-card">
                     <WishCard
-                        cardFront={selectedTemplate?.background || ""}
+                        cardFront={ts.background ||
+                            selectedTemplate?.background ||
+                            ""}
                         cardBack={ts.backgroundBack}
                         font={ts.font}
-                        fontColor={selectedTemplate?.fontColor || ""}
+                        fontColor={ts.fontColor ||
+                            selectedTemplate?.fontColor ||
+                            ""}
                         title={cs.title || selectedTemplate?.title || ""}
                         description={cs.description ||
                             selectedTemplate?.description ||

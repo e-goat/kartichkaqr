@@ -6,7 +6,7 @@ import { rewriteAssetFields } from "$lib/server/blobUrl";
 const TEMPLATE_ASSET_FIELDS = ["background", "backgroundBack"] as const;
 
 export const GET: RequestHandler = async ({ url }) => {
-    const limit = Math.min(Number(url.searchParams.get("limit")) || 9, 100);
+    const limit = Math.min(Number(url.searchParams.get("limit")) || 10, 100);
     const skip = Number(url.searchParams.get("skip")) || 0;
     const categoryId = url.searchParams.get("categoryId");
     const currentPage = Math.floor(skip / limit) + 1;

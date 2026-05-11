@@ -6,10 +6,9 @@ import { z } from "zod";
 export const introStepSchema = z.object({
     title: z
         .string()
+        .min(1, "Заглавието е задължително")
         .max(100, "Заглавието не може да бъде повече от 100 символа")
-        .trim()
-        .optional()
-        .default(""),
+        .trim(),
     sender: z
         .string()
         .max(100, "Вашето име не може да бъде повече от 100 символа")

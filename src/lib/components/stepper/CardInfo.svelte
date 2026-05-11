@@ -40,10 +40,7 @@
                         for="title-input"
                     >
                         Заглавие
-                        <span
-                            class="text-gray-400 dark:text-gray-500 font-normal text-xs ml-1"
-                            >(по избор)</span
-                        >
+                        <span class="text-red-500 ml-0.5">*</span>
                     </label>
                     <input
                         id="title-input"

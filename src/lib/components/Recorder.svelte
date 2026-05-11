@@ -15,6 +15,7 @@
     let hasStarted = $state(false);
     let isRecordingComplete = $state(false);
     let mediaRecorder: MediaRecorder;
+    let stream: MediaStream | null = null;
     let audioUrl: string | null = $state(null);
     let audioElement: HTMLAudioElement | null = null;
     let isPlaying = $state(false);
@@ -57,7 +58,7 @@
         };
     });
 
-    function handleReset(event: Event) {
+    async function handleReset(event: Event) {
         event?.preventDefault();
 
         hasStarted = false;
@@ -82,6 +83,20 @@
         if (intervalId) {
             clearInterval(intervalId);
             intervalId = null;
+        }
+
+        // Re-acquire stream so user can record again
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            await setupStream().catch((err) => {
+                Swal.fire({
+                    title: "Грешка!",
+                    text: `Възникна грешка при записването на звука: ${err}`,
+                    icon: "error",
+                    confirmButtonText: "Разбрано",
+                    customClass: { confirmButton: "swal-confirm-button" },
+                    buttonsStyling: false,
+                });
+            });
         }
     }
 
@@ -203,6 +218,71 @@
         form.appendChild(blobInput);
     }
 
+    async function setupStream() {
+        const s = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream = s;
+
+        const options: MediaRecorderOptions = {};
+        if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
+            options.mimeType = "audio/webm;codecs=opus";
+        } else if (MediaRecorder.isTypeSupported("audio/webm")) {
+            options.mimeType = "audio/webm";
+        } else if (MediaRecorder.isTypeSupported("audio/mp4")) {
+            options.mimeType = "audio/mp4";
+        } else if (MediaRecorder.isTypeSupported("audio/ogg;codecs=opus")) {
+            options.mimeType = "audio/ogg;codecs=opus";
+        }
+
+        mediaRecorder = new MediaRecorder(s, options);
+        let chunks: Blob[] = [];
+
+        mediaRecorder.ondataavailable = (event: BlobEvent) => {
+            if (event.data && event.data.size > 0) {
+                chunks.push(event.data);
+            }
+        };
+
+        mediaRecorder.onstop = () => {
+            if (chunks.length > 0) {
+                rs.blob = new Blob(chunks, {
+                    type: mediaRecorder.mimeType || "audio/webm",
+                });
+                if (audioUrl) {
+                    URL.revokeObjectURL(audioUrl);
+                }
+                audioUrl = URL.createObjectURL(rs.blob);
+                cs.audioUrl = audioUrl;
+                chunks = [];
+
+                const form = document.getElementById(
+                    "step-form",
+                ) as HTMLFormElement;
+                const existingBlob = form.querySelector('input[name="record"]');
+                if (existingBlob) {
+                    existingBlob.remove();
+                }
+
+                const blobInput = document.createElement("input");
+                blobInput.type = "file";
+                blobInput.name = "record";
+                blobInput.style.display = "none";
+
+                const file = new File([rs.blob], cs.cardUuid.trim() + ".webm", {
+                    type: rs.blob.type,
+                });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                blobInput.files = dataTransfer.files;
+
+                form.appendChild(blobInput);
+            }
+
+            // Release the microphone
+            s.getTracks().forEach((t) => t.stop());
+            stream = null;
+        };
+    }
+
     onMount(async () => {
         // Restore state if a recording already exists from a previous visit to this step
         if (rs.blob) {
@@ -215,90 +295,18 @@
         }
 
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices
-                .getUserMedia({
-                    audio: true,
-                })
-                .then((stream) => {
-                    const options: MediaRecorderOptions = {};
-
-                    if (
-                        MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
-                    ) {
-                        options.mimeType = "audio/webm;codecs=opus";
-                    } else if (MediaRecorder.isTypeSupported("audio/webm")) {
-                        options.mimeType = "audio/webm";
-                    } else if (MediaRecorder.isTypeSupported("audio/mp4")) {
-                        options.mimeType = "audio/mp4";
-                    } else if (
-                        MediaRecorder.isTypeSupported("audio/ogg;codecs=opus")
-                    ) {
-                        options.mimeType = "audio/ogg;codecs=opus";
-                    }
-
-                    mediaRecorder = new MediaRecorder(stream, options);
-
-                    let chunks: Blob[] = [];
-
-                    mediaRecorder.ondataavailable = (event: BlobEvent) => {
-                        if (event.data && event.data.size > 0) {
-                            chunks.push(event.data);
-                        }
-                    };
-
-                    mediaRecorder.onstop = () => {
-                        if (chunks.length > 0) {
-                            rs.blob = new Blob(chunks, {
-                                type: mediaRecorder.mimeType || "audio/webm",
-                            });
-                            if (audioUrl) {
-                                URL.revokeObjectURL(audioUrl);
-                            }
-                            audioUrl = URL.createObjectURL(rs.blob);
-                            cs.audioUrl = audioUrl;
-                            chunks = [];
-
-                            // Add blob to the form for server upload
-                            const form = document.getElementById(
-                                "step-form",
-                            ) as HTMLFormElement;
-                            const existingBlob = form.querySelector(
-                                'input[name="record"]',
-                            );
-                            if (existingBlob) {
-                                existingBlob.remove();
-                            }
-
-                            const blobInput = document.createElement("input");
-                            blobInput.type = "file";
-                            blobInput.name = "record";
-                            blobInput.style.display = "none";
-
-                            const file = new File(
-                                [rs.blob],
-                                cs.cardUuid.trim() + ".webm",
-                                { type: rs.blob.type },
-                            );
-                            const dataTransfer = new DataTransfer();
-                            dataTransfer.items.add(file);
-                            blobInput.files = dataTransfer.files;
-
-                            form.appendChild(blobInput);
-                        }
-                    };
-                })
-                .catch((err) => {
-                    Swal.fire({
-                        title: "Грешка!",
-                        text: `Възникна грешка при записването на звука: ${err}`,
-                        icon: "error",
-                        confirmButtonText: "Разбрано",
-                        customClass: {
-                            confirmButton: "swal-confirm-button",
-                        },
-                        buttonsStyling: false,
-                    });
+            await setupStream().catch((err) => {
+                Swal.fire({
+                    title: "Грешка!",
+                    text: `Възникна грешка при записването на звука: ${err}`,
+                    icon: "error",
+                    confirmButtonText: "Разбрано",
+                    customClass: {
+                        confirmButton: "swal-confirm-button",
+                    },
+                    buttonsStyling: false,
                 });
+            });
         } else {
             Swal.fire({
                 title: "Грешка!",

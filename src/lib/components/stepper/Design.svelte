@@ -91,6 +91,7 @@
             );
         }
         cs.templateId = parseInt(target?.dataset.templateId ?? "0");
+        ts.background = target?.dataset.templateBackground ?? "";
         ts.backgroundBack = target?.dataset.templateBackgroundBack ?? "";
         ts.titlePosition = (target?.dataset.titlePosition ?? "center") as
             | "top"
@@ -98,6 +99,7 @@
             | "center";
         ts.titleFontSize = parseInt(target?.dataset.titleFontSize ?? "24");
         ts.font = target?.dataset.font ?? "";
+        ts.fontColor = target?.dataset.fontColor ?? "";
 
         const newTemplateTitle = target?.dataset.templateTitle ?? "";
         const newTemplateDescription =
@@ -270,10 +272,12 @@
                             data-template-id={t.id}
                             data-template-title={t.title}
                             data-template-description={t.description}
+                            data-template-background={t.background}
                             data-template-background-back={t.backgroundBack}
                             data-title-position={t.titlePos}
                             data-title-font-size={t.titleFontSize}
                             data-font={t.font.name}
+                            data-font-color={t.fontColor ?? ""}
                             aria-label={t.title}
                             style="container-type: inline-size"
                         >
