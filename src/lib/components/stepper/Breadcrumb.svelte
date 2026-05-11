@@ -127,7 +127,7 @@
             <enhanced:img
                 src={ConnectorIcon}
                 alt="Step connector"
-                class="object-contain shrink-0 self-stretch my-auto aspect-[20.83] w-10.5 {isCompleted
+                class="object-contain shrink-0 self-stretch my-auto aspect-[20.83] w-10.5 invert dark:invert-0 {isCompleted
                     ? 'opacity-100'
                     : 'opacity-30'}"
             />
