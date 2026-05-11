@@ -34,7 +34,7 @@ model Card {
 model Template {
   id             Int           @id @default(autoincrement())
   cards          Card[]
-  title          String
+  title          String?
   titlePos       TitlePosition @default(top)
   titleFontSize  Int           @default(24) // Font size in pixels for the card title
   description    String?
