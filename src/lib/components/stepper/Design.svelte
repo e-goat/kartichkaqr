@@ -45,7 +45,7 @@
     let total = $derived(data.total);
     let currentPage = $derived(data.currentPage);
     let pageSize = $derived(data.pageSize);
-    let selectedCategory = $state<number | null>(null);
+    let selectedCategory = $state<number | null>(ts.designCategory);
     let isLoading = $state(false);
 
     async function fetchTemplates(categoryId: number | null, page: number = 1) {
@@ -133,18 +133,29 @@
     function handleClickEventAll(event: MouseEvent) {
         event.preventDefault();
         selectedCategory = null;
+        ts.designCategory = null;
+        ts.designPage = 1;
         fetchTemplates(null);
     }
 
     function handleClickEventCategory(event: MouseEvent, categoryId: number) {
         event.preventDefault();
         selectedCategory = categoryId;
+        ts.designCategory = categoryId;
+        ts.designPage = 1;
         fetchTemplates(categoryId);
     }
 
     function handlePageChange(page: number) {
+        ts.designPage = page;
         fetchTemplates(selectedCategory, page);
     }
+
+    onMount(() => {
+        if (ts.designPage > 1 || ts.designCategory !== null) {
+            fetchTemplates(ts.designCategory, ts.designPage);
+        }
+    });
 
     let loadedImages = $state(new Set<number>());
 

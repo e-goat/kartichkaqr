@@ -52,6 +52,8 @@ interface TemplateState {
     fontColor: string;
     templateDescription: string;
     templateTitle: string;
+    designPage: number;
+    designCategory: number | null;
 }
 
 // UNITED STATES
@@ -95,6 +97,8 @@ export const ts: TemplateState = $state({
     fontColor: "",
     templateDescription: "",
     templateTitle: "",
+    designPage: 1,
+    designCategory: null,
 });
 
 export const pcs: PhysicalCopyState = $state({

@@ -79,6 +79,17 @@
     }
 </script>
 
+{#if ss.isSubmitting}
+    <div
+        class="fixed inset-0 z-50 bg-black/60 flex flex-col items-center justify-center gap-4"
+    >
+        <div
+            class="animate-spin rounded-full h-14 w-14 border-4 border-white border-t-transparent"
+        ></div>
+        <p class="text-white text-sm font-medium">Създаване на картичка...</p>
+    </div>
+{/if}
+
 <div class="px-px max-w-95.25 text-zinc-800 dark:text-zinc-200 mx-auto mb-6">
     <div class="flex flex-col justify-center">
         <div
@@ -158,6 +169,7 @@
                             });
 
                             if (confirmation.isConfirmed) {
+                                ss.isSubmitting = true;
                                 const form = document.getElementById(
                                     "step-form",
                                 ) as HTMLFormElement;

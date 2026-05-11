@@ -58,7 +58,7 @@
         };
     });
 
-    async function handleReset(event: Event) {
+    function handleReset(event: Event) {
         event?.preventDefault();
 
         hasStarted = false;
@@ -83,20 +83,6 @@
         if (intervalId) {
             clearInterval(intervalId);
             intervalId = null;
-        }
-
-        // Re-acquire stream so user can record again
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            await setupStream().catch((err) => {
-                Swal.fire({
-                    title: "Грешка!",
-                    text: `Възникна грешка при записването на звука: ${err}`,
-                    icon: "error",
-                    confirmButtonText: "Разбрано",
-                    customClass: { confirmButton: "swal-confirm-button" },
-                    buttonsStyling: false,
-                });
-            });
         }
     }
 
@@ -169,7 +155,7 @@
         }
     }
 
-    const startRecord = (event: Event, time: number = MAX_TIME) => {
+    const startRecord = async (event: Event) => {
         event?.preventDefault();
         rs.blob = null;
         if (audioUrl) {
@@ -179,11 +165,24 @@
         audioElement = null;
         isPlaying = false;
 
+        try {
+            await setupStream();
+        } catch (err) {
+            Swal.fire({
+                title: "Грешка!",
+                text: `Възникна грешка при записването на звука: ${err}`,
+                icon: "error",
+                confirmButtonText: "Разбрано",
+                customClass: { confirmButton: "swal-confirm-button" },
+                buttonsStyling: false,
+            });
+            return;
+        }
         mediaRecorder.start();
         recording = true;
     };
 
-    const handleStartStop = (event: Event) => {
+    const handleStartStop = async (event: Event) => {
         event?.preventDefault();
 
         if (recording) {
@@ -194,7 +193,7 @@
             recording = false;
             isRecordingComplete = true;
         } else if (!hasStarted) {
-            startRecord(event);
+            await startRecord(event);
         }
     };
 
@@ -292,32 +291,6 @@
             audioUrl = URL.createObjectURL(rs.blob);
             cs.audioUrl = audioUrl;
             await reattachBlobToForm();
-        }
-
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            await setupStream().catch((err) => {
-                Swal.fire({
-                    title: "Грешка!",
-                    text: `Възникна грешка при записването на звука: ${err}`,
-                    icon: "error",
-                    confirmButtonText: "Разбрано",
-                    customClass: {
-                        confirmButton: "swal-confirm-button",
-                    },
-                    buttonsStyling: false,
-                });
-            });
-        } else {
-            Swal.fire({
-                title: "Грешка!",
-                text: "Записът на звука не е поддържан в вашия браузър!",
-                icon: "error",
-                confirmButtonText: "Разбрано",
-                customClass: {
-                    confirmButton: "swal-confirm-button",
-                },
-                buttonsStyling: false,
-            });
         }
     });
 </script>
