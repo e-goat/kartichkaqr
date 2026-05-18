@@ -208,7 +208,9 @@
         blobInput.type = "file";
         blobInput.name = "record";
         blobInput.style.display = "none";
-        const file = new File([rs.blob], cs.cardUuid.trim() + ".webm", {
+        const ext =
+            (rs.blob.type.split("/")[1] ?? "webm").split(";")[0] || "webm";
+        const file = new File([rs.blob], cs.cardUuid.trim() + "." + ext, {
             type: rs.blob.type,
         });
         const dataTransfer = new DataTransfer();
@@ -266,9 +268,14 @@
                 blobInput.name = "record";
                 blobInput.style.display = "none";
 
-                const file = new File([rs.blob], cs.cardUuid.trim() + ".webm", {
-                    type: rs.blob.type,
-                });
+                const blobExt =
+                    (rs.blob.type.split("/")[1] ?? "webm").split(";")[0] ||
+                    "webm";
+                const file = new File(
+                    [rs.blob],
+                    cs.cardUuid.trim() + "." + blobExt,
+                    { type: rs.blob.type },
+                );
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(file);
                 blobInput.files = dataTransfer.files;
