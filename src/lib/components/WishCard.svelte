@@ -228,7 +228,7 @@
                     class="flex-[0_0_100%] min-w-0 h-full bg-white flex flex-col justify-center p-6 gap-4"
                 >
                     <p
-                        class="text-sm md:text-base text-gray-800 leading-relaxed text-center break-words w-full"
+                        class="text-sm md:text-base text-gray-800 leading-relaxed text-center wrap-break-word w-full"
                     >
                         {description}
                     </p>
