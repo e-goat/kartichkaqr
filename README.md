@@ -1,38 +1,87 @@
-# KARTICHKAQR
+# KartichkaQR
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A Bulgarian greeting card platform for creating personalized cards with QR codes and voice messages. Users follow a 4-step wizard to design a card, record a voice greeting, and share it via a unique link — with an option to order a physical printed copy.
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- **Card creation wizard** — title, description, sender/receiver info, and a unique shareable slug
+- **Template designer** — choose from categorized templates with font, color, and background customization
+- **Voice recording** — record a personal audio message (Safari-compatible)
+- **QR code** — auto-generated and embedded on the card, linking back to the shared card URL
+- **Interactive card preview** — carousel showing front, sides, and back
+- **Sharing** — native share API with copy-link fallback
+- **Physical order** — request a printed card, which notifies the admin via email
+- **Dark mode**
+
+## Tech Stack
+
+- **Frontend**: Svelte 5, SvelteKit 2, TypeScript, TailwindCSS 4
+- **Database**: PostgreSQL via Prisma ORM
+- **Storage**: Vercel Blob (audio files)
+- **Email**: Resend
+- **Deployment**: Vercel
+
+## Getting Started
+
+### 1. Install dependencies
 
 ```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+npm install
 ```
 
-## Developing
+### 2. Configure environment variables
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Copy `.env.example` to `.env` and fill in the values:
+
+```bash
+cp .env.example .env
+```
+
+| Variable                     | Description                            |
+| ---------------------------- | -------------------------------------- |
+| `DATABASE_URL`               | PostgreSQL connection string           |
+| `BLOB_PROD_READ_WRITE_TOKEN` | Vercel Blob token (production)         |
+| `BLOB_DEV_READ_WRITE_TOKEN`  | Vercel Blob token (development)        |
+| `RESEND_API_KEY`             | Resend API key for transactional email |
+| `APP_EMAIL`                  | Sender address for outgoing emails     |
+| `ADMIN_EMAIL`                | Receives physical order notifications  |
+| `ADMIN_DASHBOARD_KEY`        | Password for the admin dashboard       |
+| `APP_NAME`                   | App name used in emails/branding       |
+| `APP_ENV`                    | `development` or `production`          |
+
+### 3. Set up the database
+
+```bash
+npx prisma migrate deploy
+```
+
+### 4. Start the dev server
 
 ```bash
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
 ## Building
 
-To create a production version of your app:
-
 ```bash
 npm run build
+npm run preview
 ```
 
-You can preview the production build with `npm run preview`.
+The app is deployed on Vercel using the `@sveltejs/adapter-vercel` adapter.
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+## Project Structure
+
+```
+src/
+  routes/
+    (app)/
+      card/create/   # 4-step card creation wizard
+      card/[slug]/   # Shared card view
+      about/         # About page
+  lib/
+    components/
+      stepper/       # Wizard step components
+    server/          # DB, email, and storage utilities
+prisma/              # Schema and migrations
+```
