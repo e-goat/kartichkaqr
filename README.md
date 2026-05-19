@@ -1,5 +1,7 @@
 # KartichkaQR
 
+![KartichkaQR Logo](static/logo.jpg)
+
 A Bulgarian greeting card platform for creating personalized cards with QR codes and voice messages. Users follow a 4-step wizard to design a card, record a voice greeting, and share it via a unique link — with an option to order a physical printed copy.
 
 ## Features
