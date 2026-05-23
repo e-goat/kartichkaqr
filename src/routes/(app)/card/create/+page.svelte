@@ -170,10 +170,10 @@
     {#if ss.currentStep == 1}
         <CardInfo />
     {:else if ss.currentStep == 2}
-        <Design {data} />
+        <Design categories={data.categories} />
     {:else if ss.currentStep == 3}
         <Record />
     {:else if ss.currentStep == 4}
-        <Review templates={data.templates} />
+        <Review />
     {/if}
 </Stepper>

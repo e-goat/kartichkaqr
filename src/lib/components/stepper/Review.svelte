@@ -2,25 +2,6 @@
     import WishCard from "$lib/components/WishCard.svelte";
     import { cs, ss, pcs, ts } from "$lib/state.svelte";
 
-    interface Props {
-        templates?: Array<{
-            id: number;
-            title: string;
-            description: string;
-            background: string;
-            recipient: string;
-            font: string;
-            type: string;
-            fontColor?: string;
-        }>;
-    }
-
-    let { templates = [] }: Props = $props();
-
-    let selectedTemplate = $derived(
-        templates.find((t) => t.id === cs.templateId) || null,
-    );
-
     $effect(() => {
         // Clear validation errors when user starts typing
         if (pcs.name && ss.validationErrors.name) {
@@ -76,18 +57,12 @@
             <div class="flex flex-col gap-2 sm:gap-3 md:gap-4">
                 <aside id="wish-card-preview" class="mt-6 wish-card">
                     <WishCard
-                        cardFront={ts.background ||
-                            selectedTemplate?.background ||
-                            ""}
+                        cardFront={ts.background}
                         cardBack={ts.backgroundBack}
                         font={ts.font}
-                        fontColor={ts.fontColor ||
-                            selectedTemplate?.fontColor ||
-                            ""}
-                        title={cs.title || selectedTemplate?.title || ""}
-                        description={cs.description ||
-                            selectedTemplate?.description ||
-                            ""}
+                        fontColor={ts.fontColor}
+                        title={cs.title}
+                        description={cs.description}
                         sender={cs.sender ?? undefined}
                         previewMode={true}
                         titlePosition={ts.titlePosition}

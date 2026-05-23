@@ -6,34 +6,13 @@ import { VercelStorageController } from "$lib/controller/VercelStorage";
 import { MailController } from "$lib/controller/Mail";
 import { APP_EMAIL, ADMIN_EMAIL, APP_NAME } from "$lib/server/secrets";
 import * as db from "$lib/server/database";
-import { rewriteAssetFields } from "$lib/server/blobUrl";
 import { fail } from "@sveltejs/kit";
 import { createCard } from "$lib/server/database";
 import { Prisma } from "$lib/db";
 
-const TEMPLATE_ASSET_FIELDS = ["background", "backgroundBack"] as const;
-
-export const load: PageServerLoad = async ({ url }) => {
-    const limit: number = Number(url.searchParams.get("limit")) || 10;
-    const skip: number = Number(url.searchParams.get("skip")) || 0;
-    const currentPage: number = Math.floor(skip / limit) + 1;
-
-    const categoryId = url.searchParams.get("categoryId");
-    const result = categoryId
-        ? await db.getAllTemplatesByCategory(limit, skip, Number(categoryId))
-        : await db.getAllTemplates(limit, skip);
-
+export const load: PageServerLoad = async () => {
     const categories = await db.getAllCategories();
-
-    return {
-        templates: result.templates.map((t) =>
-            rewriteAssetFields(t, TEMPLATE_ASSET_FIELDS),
-        ),
-        categories,
-        total: result.total,
-        currentPage,
-        pageSize: limit,
-    };
+    return { categories };
 };
 
 export const actions: Actions = {

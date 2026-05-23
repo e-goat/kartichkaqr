@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { cs, ss, tcc, ts } from "$lib/state.svelte";
+    import { cs, ss, ts } from "$lib/state.svelte";
     import Pagination from "../Pagination.svelte";
-    import { onMount, tick } from "svelte";
+    import { onMount, tick, untrack } from "svelte";
 
     type Template = {
         id: number;
@@ -28,31 +28,43 @@
         name: string;
     };
 
-    type PageProp = {
-        data: {
-            templates: Template[];
-            total: number;
-            currentPage: number;
-            pageSize: number;
-            categories: Category[];
-        };
-    };
+    interface Props {
+        categories: Category[];
+    }
 
-    let { data }: PageProp = $props();
+    let { categories }: Props = $props();
 
-    // Local reactive state for templates (initialized from server data)
-    let templates = $derived<Template[]>(data.templates);
-    let total = $derived(data.total);
-    let currentPage = $derived(data.currentPage);
-    let pageSize = $derived(data.pageSize);
+    const PAGE_SIZE = 10;
+    const CACHE_MAX = 10;
+    const templateCache = new Map<
+        string,
+        { templates: Template[]; total: number }
+    >();
+
+    let templates = $state<Template[]>([]);
+    let total = $state(0);
+    let currentPage = $state(ts.designPage);
     let selectedCategory = $state<number | null>(ts.designCategory);
     let isLoading = $state(false);
 
+    function cacheKey(categoryId: number | null, page: number) {
+        return `${categoryId ?? "all"}-${page}`;
+    }
+
     async function fetchTemplates(categoryId: number | null, page: number = 1) {
+        const key = cacheKey(categoryId, page);
+        const cached = templateCache.get(key);
+        if (cached) {
+            templates = cached.templates;
+            total = cached.total;
+            currentPage = page;
+            return;
+        }
+
         isLoading = true;
-        const skip = (page - 1) * pageSize;
+        const skip = (page - 1) * PAGE_SIZE;
         const params = new URLSearchParams({
-            limit: String(pageSize),
+            limit: String(PAGE_SIZE),
             skip: String(skip),
         });
 
@@ -70,6 +82,14 @@
             templates = result.templates;
             total = result.total;
             currentPage = result.currentPage;
+
+            if (templateCache.size >= CACHE_MAX) {
+                templateCache.delete(templateCache.keys().next().value!);
+            }
+            templateCache.set(key, {
+                templates: result.templates,
+                total: result.total,
+            });
 
             await tick();
         } catch (error) {
@@ -152,23 +172,23 @@
     }
 
     onMount(() => {
-        if (ts.designPage > 1 || ts.designCategory !== null) {
-            fetchTemplates(ts.designCategory, ts.designPage);
-        }
+        fetchTemplates(ts.designCategory, ts.designPage);
     });
 
     let loadedImages = $state(new Set<number>());
 
     $effect(() => {
-        templates;
-        loadedImages = new Set();
+        const newIds = new Set(templates.map((t) => t.id));
+        const prev = untrack(() => loadedImages);
+        loadedImages = new Set([...prev].filter((id) => newIds.has(id)));
     });
 
     function handleImageLoad(id: number) {
         loadedImages = new Set([...loadedImages, id]);
     }
 
-    function lazyReveal(node: HTMLElement) {
+    function lazyReveal(node: HTMLElement, index: number) {
+        const createdAt = Date.now();
         node.style.opacity = "0";
         node.style.transform = "translateY(8px)";
         node.style.transition = "opacity 0.3s ease, transform 0.3s ease";
@@ -177,8 +197,14 @@
             (entries) => {
                 for (const entry of entries) {
                     if (entry.isIntersecting) {
-                        node.style.opacity = "1";
-                        node.style.transform = "translateY(0)";
+                        // Items already in view when rendered get a left-to-right stagger.
+                        // Items revealed by scrolling appear immediately.
+                        const delay =
+                            Date.now() - createdAt < 500 ? index * 50 : 0;
+                        setTimeout(() => {
+                            node.style.opacity = "1";
+                            node.style.transform = "translateY(0)";
+                        }, delay);
                         observer.unobserve(node);
                     }
                 }
@@ -225,7 +251,7 @@
                 >
                     Всички
                 </button>
-                {#each data.categories as c}
+                {#each categories as c}
                     <button
                         type="button"
                         class="shrink-0 text-white text-xs sm:text-sm px-3 py-1 sm:px-4 sm:py-1.5 rounded-md cursor-pointer transition-colors duration-200"
@@ -268,8 +294,8 @@
             <ul
                 class="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4"
             >
-                {#each templates as t (t.id)}
-                    <li use:lazyReveal>
+                {#each templates as t, i (t.id)}
+                    <li use:lazyReveal={i}>
                         <button
                             type="button"
                             class="wish-card border-4 w-full rounded-xl overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:cursor-pointer relative aspect-3/4 bg-gray-50 dark:bg-gray-700"
@@ -330,7 +356,7 @@
             amount={total}
             url="/card/create"
             {currentPage}
-            {pageSize}
+            pageSize={PAGE_SIZE}
             onPageChange={handlePageChange}
         />
         <input type="hidden" name="templateId" value={cs.templateId} />
