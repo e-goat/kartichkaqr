@@ -14,16 +14,17 @@ async function main() {
     await prisma.category.deleteMany({ where: { templates: { none: {} } } });
     console.log("Cleared unreferenced fonts and categories.");
 
-    const categories = [
-        { name: "Благодарност" },
-        { name: "Любов" },
-        { name: "Подкрепа" },
-        { name: "Празници" },
-        { name: "Специални дни" },
-    ];
+    // Enable this code only if you want to seed categories. Disabled due to conflicting production data.
+    // const categories = [
+    //     { name: "Благодарност" },
+    //     { name: "Любов" },
+    //     { name: "Подкрепа" },
+    //     { name: "Празници" },
+    //     { name: "Специални дни" },
+    // ];
 
-    await prisma.category.createMany({ data: categories, skipDuplicates: true });
-    console.log("Seeded categories successfully.");
+    // await prisma.category.createMany({ data: categories, skipDuplicates: true });
+    // console.log("Seeded categories successfully.");
 
     // Font names must match CSS variable suffixes (--font-family-<name>)
     // Spaces are invalid in CSS custom property names, so CamelCase is required.
