@@ -63,6 +63,15 @@ npx prisma migrate deploy
 npm run dev
 ```
 
+## Storage Layout
+
+Vercel Blob organizes files by folder:
+
+| Path                                | Contents                                                                                                                                                                                                                      |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `records/{cardUuid}.{ext}`          | Audio recordings — named after `cardUuid` (the internal UUID stored on the `Card` row). To recover a recording when the blob URL is lost, look up the card's `cardUuid` in the database and fetch `records/{cardUuid}.{ext}`. |
+| `templates/{category}/{name}.{ext}` | Template background images                                                                                                                                                                                                    |
+
 ## Building
 
 ```bash

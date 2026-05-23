@@ -36,7 +36,7 @@ class VercelStorage {
                 throw new Error("Missing vercel storage token");
             }
 
-            const result = await put(`${uuid}.${mimeType}`, file, {
+            const result = await put(`records/${uuid}.${mimeType}`, file, {
                 access: "private",
                 token: BLOB_SECRET,
             });
