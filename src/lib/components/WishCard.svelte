@@ -225,17 +225,17 @@
 
                 <!-- Slide 3: Right inner (message) -->
                 <div
-                    class="flex-[0_0_100%] min-w-0 h-full bg-white flex flex-col justify-center p-6 gap-4"
+                    class="flex-[0_0_100%] min-w-0 h-full bg-white flex flex-col p-6"
                 >
-                    <p
-                        class="text-sm md:text-base text-gray-800 leading-relaxed text-center wrap-break-word w-full"
-                    >
-                        {description}
-                    </p>
-                    {#if displaySender}
+                    <div class="flex-1 flex items-center justify-center">
                         <p
-                            class="text-xs text-end underline text-gray-600 mt-auto"
+                            class="text-sm md:text-base text-gray-800 leading-relaxed text-center break-words w-full"
                         >
+                            {description}
+                        </p>
+                    </div>
+                    {#if displaySender}
+                        <p class="text-xs text-end underline text-gray-600">
                             От: {displaySender}
                         </p>
                     {/if}
