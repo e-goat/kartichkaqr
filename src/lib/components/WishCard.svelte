@@ -180,6 +180,7 @@
                             </p>
                             <audio
                                 controls
+                                preload="metadata"
                                 src={audioUrlProp}
                                 class="w-full max-w-xs mt-1"
                             >

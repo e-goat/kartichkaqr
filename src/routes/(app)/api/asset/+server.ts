@@ -5,6 +5,7 @@ import { VercelStorageController } from "$lib/controller/VercelStorage";
 const PASSTHROUGH_HEADERS = [
     "content-type",
     "content-length",
+    "content-range",
     "etag",
     "last-modified",
     "accept-ranges",
@@ -38,11 +39,13 @@ export const GET: RequestHandler = async ({ url, request }) => {
     }
 
     const ifNoneMatch = request.headers.get("if-none-match") ?? undefined;
+    const range = request.headers.get("range") ?? undefined;
 
     let result;
     try {
         result = await VercelStorageController.getAsset(blobUrl, {
             ifNoneMatch,
+            range,
         });
     } catch (err) {
         console.error("Asset fetch failed", err);
@@ -56,6 +59,7 @@ export const GET: RequestHandler = async ({ url, request }) => {
         const value = result.headers.get(name);
         if (value) headers.set(name, value);
     }
+    headers.set("Accept-Ranges", "bytes");
     headers.set("Cache-Control", "private, no-cache");
     headers.set("X-Content-Type-Options", "nosniff");
 

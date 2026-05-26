@@ -137,13 +137,19 @@ class VercelStorage {
      * Forward `ifNoneMatch` from the browser's `If-None-Match` header to get
      * a `304 Not Modified` response (no stream) when the blob is unchanged.
      *
+     * Forward `range` from the browser's `Range` header to get a `206 Partial
+     * Content` response — required for Safari to play audio. The SDK passes it
+     * as a low-level fetch header override. A 206 response has `response.ok`
+     * true so the SDK streams it normally; we detect it via the `Content-Range`
+     * response header and surface the correct status code to the caller.
+     *
      * The headers object comes from undici and is structurally compatible
      * with the standard Headers interface (has `get(name)`), so it's exposed
      * via a minimal contract rather than the full DOM Headers type.
      */
     async getAsset(
         pathnameOrUrl: string,
-        options: { ifNoneMatch?: string } = {},
+        options: { ifNoneMatch?: string; range?: string } = {},
     ): Promise<{
         stream: ReadableStream | null;
         headers: { get(name: string): string | null };
@@ -156,14 +162,18 @@ class VercelStorage {
             access: "private",
             token: BLOB_SECRET,
             ifNoneMatch: options.ifNoneMatch,
+            headers: options.range ? { Range: options.range } : undefined,
         });
 
         if (!result) return null;
 
+        const isPartial = !!result.headers.get("content-range");
+        const status = result.statusCode === 304 ? 304 : isPartial ? 206 : 200;
+
         return {
             stream: result.stream as unknown as ReadableStream | null,
             headers: result.headers,
-            status: result.statusCode,
+            status,
         };
     }
 }
