@@ -25,6 +25,20 @@
         </script>
         %sveltekit.head%
     </head>
+    <!-- Google tag (gtag.js) -->
+    <script
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-VLG31STS0W"
+    ></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag("js", new Date());
+
+        gtag("config", "G-VLG31STS0W");
+    </script>
     <body
         data-sveltekit-preload-data="hover"
         class="antialiased bg-custom-teal-200 dark:bg-gray-900 text-sm"
