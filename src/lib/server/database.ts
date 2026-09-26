@@ -153,3 +153,48 @@ export async function getAllCategories() {
         orderBy: { id: "asc" },
     });
 }
+
+const TEMPLATE_CARD_SELECT = {
+    id: true,
+    title: true,
+    titlePos: true,
+    titleFontSize: true,
+    description: true,
+    background: true,
+    backgroundBack: true,
+    font: true,
+    fontColor: true,
+    categoryId: true,
+    createdAt: true,
+    categories: { select: { name: true } },
+} satisfies Prisma.TemplateSelect;
+
+/** Newest templates with an image background, for the home page showcase. */
+export async function getShowcaseTemplates(limit: number) {
+    return prisma.template.findMany({
+        select: TEMPLATE_CARD_SELECT,
+        where: { background: { startsWith: "http" } },
+        orderBy: { createdAt: "desc" },
+        take: limit,
+    });
+}
+
+/** A template by id, or null (unlike getTemplateById, which throws). */
+export async function findTemplate(templateId: number) {
+    return prisma.template.findUnique({
+        select: TEMPLATE_CARD_SELECT,
+        where: { id: templateId },
+    });
+}
+
+/** Categories with at least one template, for crawlable category links. */
+export async function getCategoriesWithTemplateCount() {
+    return prisma.category.findMany({
+        orderBy: { id: "asc" },
+        select: {
+            id: true,
+            name: true,
+            _count: { select: { templates: true } },
+        },
+    });
+}
