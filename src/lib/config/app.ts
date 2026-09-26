@@ -29,15 +29,22 @@ const TOKENS_BY_STORE = new Map(
  * Token for reading or deleting an existing blob. Local dev and the preview
  * share a database but not a blob store, so a card's files may live in the
  * store other than the one `APP_ENV` selects. New uploads always go to
- * `appConfig.blob`. Falls back to that token for pathnames or unknown stores.
+ * `appConfig.blob`. Pathnames use that token too. Throws for a URL in a
+ * store this environment has no token for, since any other token would
+ * just get a 403.
  */
 export function blobTokenForUrl(pathnameOrUrl: string): string | undefined {
+    let storeId: string;
     try {
-        const storeId = new URL(pathnameOrUrl).hostname.split(".")[0];
-        return TOKENS_BY_STORE.get(storeId) ?? appConfig.blob;
+        storeId = new URL(pathnameOrUrl).hostname.split(".")[0];
     } catch {
         return appConfig.blob;
     }
+    const token = TOKENS_BY_STORE.get(storeId);
+    if (!token) {
+        throw new Error(`No blob token configured for store "${storeId}"`);
+    }
+    return token;
 }
 
 export default appConfig;
