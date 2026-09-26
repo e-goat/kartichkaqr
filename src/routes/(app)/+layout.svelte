@@ -1,10 +1,12 @@
 <script lang="ts">
     import { injectAnalytics } from "@vercel/analytics/sveltekit";
+    import { ModeWatcher } from "mode-watcher";
     import "../../app.css";
     import Logo from "$lib/assets/logo.jpg";
     import Footer from "$lib/components/Footer.svelte";
     import Header from "$lib/components/Header.svelte";
     import CookieModal from "$lib/components/CookieModal.svelte";
+    import { Toaster } from "$lib/components/ui/sonner";
     let { children, data } = $props();
     injectAnalytics();
 
@@ -26,10 +28,14 @@
     {@html `<script type="application/ld+json">${organizationSchema}<\/script>`}
 </svelte:head>
 
-<main class="min-h-screen flex flex-col dark:text-gray-100">
-    <Header logo={Logo} />
-    <section class="flex justify-center flex-1 pt-4 mx-4">
-        <div class="max-w-7xl w-full">
+<!-- "theme" keeps the preference users saved with the previous toggle -->
+<ModeWatcher modeStorageKey="theme" />
+<Toaster richColors position="top-center" />
+
+<main class="min-h-screen flex flex-col">
+    <Header logo={Logo} user={data.user} />
+    <section class="flex justify-center flex-1 px-4 py-6 sm:py-8">
+        <div class="max-w-6xl w-full">
             {@render children()}
         </div>
     </section>

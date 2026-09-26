@@ -1,12 +1,6 @@
-import { PrismaClient, Prisma } from "$lib/db";
+import { Prisma } from "$lib/db";
 import { error } from "@sveltejs/kit";
-import { DATABASE_URL } from "$env/static/private";
-import { PrismaPg } from "@prisma/adapter-pg";
-import pg from "pg";
-
-const pool = new pg.Pool({ connectionString: DATABASE_URL });
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
+import { prisma } from "$lib/server/prisma";
 
 export async function getCardBySlug(slug: string) {
     return prisma.card.findUnique({
@@ -22,6 +16,19 @@ export async function getCardBySlug(slug: string) {
 export async function createCard(data: Prisma.CardCreateInput) {
     return prisma.card.create({
         data,
+    });
+}
+
+export async function getCardsByUser(userId: string) {
+    return prisma.card.findMany({
+        where: { userId },
+        orderBy: { createdAt: "desc" },
+        include: {
+            template: {
+                select: { background: true, title: true },
+            },
+            category: { select: { name: true } },
+        },
     });
 }
 

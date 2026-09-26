@@ -1,7 +1,19 @@
 <script lang="ts">
-    import { cs, ss, ts } from "$lib/state.svelte";
+    import { ai, cs, ss, ts } from "$lib/state.svelte";
+    import { CARD_FONT_KEYS, TITLE_FONT_SIZE, toCqw } from "$lib/config/card";
+    import { generateImage, useAiImage } from "$lib/controller/AiImage";
     import Pagination from "../Pagination.svelte";
     import { onMount, tick, untrack } from "svelte";
+    import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
+    import CheckIcon from "@lucide/svelte/icons/check";
+    import SparklesIcon from "@lucide/svelte/icons/sparkles";
+    import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
+    import Loader2Icon from "@lucide/svelte/icons/loader-2";
+    import { Button } from "$lib/components/ui/button";
+    import { Badge } from "$lib/components/ui/badge";
+    import { Skeleton } from "$lib/components/ui/skeleton";
+    import * as Tabs from "$lib/components/ui/tabs";
+    import { cn } from "$lib/utils/cn";
 
     type Template = {
         id: number;
@@ -34,6 +46,8 @@
 
     let { categories }: Props = $props();
 
+    let tab = $state(cs.templateId ? "templates" : "ai");
+
     const PAGE_SIZE = 10;
     const CACHE_MAX = 10;
     const templateCache = new Map<
@@ -46,6 +60,10 @@
     let currentPage = $state(ts.designPage);
     let selectedCategory = $state<number | null>(ts.designCategory);
     let isLoading = $state(false);
+
+    const usingAiImage = $derived(
+        !!ai.result && cs.backgroundUrl === ai.result.imageUrl,
+    );
 
     function cacheKey(categoryId: number | null, page: number) {
         return `${categoryId ?? "all"}-${page}`;
@@ -99,31 +117,29 @@
         }
     }
 
-    function handleClickEvent(event: MouseEvent) {
-        const target = event.currentTarget as HTMLElement | null;
-        const cards = document.querySelectorAll(".wish-card");
-        for (const card of cards) {
-            card.classList.add("border", "border-transparent");
-            card.classList.remove(
-                "border",
-                "border-solid",
-                "border-custom-orange-600",
-            );
-        }
-        cs.templateId = parseInt(target?.dataset.templateId ?? "0");
-        ts.background = target?.dataset.templateBackground ?? "";
-        ts.backgroundBack = target?.dataset.templateBackgroundBack ?? "";
-        ts.titlePosition = (target?.dataset.titlePosition ?? "center") as
+    function selectTemplate(t: Template) {
+        cs.templateId = t.id;
+        cs.backgroundUrl = null;
+        cs.categoryId = null;
+        cs.prompt = null;
+        ts.background = t.background;
+        ts.backgroundBack = t.backgroundBack;
+        ts.titlePosition = (t.titlePos ?? "center") as
             | "top"
             | "bottom"
             | "center";
-        ts.titleFontSize = parseInt(target?.dataset.titleFontSize ?? "24");
-        ts.font = target?.dataset.font ?? "";
-        ts.fontColor = target?.dataset.fontColor ?? "";
 
-        const newTemplateTitle = target?.dataset.templateTitle ?? "";
-        const newTemplateDescription =
-            target?.dataset.templateDescription ?? "";
+        // The template's title typography becomes the starting point for
+        // the per-card style editor in the next step.
+        if (CARD_FONT_KEYS.includes(t.font.name)) cs.titleFont = t.font.name;
+        if (t.fontColor) cs.titleColor = t.fontColor;
+        cs.titleFontSize = Math.min(
+            TITLE_FONT_SIZE.max,
+            Math.max(TITLE_FONT_SIZE.min, t.titleFontSize ?? 24),
+        );
+
+        const newTemplateTitle = t.title ?? "";
+        const newTemplateDescription = t.description ?? "";
 
         // Update title/description if the user hasn't customized them
         // (empty or still matching the previous template's auto-populated value)
@@ -137,29 +153,13 @@
         ts.templateTitle = newTemplateTitle;
         ts.templateDescription = newTemplateDescription;
 
-        target?.classList.remove("border", "border-transparent");
-        target?.classList.add(
-            "border",
-            "border-solid",
-            "border-custom-orange-600",
-        );
-
         // Clear validation error when template is selected
         if (cs.templateId > 0 && ss.validationErrors.templateId) {
             delete ss.validationErrors.templateId;
         }
     }
 
-    function handleClickEventAll(event: MouseEvent) {
-        event.preventDefault();
-        selectedCategory = null;
-        ts.designCategory = null;
-        ts.designPage = 1;
-        fetchTemplates(null);
-    }
-
-    function handleClickEventCategory(event: MouseEvent, categoryId: number) {
-        event.preventDefault();
+    function selectCategory(categoryId: number | null) {
         selectedCategory = categoryId;
         ts.designCategory = categoryId;
         ts.designPage = 1;
@@ -176,11 +176,18 @@
     });
 
     let loadedImages = $state(new Set<number>());
+    let aiImageLoaded = $state(false);
 
     $effect(() => {
         const newIds = new Set(templates.map((t) => t.id));
         const prev = untrack(() => loadedImages);
         loadedImages = new Set([...prev].filter((id) => newIds.has(id)));
+    });
+
+    $effect(() => {
+        // Reset the fade-in when a new image arrives
+        void ai.result?.imageUrl;
+        aiImageLoaded = false;
     });
 
     function handleImageLoad(id: number) {
@@ -222,143 +229,246 @@
     }
 </script>
 
-<section class="w-full">
-    <aside>
-        <h1
-            class="mb-2 sm:mb-3 md:mb-4 text-xl md:text-2xl lg:text-3xl leading-none text-gray-900 dark:text-gray-100 text-center"
-        >
-            {"Изберете дизайн"}
+<section class="w-full flex flex-col gap-6">
+    <div class="flex flex-col gap-1 text-center">
+        <h1 class="text-2xl sm:text-3xl font-semibold tracking-tight">
+            Изберете дизайн
         </h1>
-        <p
-            class="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl italic drop-shadow-sm tracking-wide text-center"
-        >
-            {"Моля, изберете един от показаните шаблони"}
+        <p class="text-muted-foreground">
+            Използвайте генерираното изображение или изберете готов шаблон.
         </p>
+    </div>
 
-        <div
-            class="relative mt-6 sm:mt-10 border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 px-3 py-2.5 sm:px-4 sm:py-3"
+    {#if ss.validationErrors.templateId}
+        <p
+            class="rounded-lg border border-destructive/40 bg-destructive/10 p-3 text-sm text-destructive"
         >
-            <section
-                class="flex gap-1.5 sm:gap-2 overflow-x-auto sm:flex-wrap [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
-            >
-                <button
-                    type="button"
-                    class="shrink-0 text-white text-xs sm:text-sm px-3 py-1 sm:px-4 sm:py-1.5 rounded-md cursor-pointer transition-colors duration-200"
-                    class:bg-custom-orange-600={selectedCategory === null}
-                    class:bg-gray-400={selectedCategory !== null}
-                    class:dark:bg-gray-600={selectedCategory !== null}
-                    onclick={handleClickEventAll}
-                >
-                    Всички
-                </button>
-                {#each categories as c}
-                    <button
-                        type="button"
-                        class="shrink-0 text-white text-xs sm:text-sm px-3 py-1 sm:px-4 sm:py-1.5 rounded-md cursor-pointer transition-colors duration-200"
-                        class:bg-custom-orange-600={selectedCategory === c.id}
-                        class:bg-gray-400={selectedCategory !== c.id}
-                        class:dark:bg-gray-600={selectedCategory !== c.id}
-                        onclick={(e) => handleClickEventCategory(e, c.id)}
-                    >
-                        {c.name}
-                    </button>
-                {/each}
-            </section>
-            <div
-                class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-gray-50 dark:from-gray-800 to-transparent pointer-events-none rounded-r-xl sm:hidden"
-            ></div>
-        </div>
-        {#if ss.validationErrors.templateId}
-            <div
-                class="mt-4 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 rounded-lg"
-            >
-                <p class="text-sm text-red-600 dark:text-red-400">
-                    {ss.validationErrors.templateId}
-                </p>
-            </div>
-        {/if}
+            {ss.validationErrors.templateId}
+        </p>
+    {/if}
 
-        {#if isLoading}
-            <div class="mt-6 flex justify-center items-center py-20">
+    <Tabs.Root bind:value={tab} class="w-full">
+        <Tabs.List class="mx-auto">
+            <Tabs.Trigger value="ai">
+                <SparklesIcon /> AI изображение
+            </Tabs.Trigger>
+            <Tabs.Trigger value="templates">Готови шаблони</Tabs.Trigger>
+        </Tabs.List>
+
+        <Tabs.Content value="ai" class="pt-4">
+            <div class="flex flex-col items-center gap-4">
                 <div
-                    class="animate-spin rounded-full h-12 w-12 border-4 border-custom-orange-600 border-t-transparent"
-                ></div>
+                    class={cn(
+                        "relative aspect-3/4 w-full max-w-xs overflow-hidden rounded-xl border-4 bg-muted shadow-lg",
+                        usingAiImage ? "border-primary" : "border-transparent",
+                    )}
+                    style="container-type: inline-size"
+                >
+                    {#if ai.generating}
+                        <Skeleton class="absolute inset-0 rounded-none" />
+                        <div
+                            class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-muted-foreground"
+                        >
+                            <Loader2Icon class="size-8 animate-spin" />
+                            <span class="text-sm"
+                                >Рисуваме вашата картичка...</span
+                            >
+                        </div>
+                    {:else if ai.result}
+                        {#if !aiImageLoaded}
+                            <Skeleton class="absolute inset-0 rounded-none" />
+                        {/if}
+                        <img
+                            src={ai.result.imageUrl}
+                            alt={ai.result.imagePrompt}
+                            class={cn(
+                                "absolute inset-0 size-full object-cover transition-opacity duration-500",
+                                aiImageLoaded ? "opacity-100" : "opacity-0",
+                            )}
+                            onload={() => (aiImageLoaded = true)}
+                        />
+                        {#if aiImageLoaded && cs.title}
+                            <div
+                                class="absolute inset-x-[6%] top-1/2 -translate-y-1/2 text-center"
+                                style="color: {cs.titleColor}; font-family: var(--font-family-{cs.titleFont}); font-size: {toCqw(
+                                    cs.titleFontSize,
+                                )}; line-height: 1.4;"
+                            >
+                                {cs.title}
+                            </div>
+                        {/if}
+                    {:else}
+                        <div
+                            class="absolute inset-0 flex flex-col items-center justify-center gap-2 p-6 text-center text-muted-foreground"
+                        >
+                            {#if ai.error}
+                                <TriangleAlertIcon
+                                    class="size-8 text-destructive"
+                                />
+                                <span class="text-sm text-destructive"
+                                    >{ai.error}</span
+                                >
+                            {:else}
+                                <SparklesIcon class="size-8" />
+                                <span class="text-sm">
+                                    Все още няма генерирано изображение.
+                                </span>
+                            {/if}
+                        </div>
+                    {/if}
+                </div>
+
+                {#if ai.result && !ai.generating}
+                    <div
+                        class="flex flex-col items-center gap-2 max-w-md text-center"
+                    >
+                        <Badge variant="secondary"
+                            >{ai.result.category.name}</Badge
+                        >
+                        {#if ai.result.imagePrompt !== ai.prompt.trim()}
+                            <p class="text-xs text-muted-foreground">
+                                <span class="font-medium">Подобрен промпт:</span
+                                >
+                                {ai.result.imagePrompt}
+                            </p>
+                        {/if}
+                    </div>
+                {/if}
+
+                <div class="flex flex-wrap justify-center gap-2">
+                    {#if ai.result && !usingAiImage && !ai.generating}
+                        <Button type="button" onclick={useAiImage}>
+                            <CheckIcon /> Използвай това изображение
+                        </Button>
+                    {/if}
+                    <Button
+                        type="button"
+                        variant="outline"
+                        disabled={ai.generating || ai.prompt.trim().length < 3}
+                        onclick={() => generateImage({ force: true })}
+                    >
+                        <RefreshCwIcon />
+                        {ai.result || ai.error
+                            ? "Генерирай отново"
+                            : "Генерирай"}
+                    </Button>
+                </div>
             </div>
-        {:else if templates.length === 0}
-            <div class="mt-6 flex justify-center items-center py-20">
-                <p class="text-gray-500 dark:text-gray-400 text-lg italic">
+        </Tabs.Content>
+
+        <Tabs.Content value="templates" class="pt-4">
+            <div class="relative">
+                <div
+                    class="flex gap-1.5 overflow-x-auto sm:flex-wrap [&::-webkit-scrollbar]:hidden [scrollbar-width:none]"
+                >
+                    <Button
+                        type="button"
+                        size="sm"
+                        variant={selectedCategory === null
+                            ? "default"
+                            : "outline"}
+                        onclick={() => selectCategory(null)}
+                    >
+                        Всички
+                    </Button>
+                    {#each categories as c (c.id)}
+                        <Button
+                            type="button"
+                            size="sm"
+                            variant={selectedCategory === c.id
+                                ? "default"
+                                : "outline"}
+                            onclick={() => selectCategory(c.id)}
+                        >
+                            {c.name}
+                        </Button>
+                    {/each}
+                </div>
+            </div>
+
+            {#if isLoading}
+                <ul
+                    class="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4"
+                >
+                    {#each Array(PAGE_SIZE) as _, i (i)}
+                        <li>
+                            <Skeleton class="aspect-3/4 w-full rounded-xl" />
+                        </li>
+                    {/each}
+                </ul>
+            {:else if templates.length === 0}
+                <p class="mt-6 py-20 text-center italic text-muted-foreground">
                     Няма налични шаблони за тази категория.
                 </p>
-            </div>
-        {:else}
-            <ul
-                class="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4"
-            >
-                {#each templates as t, i (t.id)}
-                    <li use:lazyReveal={i}>
-                        <button
-                            type="button"
-                            class="wish-card border-4 w-full rounded-xl overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl hover:cursor-pointer relative aspect-3/4 bg-gray-50 dark:bg-gray-700"
-                            class:border-custom-orange-600={t.id ==
-                                cs.templateId}
-                            class:border-red-500={ss.validationErrors
-                                .templateId && t.id == cs.templateId}
-                            class:border-transparent={t.id != cs.templateId &&
-                                !ss.validationErrors.templateId}
-                            onclick={handleClickEvent}
-                            data-template-id={t.id}
-                            data-template-title={t.title}
-                            data-template-description={t.description}
-                            data-template-background={t.background}
-                            data-template-background-back={t.backgroundBack}
-                            data-title-position={t.titlePos}
-                            data-title-font-size={t.titleFontSize}
-                            data-font={t.font.name}
-                            data-font-color={t.fontColor ?? ""}
-                            aria-label={t.title}
-                            style="container-type: inline-size"
-                        >
-                            {#if !loadedImages.has(t.id)}
-                                <div
-                                    class="absolute inset-0 animate-pulse bg-gray-200 dark:bg-gray-600 rounded-lg"
-                                ></div>
-                            {/if}
-                            <enhanced:img
-                                src={t.background}
-                                class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
-                                class:opacity-0={!loadedImages.has(t.id)}
-                                class:opacity-100={loadedImages.has(t.id)}
-                                alt={t.title}
-                                loading="lazy"
-                                onload={() => handleImageLoad(t.id)}
-                            />
-                            {#if loadedImages.has(t.id)}
-                                {@const displayTitle =
-                                    cs.title && cs.title !== ts.templateTitle
-                                        ? cs.title
-                                        : t.title}
-                                {#if displayTitle}
-                                    <div
-                                        class="absolute text-center"
-                                        style={getTitleStyle(t)}
-                                    >
-                                        {displayTitle}
-                                    </div>
+            {:else}
+                <ul
+                    class="mt-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4"
+                >
+                    {#each templates as t, i (t.id)}
+                        <li use:lazyReveal={i}>
+                            <button
+                                type="button"
+                                class={cn(
+                                    "relative aspect-3/4 w-full overflow-hidden rounded-xl border-4 bg-muted shadow-md transition-transform duration-300 hover:scale-[1.03] hover:shadow-xl cursor-pointer",
+                                    t.id == cs.templateId
+                                        ? "border-primary"
+                                        : "border-transparent",
+                                )}
+                                onclick={() => selectTemplate(t)}
+                                aria-label={t.title}
+                                aria-pressed={t.id == cs.templateId}
+                                style="container-type: inline-size"
+                            >
+                                {#if !loadedImages.has(t.id)}
+                                    <Skeleton
+                                        class="absolute inset-0 rounded-none"
+                                    />
                                 {/if}
-                            {/if}
-                        </button>
-                    </li>
-                {/each}
-            </ul>
-        {/if}
+                                <enhanced:img
+                                    src={t.background}
+                                    class="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
+                                    class:opacity-0={!loadedImages.has(t.id)}
+                                    class:opacity-100={loadedImages.has(t.id)}
+                                    alt={t.title}
+                                    loading="lazy"
+                                    onload={() => handleImageLoad(t.id)}
+                                />
+                                {#if loadedImages.has(t.id)}
+                                    {@const displayTitle =
+                                        cs.title &&
+                                        cs.title !== ts.templateTitle
+                                            ? cs.title
+                                            : t.title}
+                                    {#if displayTitle}
+                                        <div
+                                            class="absolute text-center"
+                                            style={getTitleStyle(t)}
+                                        >
+                                            {displayTitle}
+                                        </div>
+                                    {/if}
+                                {/if}
+                                {#if t.id == cs.templateId}
+                                    <span
+                                        class="absolute right-2 top-2 flex size-6 items-center justify-center rounded-full bg-primary text-primary-foreground"
+                                    >
+                                        <CheckIcon class="size-4" />
+                                    </span>
+                                {/if}
+                            </button>
+                        </li>
+                    {/each}
+                </ul>
+            {/if}
 
-        <Pagination
-            amount={total}
-            url="/card/create"
-            {currentPage}
-            pageSize={PAGE_SIZE}
-            onPageChange={handlePageChange}
-        />
-        <input type="hidden" name="templateId" value={cs.templateId} />
-    </aside>
+            <Pagination
+                amount={total}
+                url="/"
+                {currentPage}
+                pageSize={PAGE_SIZE}
+                onPageChange={handlePageChange}
+            />
+        </Tabs.Content>
+    </Tabs.Root>
+    <input type="hidden" name="templateId" value={cs.templateId} />
 </section>

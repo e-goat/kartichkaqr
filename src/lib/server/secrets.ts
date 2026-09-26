@@ -19,3 +19,17 @@ export const APP_NAME = env.APP_NAME;
 export const ADMIN_DASHBOARD_KEY = env.ADMIN_DASHBOARD_KEY;
 
 export const APP_ENV = env.APP_ENV;
+
+export const ANTHROPIC_API = env.ANTHROPIC_API;
+
+export const FAL_KEY = env.FAL_KEY;
+
+export const BETTER_AUTH_SECRET = env.BETTER_AUTH_SECRET;
+
+// Vercel system env vars: the per-deployment URL and the stable branch alias.
+// Used so preview deployments work without a hard-coded BETTER_AUTH_URL.
+export const VERCEL_ORIGINS = [env.VERCEL_BRANCH_URL, env.VERCEL_URL]
+    .filter(Boolean)
+    .map((host) => `https://${host}`);
+
+export const BETTER_AUTH_URL = env.BETTER_AUTH_URL || VERCEL_ORIGINS[0];

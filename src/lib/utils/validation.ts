@@ -1,7 +1,10 @@
 import { z } from "zod";
 import type { ZodType } from "zod";
-import { cs } from "$lib/state.svelte";
+import { ai, cs } from "$lib/state.svelte";
+import { STEP } from "$lib/config/steps";
 import {
+    aiPromptStepSchema,
+    cardStyleSchema,
     introStepSchema,
     designStepSchema,
     type CardInfoStepSchema,
@@ -49,7 +52,14 @@ function validateSchema<T>(
 }
 
 /**
- * Validate Step 1 data
+ * Validate the Prompt step (AI image idea)
+ */
+export function validatePromptStep(): ValidationResult {
+    return validateSchema(aiPromptStepSchema, { prompt: ai.prompt });
+}
+
+/**
+ * Validate the Text & style step (card info + typography)
  */
 export function validateCardInfoStep(): ValidationResult {
     const data: CardInfoStepSchema = {
@@ -58,22 +68,32 @@ export function validateCardInfoStep(): ValidationResult {
         description: cs.description || "",
     };
 
-    return validateSchema(introStepSchema, data);
+    const info = validateSchema(introStepSchema, data);
+    if (!info.success) return info;
+    return validateSchema(cardStyleSchema, {
+        titleFont: cs.titleFont,
+        titleFontSize: cs.titleFontSize,
+        titleColor: cs.titleColor,
+        descriptionFont: cs.descriptionFont,
+        descriptionFontSize: cs.descriptionFontSize,
+        descriptionColor: cs.descriptionColor,
+    });
 }
 
 /**
- * Validate Step 2 (Design) data
+ * Validate the Design step (AI image or template)
  */
 export function validateDesignStep(): ValidationResult {
     const data: DesignStepData = {
         templateId: cs.templateId,
+        backgroundUrl: cs.backgroundUrl,
     };
 
     return validateSchema(designStepSchema, data);
 }
 
 /**
- * Validate Step 3 (Record) - Always valid as audio is optional
+ * Validate the Record step - Always valid as audio is optional
  */
 export function validateRecordStep(): ValidationResult {
     // Audio recording is optional, so this step is always valid
@@ -81,7 +101,7 @@ export function validateRecordStep(): ValidationResult {
 }
 
 /**
- * Validate Step 4 (Review) - Physical copy data if requested
+ * Validate the Review step - Physical copy data if requested
  */
 export function validatePhysicalCopy(
     physicalCopy: PhysicalCopyData & { requested?: boolean },
@@ -126,20 +146,22 @@ export function validatePhysicalCopy(
 /**
  * Validate a specific step by step number
  * @param stepNumber - The step number to validate
- * @param physicalCopyData - Optional physical copy data for step 4
+ * @param physicalCopyData - Optional physical copy data for the Review step
  */
 export function validateStep(
     stepNumber: number,
     physicalCopyData?: PhysicalCopyData & { requested?: boolean },
 ): ValidationResult {
     switch (stepNumber) {
-        case 1:
-            return validateCardInfoStep();
-        case 2:
+        case STEP.PROMPT:
+            return validatePromptStep();
+        case STEP.DESIGN:
             return validateDesignStep();
-        case 3:
+        case STEP.INFO:
+            return validateCardInfoStep();
+        case STEP.RECORD:
             return validateRecordStep();
-        case 4:
+        case STEP.REVIEW:
             // If physical copy is requested, validate it
             if (physicalCopyData?.requested) {
                 return validatePhysicalCopy(physicalCopyData);

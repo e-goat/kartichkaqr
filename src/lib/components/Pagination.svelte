@@ -1,4 +1,7 @@
 <script lang="ts">
+    import ChevronLeftIcon from "@lucide/svelte/icons/chevron-left";
+    import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
+    import { Button } from "$lib/components/ui/button";
     type Props = {
         pageSize?: number;
         url?: string;
@@ -67,115 +70,53 @@
 
 {#if totalPages > 1}
     <nav
-        class="flex items-center justify-center space-x-1 mt-8"
+        class="flex items-center justify-center gap-1 mt-8"
         aria-label="Странициране"
     >
-        {#if currentPage > 1}
-            <a
-                href={buildHref(currentPage - 1)}
-                class="flex items-center justify-center w-10 h-10 text-sm font-medium text-custom-orange-600 bg-white dark:bg-gray-800 border border-custom-orange-200 dark:border-custom-orange-600/40 rounded-lg hover:bg-custom-orange-200 dark:hover:bg-custom-orange-600/20 hover:text-custom-orange-600 transition-colors duration-200"
-                aria-label="Предишна страница"
-                onclick={(e) => handlePageClick(e, currentPage - 1)}
-            >
-                <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M15 19l-7-7 7-7"
-                    />
-                </svg>
-            </a>
-        {:else}
-            <span
-                class="flex items-center justify-center w-10 h-10 text-sm font-medium text-black dark:text-gray-400 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg cursor-not-allowed"
-            >
-                <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M15 19l-7-7 7-7"
-                    />
-                </svg>
-            </span>
-        {/if}
+        <Button
+            href={currentPage > 1 ? buildHref(currentPage - 1) : undefined}
+            variant="outline"
+            size="icon"
+            aria-label="Предишна страница"
+            disabled={currentPage <= 1}
+            onclick={(e: MouseEvent) => handlePageClick(e, currentPage - 1)}
+        >
+            <ChevronLeftIcon />
+        </Button>
 
         <!-- Page numbers -->
-        {#each visiblePages as page}
+        {#each visiblePages as page, i (i)}
             {#if page === "..."}
                 <span
-                    class="flex items-center justify-center w-10 h-10 text-sm font-medium text-gray-400 dark:text-gray-500"
+                    class="flex size-9 items-center justify-center text-sm text-muted-foreground"
                 >
                     ...
                 </span>
-            {:else if page === currentPage}
-                <span
-                    class="flex items-center justify-center w-10 h-10 text-sm font-semibold text-white bg-custom-orange-600 border border-custom-orange-600 rounded-lg shadow-sm"
-                >
-                    {page}
-                </span>
             {:else}
-                <a
+                <Button
                     href={buildHref(Number(page))}
-                    class="flex items-center justify-center w-10 h-10 text-sm font-medium text-custom-orange-600 bg-white dark:bg-gray-800 border border-custom-orange-200 dark:border-custom-orange-600/40 rounded-lg hover:bg-custom-orange-200 dark:hover:bg-custom-orange-600/20 hover:text-custom-orange-600 hover:border-custom-orange-400 transition-colors duration-200"
-                    onclick={(e) => handlePageClick(e, Number(page))}
+                    variant={page === currentPage ? "default" : "outline"}
+                    size="icon"
+                    aria-current={page === currentPage ? "page" : undefined}
+                    onclick={(e: MouseEvent) =>
+                        handlePageClick(e, Number(page))}
                 >
                     {page}
-                </a>
+                </Button>
             {/if}
         {/each}
 
-        <!-- Next button -->
-        {#if currentPage < totalPages}
-            <a
-                href={buildHref(currentPage + 1)}
-                class="flex items-center justify-center w-10 h-10 text-sm font-medium text-black dark:text-gray-200 bg-white dark:bg-gray-800 border border-custom-orange-200 dark:border-custom-orange-600/40 rounded-lg hover:bg-custom-orange-200 dark:hover:bg-custom-orange-600/20 hover:text-black transition-colors duration-200"
-                aria-label="Следваща страница"
-                onclick={(e) => handlePageClick(e, currentPage + 1)}
-            >
-                <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9 5l7 7-7 7"
-                    />
-                </svg>
-            </a>
-        {:else}
-            <span
-                class="flex items-center justify-center w-10 h-10 text-sm font-medium text-black dark:text-gray-400 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg cursor-not-allowed"
-            >
-                <svg
-                    class="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
-                    <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9 5l7 7-7 7"
-                    />
-                </svg>
-            </span>
-        {/if}
+        <Button
+            href={currentPage < totalPages
+                ? buildHref(currentPage + 1)
+                : undefined}
+            variant="outline"
+            size="icon"
+            aria-label="Следваща страница"
+            disabled={currentPage >= totalPages}
+            onclick={(e: MouseEvent) => handlePageClick(e, currentPage + 1)}
+        >
+            <ChevronRightIcon />
+        </Button>
     </nav>
 {/if}

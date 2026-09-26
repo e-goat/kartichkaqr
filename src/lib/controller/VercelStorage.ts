@@ -123,6 +123,43 @@ class VercelStorage {
         return result;
     }
 
+    /**
+     * Copy an AI-generated image into our store at `generated/{uuid}.{ext}`.
+     * Generator URLs are temporary, so the card must reference our copy.
+     * Only fal.ai media URLs are accepted, so this can't be used to make the
+     * server fetch arbitrary addresses.
+     */
+    async storeGeneratedImage({
+        sourceUrl,
+        uuid,
+    }: {
+        sourceUrl: string;
+        uuid: string;
+    }): Promise<PutBlobResult> {
+        if (!BLOB_SECRET) throw new Error("Missing vercel storage token");
+
+        const url = new URL(sourceUrl);
+        const trusted =
+            url.protocol === "https:" &&
+            (url.hostname === "fal.media" ||
+                url.hostname.endsWith(".fal.media"));
+        if (!trusted) throw new Error("Untrusted image source");
+
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`Image download failed: ${res.status}`);
+        const mimeType = res.headers.get("content-type") ?? "image/jpeg";
+        if (!mimeType.startsWith("image/")) {
+            throw new Error(`Unexpected image type: ${mimeType}`);
+        }
+
+        const ext = this.#extensionFromMimeType(mimeType) || "jpg";
+        return put(`generated/${uuid}.${ext}`, await res.blob(), {
+            access: "private",
+            token: BLOB_SECRET,
+            contentType: mimeType,
+        });
+    }
+
     /** Delete a blob by its URL (from store/storeWithCategory). */
     async deleteByUrl(url: string): Promise<void> {
         if (!url?.trim()) throw new Error("Missing url");

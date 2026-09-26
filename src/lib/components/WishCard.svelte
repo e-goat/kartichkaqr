@@ -7,6 +7,12 @@
     import { onMount, onDestroy } from "svelte";
     import EmblaCarousel from "embla-carousel";
     import type { EmblaCarouselType } from "embla-carousel";
+    import ChevronLeftIcon from "@lucide/svelte/icons/chevron-left";
+    import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
+    import MusicIcon from "@lucide/svelte/icons/music";
+    import { Button } from "$lib/components/ui/button";
+    import { toCqw } from "$lib/config/card";
+    import { cn } from "$lib/utils/cn";
 
     interface Props {
         cardFront?: string;
@@ -21,6 +27,10 @@
         cardPageUrl?: string | null;
         titlePosition?: string | "center";
         titleFontSize?: number;
+        // Optional per-card message styling; unset keeps the classic look
+        descriptionFont?: string | null;
+        descriptionFontSize?: number | null;
+        descriptionColor?: string | null;
     }
 
     let {
@@ -36,11 +46,24 @@
         cardPageUrl = null,
         titlePosition = "center",
         titleFontSize = 24,
+        descriptionFont = null,
+        descriptionFontSize = null,
+        descriptionColor = null,
     }: Props = $props();
+
+    const descriptionStyle = $derived(
+        [
+            descriptionFont &&
+                `font-family: var(--font-family-${descriptionFont})`,
+            descriptionFontSize && `font-size: ${toCqw(descriptionFontSize)}`,
+            descriptionColor && `color: ${descriptionColor}`,
+        ]
+            .filter(Boolean)
+            .join("; "),
+    );
 
     const displayTitle = $derived(cs.title || title);
     const displaySender = $derived(sender ?? cs.sender ?? "");
-    const titleFontSizeCqw = $derived(((titleFontSize ?? 24) / 340) * 100);
 
     const titlePositionClass = $derived(
         titlePosition === "top"
@@ -88,13 +111,12 @@
     <div class="flex gap-2">
         {#each slideLabels as label, i}
             <span
-                class="text-xs px-2 py-0.5 rounded-full transition-colors"
-                class:bg-custom-orange-600={selectedIndex === i}
-                class:text-white={selectedIndex === i}
-                class:bg-gray-200={selectedIndex !== i}
-                class:dark:bg-gray-700={selectedIndex !== i}
-                class:text-gray-500={selectedIndex !== i}
-                class:dark:text-gray-400={selectedIndex !== i}
+                class={cn(
+                    "text-xs px-2 py-0.5 rounded-full transition-colors",
+                    selectedIndex === i
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground",
+                )}
             >
                 {label}
             </span>
@@ -103,27 +125,16 @@
 
     <div class="relative w-full flex items-center justify-center">
         <!-- Prev button -->
-        <button
+        <Button
             type="button"
+            variant="outline"
+            size="icon"
             onclick={scrollPrev}
-            class="absolute left-0 z-10 bg-white/80 dark:bg-gray-700/80 hover:bg-white dark:hover:bg-gray-700 rounded-full p-1.5 shadow transition-colors"
+            class="absolute left-0 z-10 rounded-full shadow"
             aria-label="Предишен слайд"
         >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5 text-gray-700 dark:text-gray-100"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M15 19l-7-7 7-7"
-                />
-            </svg>
-        </button>
+            <ChevronLeftIcon />
+        </Button>
 
         <!-- Embla viewport -->
         <div
@@ -144,9 +155,9 @@
                     {#if displayTitle}
                         <div
                             class={titlePositionClass}
-                            style="color: {fontColor}; font-family: var(--font-family-{font}); font-size: {titleFontSizeCqw.toFixed(
-                                2,
-                            )}cqw; line-height: 1.4;"
+                            style="color: {fontColor}; font-family: var(--font-family-{font}); font-size: {toCqw(
+                                titleFontSize ?? 24,
+                            )}; line-height: 1.4;"
                         >
                             {displayTitle}
                         </div>
@@ -161,20 +172,7 @@
                         <div
                             class="flex flex-col items-center gap-3 text-center w-full"
                         >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-10 h-10 text-custom-orange-600"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="1.5"
-                                    d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
-                                />
-                            </svg>
+                            <MusicIcon class="size-10 text-primary" />
                             <p class="text-sm font-medium text-gray-700">
                                 Аудио поздрав
                             </p>
@@ -203,20 +201,7 @@
                         <div
                             class="flex flex-col items-center gap-3 text-center"
                         >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-10 h-10 text-gray-300"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="1.5"
-                                    d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
-                                />
-                            </svg>
+                            <MusicIcon class="size-10 text-gray-300" />
                             <p class="text-sm text-gray-500 italic">
                                 Няма записано аудио съобщение за тази картичка.
                             </p>
@@ -227,10 +212,12 @@
                 <!-- Slide 3: Right inner (message) -->
                 <div
                     class="flex-[0_0_100%] min-w-0 h-full bg-white flex flex-col p-6"
+                    style="container-type: inline-size"
                 >
                     <div class="flex-1 flex items-center justify-center">
                         <p
                             class="text-sm md:text-base text-gray-800 leading-relaxed text-center break-words w-full"
+                            style={descriptionStyle}
                         >
                             {description}
                         </p>
@@ -276,26 +263,15 @@
         </div>
 
         <!-- Next button -->
-        <button
+        <Button
             type="button"
+            variant="outline"
+            size="icon"
             onclick={scrollNext}
-            class="absolute right-0 z-10 bg-white/80 dark:bg-gray-700/80 hover:bg-white dark:hover:bg-gray-700 rounded-full p-1.5 shadow transition-colors"
+            class="absolute right-0 z-10 rounded-full shadow"
             aria-label="Следващ слайд"
         >
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5 text-gray-700 dark:text-gray-100"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-            >
-                <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 5l7 7-7 7"
-                />
-            </svg>
-        </button>
+            <ChevronRightIcon />
+        </Button>
     </div>
 </div>
