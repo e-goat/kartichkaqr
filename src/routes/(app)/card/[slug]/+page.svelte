@@ -60,6 +60,7 @@
     font={data.titleFont}
     fontColor={data.titleColor}
     titlePosition={data.titlePos}
+    titleRotation={data.titleRotation}
     titleFontSize={data.titleFontSize}
     title={data.title}
     description={data.description}

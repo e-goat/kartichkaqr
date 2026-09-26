@@ -27,6 +27,8 @@
         cardPageUrl?: string | null;
         titlePosition?: string | "center";
         titleFontSize?: number;
+        // Degrees; applied with transform: rotate() around the title's center
+        titleRotation?: number;
         // Optional per-card message styling; unset keeps the classic look
         descriptionFont?: string | null;
         descriptionFontSize?: number | null;
@@ -46,6 +48,7 @@
         cardPageUrl = null,
         titlePosition = "center",
         titleFontSize = 24,
+        titleRotation = 0,
         descriptionFont = null,
         descriptionFontSize = null,
         descriptionColor = null,
@@ -157,7 +160,7 @@
                             class={titlePositionClass}
                             style="color: {fontColor}; font-family: var(--font-family-{font}); font-size: {toCqw(
                                 titleFontSize ?? 24,
-                            )}; line-height: 1.4;"
+                            )}; line-height: 1.4; transform: rotate({titleRotation}deg);"
                         >
                             {displayTitle}
                         </div>

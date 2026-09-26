@@ -8,10 +8,25 @@ import { APP_EMAIL, ADMIN_EMAIL, APP_NAME } from "$lib/server/secrets";
 import * as db from "$lib/server/database";
 import { cardStyleSchema, introStepSchema } from "$lib/schemas/card.schema";
 import { STEP } from "$lib/config/steps";
+import { rewriteAssetFields } from "$lib/server/blobUrl";
+
+const SHOWCASE_SIZE = 8;
 
 export const load: PageServerLoad = async ({ locals }) => {
-    const categories = await db.getAllCategories();
-    return { categories, authenticated: !!locals.user };
+    const [categories, showcase] = await Promise.all([
+        db.getAllCategories(),
+        // Newest templates double as sample cards for the home page carousel
+        db.getAllTemplates(SHOWCASE_SIZE, 0),
+    ]);
+    return {
+        categories,
+        authenticated: !!locals.user,
+        showcase: showcase.templates
+            .filter((t) => t.background.startsWith("http"))
+            .map((t) =>
+                rewriteAssetFields(t, ["background", "backgroundBack"]),
+            ),
+    };
 };
 
 export const actions: Actions = {
@@ -95,7 +110,6 @@ export const actions: Actions = {
                     typeof cardMeta.prompt === "string"
                         ? cardMeta.prompt.slice(0, 1000)
                         : null;
-                card.titlePos = "center";
                 card.category = { connect: { id: categoryId! } };
             } else {
                 card.template = { connect: { id: cardMeta.templateId } };

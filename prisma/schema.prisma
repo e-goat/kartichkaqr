@@ -37,7 +37,9 @@ model Card {
   categoryId    Int?
 
   // Per-card typography. Null means "use the template's value".
+  // The editor only offers top/center/bottom for titlePos.
   titlePos            TitlePosition?
+  titleRotation       Int            @default(0) // degrees, -180..180
   titleFont           String?
   titleFontSize       Int?
   titleColor          String?

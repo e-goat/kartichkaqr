@@ -1,4 +1,4 @@
-import { DEFAULT_CARD_STYLE } from "$lib/config/card";
+import { DEFAULT_CARD_STYLE, type TitlePosition } from "$lib/config/card";
 
 // IN YOUR INTERFACE
 //
@@ -20,6 +20,8 @@ interface CardState {
     titleFont: string;
     titleFontSize: number;
     titleColor: string;
+    titlePos: TitlePosition;
+    titleRotation: number;
     descriptionFont: string;
     descriptionFontSize: number;
     descriptionColor: string;
@@ -73,7 +75,6 @@ interface PhysicalCopyState {
 interface TemplateState {
     description: string;
     title: string;
-    titlePosition: "top" | "bottom" | "center";
     background: string;
     backgroundBack: string;
     templateDescription: string;
@@ -129,7 +130,6 @@ export const tcc: TemplateColorCache = $state({
 export const ts: TemplateState = $state({
     description: "",
     title: "",
-    titlePosition: "center",
     background: "",
     backgroundBack: "",
     templateDescription: "",
@@ -163,7 +163,6 @@ export function resetCardState() {
 
     ts.background = "";
     ts.backgroundBack = "";
-    ts.titlePosition = "center";
     ts.templateTitle = "";
     ts.templateDescription = "";
 

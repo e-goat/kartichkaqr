@@ -1,6 +1,7 @@
 <script lang="ts">
     import { ai, cs, ss, ts } from "$lib/state.svelte";
-    import { CARD_FONT_KEYS, TITLE_FONT_SIZE, toCqw } from "$lib/config/card";
+    import { titlePlacementClass, toCqw } from "$lib/config/card";
+    import { selectTemplate, type Template } from "$lib/controller/Template";
     import { generateImage, useAiImage } from "$lib/controller/AiImage";
     import Pagination from "../Pagination.svelte";
     import { onMount, tick, untrack } from "svelte";
@@ -9,23 +10,12 @@
     import SparklesIcon from "@lucide/svelte/icons/sparkles";
     import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
     import Loader2Icon from "@lucide/svelte/icons/loader-2";
+    import ImageOffIcon from "@lucide/svelte/icons/image-off";
     import { Button } from "$lib/components/ui/button";
     import { Badge } from "$lib/components/ui/badge";
     import { Skeleton } from "$lib/components/ui/skeleton";
     import * as Tabs from "$lib/components/ui/tabs";
     import { cn } from "$lib/utils/cn";
-
-    type Template = {
-        id: number;
-        title: string;
-        description: string;
-        background: string;
-        backgroundBack: string;
-        titlePos: string;
-        titleFontSize: number;
-        font: { id: number; name: string };
-        fontColor?: string;
-    };
 
     function getTitleStyle(t: Template): string {
         const cqw = ((t.titleFontSize ?? 24) / 340) * 100 - 2;
@@ -47,6 +37,10 @@
     let { categories }: Props = $props();
 
     let tab = $state(cs.templateId ? "templates" : "ai");
+    // A template picked elsewhere (e.g. the home page carousel) shows its tab
+    $effect(() => {
+        if (cs.templateId) untrack(() => (tab = "templates"));
+    });
 
     const PAGE_SIZE = 10;
     const CACHE_MAX = 10;
@@ -117,48 +111,6 @@
         }
     }
 
-    function selectTemplate(t: Template) {
-        cs.templateId = t.id;
-        cs.backgroundUrl = null;
-        cs.categoryId = null;
-        cs.prompt = null;
-        ts.background = t.background;
-        ts.backgroundBack = t.backgroundBack;
-        ts.titlePosition = (t.titlePos ?? "center") as
-            | "top"
-            | "bottom"
-            | "center";
-
-        // The template's title typography becomes the starting point for
-        // the per-card style editor in the next step.
-        if (CARD_FONT_KEYS.includes(t.font.name)) cs.titleFont = t.font.name;
-        if (t.fontColor) cs.titleColor = t.fontColor;
-        cs.titleFontSize = Math.min(
-            TITLE_FONT_SIZE.max,
-            Math.max(TITLE_FONT_SIZE.min, t.titleFontSize ?? 24),
-        );
-
-        const newTemplateTitle = t.title ?? "";
-        const newTemplateDescription = t.description ?? "";
-
-        // Update title/description if the user hasn't customized them
-        // (empty or still matching the previous template's auto-populated value)
-        if (!cs.title || cs.title === ts.templateTitle) {
-            cs.title = newTemplateTitle;
-        }
-        if (!cs.description || cs.description === ts.templateDescription) {
-            cs.description = newTemplateDescription;
-        }
-
-        ts.templateTitle = newTemplateTitle;
-        ts.templateDescription = newTemplateDescription;
-
-        // Clear validation error when template is selected
-        if (cs.templateId > 0 && ss.validationErrors.templateId) {
-            delete ss.validationErrors.templateId;
-        }
-    }
-
     function selectCategory(categoryId: number | null) {
         selectedCategory = categoryId;
         ts.designCategory = categoryId;
@@ -176,6 +128,9 @@
     });
 
     let loadedImages = $state(new Set<number>());
+    // Templates whose image failed to load; shown with a placeholder instead
+    // of an endless skeleton
+    let failedImages = $state(new Set<number>());
     let aiImageLoaded = $state(false);
 
     $effect(() => {
@@ -192,6 +147,11 @@
 
     function handleImageLoad(id: number) {
         loadedImages = new Set([...loadedImages, id]);
+    }
+
+    function handleImageError(t: Template) {
+        console.error(`Template ${t.id} image failed to load`, t.background);
+        failedImages = new Set([...failedImages, t.id]);
     }
 
     function lazyReveal(node: HTMLElement, index: number) {
@@ -289,10 +249,12 @@
                         />
                         {#if aiImageLoaded && cs.title}
                             <div
-                                class="absolute inset-x-[6%] top-1/2 -translate-y-1/2 text-center"
+                                class="absolute inset-x-[6%] text-center {titlePlacementClass(
+                                    cs.titlePos,
+                                )}"
                                 style="color: {cs.titleColor}; font-family: var(--font-family-{cs.titleFont}); font-size: {toCqw(
                                     cs.titleFontSize,
-                                )}; line-height: 1.4;"
+                                )}; line-height: 1.4; transform: rotate({cs.titleRotation}deg);"
                             >
                                 {cs.title}
                             </div>
@@ -419,7 +381,14 @@
                                 aria-pressed={t.id == cs.templateId}
                                 style="container-type: inline-size"
                             >
-                                {#if !loadedImages.has(t.id)}
+                                {#if failedImages.has(t.id)}
+                                    <div
+                                        class="absolute inset-0 flex flex-col items-center justify-center gap-2 p-3 text-center text-xs text-muted-foreground"
+                                    >
+                                        <ImageOffIcon class="size-6" />
+                                        Изображението не е налично
+                                    </div>
+                                {:else if !loadedImages.has(t.id)}
                                     <Skeleton
                                         class="absolute inset-0 rounded-none"
                                     />
@@ -432,6 +401,7 @@
                                     alt={t.title}
                                     loading="lazy"
                                     onload={() => handleImageLoad(t.id)}
+                                    onerror={() => handleImageError(t)}
                                 />
                                 {#if loadedImages.has(t.id)}
                                     {@const displayTitle =

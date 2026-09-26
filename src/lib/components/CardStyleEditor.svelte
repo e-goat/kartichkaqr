@@ -1,16 +1,32 @@
 <script lang="ts">
     import RotateCcwIcon from "@lucide/svelte/icons/rotate-ccw";
+    import AlignStartHorizontalIcon from "@lucide/svelte/icons/align-start-horizontal";
+    import AlignCenterHorizontalIcon from "@lucide/svelte/icons/align-center-horizontal";
+    import AlignEndHorizontalIcon from "@lucide/svelte/icons/align-end-horizontal";
     import { cs } from "$lib/state.svelte";
     import {
         CARD_FONTS,
         DEFAULT_CARD_STYLE,
         DESCRIPTION_FONT_SIZE,
         TITLE_FONT_SIZE,
+        TITLE_ROTATION,
+        type TitlePosition,
     } from "$lib/config/card";
     import { Button } from "$lib/components/ui/button";
     import { Label } from "$lib/components/ui/label";
     import { Slider } from "$lib/components/ui/slider";
     import * as Select from "$lib/components/ui/select";
+    import * as ToggleGroup from "$lib/components/ui/toggle-group";
+
+    const positions: {
+        value: TitlePosition;
+        label: string;
+        icon: typeof RotateCcwIcon;
+    }[] = [
+        { value: "top", label: "Горе", icon: AlignStartHorizontalIcon },
+        { value: "center", label: "Център", icon: AlignCenterHorizontalIcon },
+        { value: "bottom", label: "Долу", icon: AlignEndHorizontalIcon },
+    ];
 
     const groups = [
         {
@@ -98,6 +114,70 @@
                     />
                 </div>
             </div>
+
+            {#if g.id === "title"}
+                <div class="flex flex-col gap-2">
+                    <Label id="title-position-label">Позиция</Label>
+                    <!-- A single toggle group can be cleared; keep the last choice -->
+                    <ToggleGroup.Root
+                        type="single"
+                        variant="outline"
+                        class="w-full"
+                        aria-labelledby="title-position-label"
+                        bind:value={
+                            () => cs.titlePos,
+                            (v) => {
+                                if (v) cs.titlePos = v as TitlePosition;
+                            }
+                        }
+                    >
+                        {#each positions as p (p.value)}
+                            <ToggleGroup.Item
+                                value={p.value}
+                                class="flex-1"
+                                aria-label={p.label}
+                            >
+                                <p.icon />
+                                {p.label}
+                            </ToggleGroup.Item>
+                        {/each}
+                    </ToggleGroup.Root>
+                </div>
+
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-center justify-between">
+                        <Label for="title-rotation">Завъртане</Label>
+                        <div class="flex items-center gap-1">
+                            <span
+                                class="text-xs tabular-nums text-muted-foreground"
+                            >
+                                {cs.titleRotation}°
+                            </span>
+                            {#if cs.titleRotation !== TITLE_ROTATION.default}
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon-xs"
+                                    aria-label="Без завъртане"
+                                    onclick={() =>
+                                        (cs.titleRotation =
+                                            TITLE_ROTATION.default)}
+                                >
+                                    <RotateCcwIcon />
+                                </Button>
+                            {/if}
+                        </div>
+                    </div>
+                    <Slider
+                        id="title-rotation"
+                        type="single"
+                        bind:value={cs.titleRotation}
+                        min={TITLE_ROTATION.min}
+                        max={TITLE_ROTATION.max}
+                        step={1}
+                    />
+                </div>
+            {/if}
         </fieldset>
     {/each}
 
