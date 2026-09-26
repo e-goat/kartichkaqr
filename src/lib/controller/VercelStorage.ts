@@ -1,6 +1,6 @@
 import { put, del, get } from "@vercel/blob";
 import type { PutBlobResult } from "@vercel/blob";
-import appConfig from "$lib/config/app";
+import appConfig, { blobTokenForUrl } from "$lib/config/app";
 
 const BLOB_SECRET = appConfig.blob;
 
@@ -160,10 +160,43 @@ class VercelStorage {
         });
     }
 
+    /**
+     * Delete the blobs that belong to a single card: its generated image
+     * (`generated/`) and voice recording (`records/`). Anything else, such as
+     * a shared template background, is skipped so deleting a card can never
+     * remove assets other cards depend on. Deleting a missing blob is a no-op,
+     * so this is safe to retry.
+     */
+    async deleteCardAssets(urls: (string | null | undefined)[]): Promise<void> {
+        const owned = urls.filter((u): u is string => {
+            if (!u) return false;
+            try {
+                const { protocol, hostname, pathname } = new URL(u);
+                return (
+                    protocol === "https:" &&
+                    hostname.endsWith(".blob.vercel-storage.com") &&
+                    /^\/(generated|records)\//.test(pathname)
+                );
+            } catch {
+                return false;
+            }
+        });
+        // A token only works for its own store, so delete per store
+        const byToken = new Map<string, string[]>();
+        for (const u of owned) {
+            const token = blobTokenForUrl(u);
+            if (!token) throw new Error("Missing vercel storage token");
+            byToken.set(token, [...(byToken.get(token) ?? []), u]);
+        }
+        for (const [token, group] of byToken) {
+            await del(group, { token });
+        }
+    }
+
     /** Delete a blob by its URL (from store/storeWithCategory). */
     async deleteByUrl(url: string): Promise<void> {
         if (!url?.trim()) throw new Error("Missing url");
-        await del([url], { token: BLOB_SECRET });
+        await del([url], { token: blobTokenForUrl(url) });
     }
 
     /**
@@ -193,11 +226,12 @@ class VercelStorage {
         status: number;
     } | null> {
         if (!pathnameOrUrl?.trim()) throw new Error("Missing pathname or url");
-        if (!BLOB_SECRET) throw new Error("Missing vercel storage token");
+        const token = blobTokenForUrl(pathnameOrUrl);
+        if (!token) throw new Error("Missing vercel storage token");
 
         const result = await get(pathnameOrUrl, {
             access: "private",
-            token: BLOB_SECRET,
+            token,
             ifNoneMatch: options.ifNoneMatch,
             headers: options.range ? { Range: options.range } : undefined,
         });
