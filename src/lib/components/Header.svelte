@@ -20,7 +20,7 @@
     let mobileMenuOpen = $state(false);
 
     const links = [
-        { href: "/", label: "Създай" },
+        { href: "/create", label: "Създай" },
         { href: "/about", label: "За нас" },
     ];
 
@@ -34,7 +34,7 @@
     );
 
     const loginHref = $derived(
-        `/login?redirectTo=${encodeURIComponent(page.url.pathname)}`,
+        `/login?redirectTo=${encodeURIComponent(page.url.pathname + page.url.search)}`,
     );
 </script>
 

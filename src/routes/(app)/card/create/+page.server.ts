@@ -1,7 +1,7 @@
 import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
-// Card creation now lives on the home page.
-export const load: PageServerLoad = () => {
-    redirect(301, "/");
+// Card creation lives at /create; keep old links (and their query) working.
+export const load: PageServerLoad = ({ url }) => {
+    redirect(301, `/create${url.search}`);
 };

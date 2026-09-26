@@ -2,37 +2,34 @@
     import { onMount } from "svelte";
     import EmblaCarousel from "embla-carousel";
     import type { EmblaCarouselType } from "embla-carousel";
-    import ChevronLeftIcon from "@lucide/svelte/icons/chevron-left";
-    import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
-    import PauseIcon from "@lucide/svelte/icons/pause";
-    import PlayIcon from "@lucide/svelte/icons/play";
-    import { Button } from "$lib/components/ui/button";
     import { titlePlacementClass, toCqw } from "$lib/config/card";
+    import { CARD_IMAGE } from "$lib/config/seo";
+    import { imageSrcset, imageUrl } from "$lib/utils/image";
     import type { Template } from "$lib/controller/Template";
-    import { cn } from "$lib/utils/cn";
+
+    type ShowcaseTemplate = Template & { categories?: { name: string } };
 
     interface Props {
-        templates: Template[];
-        /** Called when a visitor picks a slide's design. */
-        onSelect: (t: Template) => void;
-        /** Milliseconds between automatic slide changes. */
+        templates: ShowcaseTemplate[];
+        /** Milliseconds between automatic slides while nobody interacts. */
         interval?: number;
     }
 
-    let { templates, onSelect, interval = 4000 }: Props = $props();
+    let { templates, interval = 3000 }: Props = $props();
+
+    // One card fills the slide; the frame caps its size on wide screens.
+    const SIZES = "(min-width: 640px) 24rem, 80vw";
 
     let viewport = $state<HTMLElement | null>(null);
     let embla: EmblaCarouselType | null = null;
     let selected = $state(0);
-    // Paused by the visitor via the play/pause button
-    let userPaused = $state(false);
-    // Paused while the visitor hovers, focuses or drags the carousel
+    // Hovering, focusing or dragging the slider pauses it
     let interacting = $state(false);
     let reducedMotion = $state(false);
     let timer: ReturnType<typeof setInterval> | null = null;
 
     const autoplaying = $derived(
-        !userPaused && !interacting && !reducedMotion && templates.length > 1,
+        !interacting && !reducedMotion && templates.length > 1,
     );
 
     function stop() {
@@ -40,6 +37,8 @@
         timer = null;
     }
 
+    // Restarting after every interaction gives a full interval before the
+    // next automatic slide.
     function restart() {
         stop();
         if (!autoplaying || document.hidden) return;
@@ -60,20 +59,15 @@
 
         if (viewport) {
             embla = EmblaCarousel(viewport, {
-                loop: templates.length > 2,
+                loop: templates.length > 1,
                 align: "center",
-                skipSnaps: false,
-                duration: reducedMotion ? 10 : 30,
+                duration: 28,
             });
             embla.on("select", () => {
                 selected = embla?.selectedScrollSnap() ?? 0;
             });
-            // Manual navigation resets the countdown
             embla.on("pointerDown", () => (interacting = true));
-            embla.on("pointerUp", () => {
-                interacting = false;
-                restart();
-            });
+            embla.on("pointerUp", () => (interacting = false));
         }
 
         document.addEventListener("visibilitychange", restart);
@@ -85,60 +79,77 @@
         };
     });
 
-    function go(index: number) {
-        embla?.scrollTo(index);
-        restart();
-    }
-
-    function onKeydown(e: KeyboardEvent) {
-        if (e.key === "ArrowLeft") {
-            e.preventDefault();
-            embla?.scrollPrev();
-        } else if (e.key === "ArrowRight") {
-            e.preventDefault();
-            embla?.scrollNext();
-        }
+    /** Loads the visible card and its neighbours eagerly, the rest lazily. */
+    function isNear(i: number) {
+        const n = templates.length;
+        const distance = Math.min(
+            Math.abs(i - selected),
+            n - Math.abs(i - selected),
+        );
+        return distance <= 1;
     }
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <section
-    class="relative"
+    class="mx-auto w-full max-w-sm"
     aria-roledescription="carousel"
     aria-label="Примерни картички"
     onmouseenter={() => (interacting = true)}
     onmouseleave={() => (interacting = false)}
     onfocusin={() => (interacting = true)}
     onfocusout={() => (interacting = false)}
-    onkeydown={onKeydown}
 >
-    <div bind:this={viewport} class="overflow-hidden py-4">
-        <ul class="flex touch-pan-y">
+    <div
+        bind:this={viewport}
+        class="cursor-grab overflow-hidden rounded-2xl active:cursor-grabbing"
+    >
+        <div class="flex touch-pan-y">
             {#each templates as t, i (t.id)}
-                <li
-                    class="min-w-0 flex-[0_0_62%] px-2 sm:flex-[0_0_42%] lg:flex-[0_0_34%]"
+                {@const title = t.title || "Примерна картичка"}
+                <article
+                    class="min-w-0 flex-[0_0_100%]"
                     aria-roledescription="slide"
-                    aria-label="{i + 1} от {templates.length}"
+                    aria-label="{i + 1} от {templates.length}: {title}"
                 >
-                    <div
-                        class={cn(
-                            "group relative aspect-3/4 overflow-hidden rounded-2xl border bg-muted shadow-lg transition-all duration-500 ease-out",
-                            i === selected
-                                ? "scale-100 opacity-100"
-                                : "scale-90 opacity-60",
-                        )}
+                    <a
+                        href="/create?template={t.id}"
+                        class="group relative block aspect-3/4 overflow-hidden rounded-2xl border bg-muted shadow-xl focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
                         style="container-type: inline-size"
+                        draggable="false"
                     >
-                        <img
-                            src={t.background}
-                            alt={t.title ?? "Примерна картичка"}
-                            loading={i < 3 ? "eager" : "lazy"}
-                            draggable="false"
-                            class="absolute inset-0 size-full object-cover select-none"
-                        />
+                        <picture>
+                            <source
+                                type="image/avif"
+                                srcset={imageSrcset(t.background, "avif", 960)}
+                                sizes={SIZES}
+                            />
+                            <source
+                                type="image/webp"
+                                srcset={imageSrcset(t.background, "webp", 960)}
+                                sizes={SIZES}
+                            />
+                            <img
+                                src={imageUrl(t.background, 640)}
+                                srcset={imageSrcset(
+                                    t.background,
+                                    undefined,
+                                    960,
+                                )}
+                                sizes={SIZES}
+                                width={CARD_IMAGE.width}
+                                height={CARD_IMAGE.height}
+                                alt="{title} — шаблон за картичка"
+                                loading={isNear(i) ? "eager" : "lazy"}
+                                fetchpriority={i === 0 ? "high" : "auto"}
+                                decoding={i === 0 ? "sync" : "async"}
+                                draggable="false"
+                                class="absolute inset-0 size-full object-cover transition-transform duration-700 select-none group-hover:scale-[1.03]"
+                            />
+                        </picture>
                         {#if t.title}
-                            <div
-                                class="pointer-events-none absolute inset-x-[6%] text-center {titlePlacementClass(
+                            <h3
+                                class="pointer-events-none absolute inset-x-[6%] text-center font-normal {titlePlacementClass(
                                     t.titlePos,
                                 )}"
                                 style="color: {t.fontColor ??
@@ -148,88 +159,19 @@
                                 )}; line-height: 1.4;"
                             >
                                 {t.title}
-                            </div>
+                            </h3>
                         {/if}
-                        <div
-                            class={cn(
-                                "absolute inset-x-0 bottom-0 flex justify-center bg-linear-to-t from-black/60 to-transparent p-4 pt-12 transition-opacity duration-300",
-                                i === selected
-                                    ? "opacity-100"
-                                    : "pointer-events-none opacity-0",
-                            )}
-                        >
-                            <Button
-                                size="sm"
-                                tabindex={i === selected ? 0 : -1}
-                                onclick={() => onSelect(t)}
+                        {#if t.categories?.name}
+                            <span
+                                class="absolute bottom-3 left-3 rounded-full bg-black/55 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm"
                             >
-                                Използвай този дизайн
-                            </Button>
-                        </div>
-                    </div>
-                </li>
+                                {t.categories.name}
+                            </span>
+                        {/if}
+                        <span class="sr-only">— използвай този дизайн</span>
+                    </a>
+                </article>
             {/each}
-        </ul>
-    </div>
-
-    {#if templates.length > 1}
-        <div class="mt-2 flex items-center justify-center gap-3">
-            <Button
-                variant="outline"
-                size="icon-sm"
-                class="rounded-full"
-                aria-label="Предишна картичка"
-                onclick={() => {
-                    embla?.scrollPrev();
-                    restart();
-                }}
-            >
-                <ChevronLeftIcon />
-            </Button>
-
-            <div class="flex items-center gap-1.5">
-                {#each templates as t, i (t.id)}
-                    <button
-                        type="button"
-                        class={cn(
-                            "h-2 rounded-full transition-all duration-300",
-                            i === selected
-                                ? "w-6 bg-primary"
-                                : "w-2 bg-muted-foreground/30 hover:bg-muted-foreground/60",
-                        )}
-                        aria-label="Картичка {i + 1}"
-                        aria-current={i === selected}
-                        onclick={() => go(i)}
-                    ></button>
-                {/each}
-            </div>
-
-            <Button
-                variant="outline"
-                size="icon-sm"
-                class="rounded-full"
-                aria-label="Следваща картичка"
-                onclick={() => {
-                    embla?.scrollNext();
-                    restart();
-                }}
-            >
-                <ChevronRightIcon />
-            </Button>
-
-            {#if !reducedMotion}
-                <Button
-                    variant="ghost"
-                    size="icon-sm"
-                    class="rounded-full"
-                    aria-label={userPaused
-                        ? "Пусни автоматичното превъртане"
-                        : "Спри автоматичното превъртане"}
-                    onclick={() => (userPaused = !userPaused)}
-                >
-                    {#if userPaused}<PlayIcon />{:else}<PauseIcon />{/if}
-                </Button>
-            {/if}
         </div>
-    {/if}
+    </div>
 </section>

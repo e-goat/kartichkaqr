@@ -5,9 +5,12 @@ User-agent: *
 # Allow access to main pages
 Allow: /
 Allow: /about
-Allow: /card/create
+Allow: /create
 
-# Disallow API endpoints to prevent crawling of backend functionality
+# Disallow API endpoints to prevent crawling of backend functionality.
+# /api/asset serves images (template art, og:image) that crawlers and social
+# previews need to fetch.
+Allow: /api/asset
 Disallow: /api/
 
 # Individual card pages - consider allowing if cards should be publicly discoverable

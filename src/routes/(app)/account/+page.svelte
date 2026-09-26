@@ -39,7 +39,7 @@
                 {data.cards.length === 1 ? "картичка" : "картички"}
             </p>
         </div>
-        <Button href="/"><PlusIcon /> Нова картичка</Button>
+        <Button href="/create"><PlusIcon /> Нова картичка</Button>
     </div>
 
     {#if data.cards.length === 0}
@@ -49,7 +49,7 @@
                 <p class="text-muted-foreground">
                     Все още нямате създадени картички.
                 </p>
-                <Button href="/">Създайте първата си картичка</Button>
+                <Button href="/create">Създайте първата си картичка</Button>
             </Card.Content>
         </Card.Root>
     {:else}

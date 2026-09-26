@@ -1,81 +1,24 @@
 <script lang="ts">
     import type { PageProps } from "./$types";
-    import { goto } from "$app/navigation";
-    import { toast } from "svelte-sonner";
     import ClockIcon from "@lucide/svelte/icons/clock";
-    import TriangleAlertIcon from "@lucide/svelte/icons/triangle-alert";
     import SparklesIcon from "@lucide/svelte/icons/sparkles";
     import PaletteIcon from "@lucide/svelte/icons/palette";
     import MicIcon from "@lucide/svelte/icons/mic";
     import QrCodeIcon from "@lucide/svelte/icons/qr-code";
-    import ArrowDownIcon from "@lucide/svelte/icons/arrow-down";
+    import ArrowRightIcon from "@lucide/svelte/icons/arrow-right";
 
-    import Stepper from "$lib/components/Stepper.svelte";
-    import Prompt from "$lib/components/stepper/Prompt.svelte";
-    import Design from "$lib/components/stepper/Design.svelte";
-    import CardInfo from "$lib/components/stepper/CardInfo.svelte";
-    import Record from "$lib/components/stepper/Record.svelte";
-    import Review from "$lib/components/stepper/Review.svelte";
+    import Seo from "$lib/components/Seo.svelte";
     import ShowcaseCarousel from "$lib/components/ShowcaseCarousel.svelte";
     import { reveal } from "$lib/actions/reveal";
-    import { selectTemplate, type Template } from "$lib/controller/Template";
+    import { SITE_URL, SITE_NAME, DEFAULT_DESCRIPTION } from "$lib/config/seo";
+    import { imageUrl } from "$lib/utils/image";
     import { Badge } from "$lib/components/ui/badge";
-    import { ss, resetCardState } from "$lib/state.svelte";
-    import { STEP, TOTAL_STEPS } from "$lib/config/steps";
     import { Button } from "$lib/components/ui/button";
     import * as Card from "$lib/components/ui/card";
-    import * as AlertDialog from "$lib/components/ui/alert-dialog";
 
-    let { data, form }: PageProps = $props();
+    let { data }: PageProps = $props();
 
-    let successOpen = $state(false);
-    let createdUrl = $state("");
-    let physicalCopyRequested = $state(false);
-
-    const webAppSchema = JSON.stringify({
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
-        name: "KartichkaQR",
-        url: "https://kartichkaqr.com/",
-        applicationCategory: "LifestyleApplication",
-        operatingSystem: "Web",
-        offers: {
-            "@type": "Offer",
-            price: "0",
-            priceCurrency: "BGN",
-        },
-        description:
-            "Създайте персонализирана поздравителна картичка с вашия почерк и глас. Изберете дизайн, запишете съобщение и споделете с близките си.",
-        inLanguage: "bg",
-    });
-
-    /**
-     * Copies the provided text to the clipboard
-     */
-    async function copyToClipboard(text: string): Promise<boolean> {
-        try {
-            await navigator.clipboard.writeText(text);
-            return true;
-        } catch {
-            return false;
-        }
-    }
-
-    $effect(() => {
-        if (!form) return;
-        ss.isSubmitting = false;
-
-        if (form.success) {
-            createdUrl = form.cardUrl || "";
-            physicalCopyRequested = !!form.physicalCopyRequested;
-            successOpen = true;
-        } else if (form.error) {
-            toast.error(form.error);
-            if ("errorStep" in form && form.errorStep) {
-                ss.currentStep = Number(form.errorStep);
-            }
-        }
-    });
+    const title = "Картичка QR - Поздравителни картички с AI дизайн и глас";
 
     const howItWorks = [
         {
@@ -100,65 +43,67 @@
         },
     ];
 
-    /** Starts the wizard from a design picked in the showcase carousel. */
-    function startFromShowcase(t: Template) {
-        selectTemplate(t);
-        ss.currentStep = STEP.DESIGN;
-        toast.success("Дизайнът е избран");
-        // Follows CSS scroll-behavior, so reduced-motion users jump
-        document.getElementById("create")?.scrollIntoView();
-    }
+    const heroImage = $derived(data.showcase[0]);
 
-    function finish(target: "card" | "home" | "copy") {
-        const cardPath = new URL(createdUrl).pathname;
-        successOpen = false;
-        resetCardState();
-        if (target === "card") {
-            goto(cardPath);
-        } else {
-            if (target === "copy") {
-                copyToClipboard(createdUrl).then(
-                    (ok) => ok && toast.success("Линкът е копиран"),
-                );
-            }
-            goto("/");
-        }
-    }
+    const schema = $derived([
+        {
+            "@type": "WebSite",
+            "@id": `${SITE_URL}/#website`,
+            url: `${SITE_URL}/`,
+            name: SITE_NAME,
+            inLanguage: "bg",
+        },
+        {
+            "@type": "WebApplication",
+            name: SITE_NAME,
+            url: `${SITE_URL}/create`,
+            applicationCategory: "LifestyleApplication",
+            operatingSystem: "Web",
+            inLanguage: "bg",
+            description: DEFAULT_DESCRIPTION,
+            offers: { "@type": "Offer", price: "0", priceCurrency: "BGN" },
+        },
+        {
+            "@type": "ItemList",
+            name: "Примерни картички",
+            itemListElement: data.showcase.map((t, i) => ({
+                "@type": "ListItem",
+                position: i + 1,
+                item: {
+                    "@type": "CreativeWork",
+                    name: t.title || "Шаблон за картичка",
+                    url: `${SITE_URL}/create?template=${t.id}`,
+                    inLanguage: "bg",
+                    ...(t.categories?.name && { genre: t.categories.name }),
+                    ...(t.description && { description: t.description }),
+                    image: {
+                        "@type": "ImageObject",
+                        contentUrl: `${SITE_URL}${imageUrl(t.background, 1200)}`,
+                        caption: t.title || undefined,
+                    },
+                },
+            })),
+        },
+    ]);
 </script>
 
-<svelte:head>
-    <title>{"Картичка QR - Поздравителна картичка с вашия личен почерк"}</title>
-    <meta
-        name="description"
-        content="Създайте персонализирана поздравителна картичка с вашия почерк и глас. Перфектни картички за подаръци - изберете дизайн, запишете съобщение и споделете с близките си. Create personalized greeting cards with handwriting and voice messages. KartichkaQR - български екип, който революционизира поздравителните картички с QR кодове и гласови съобщения. Идеални картички за подаръци за всички поводи."
-    />
-    <link rel="canonical" href="https://kartichkaqr.com/" />
-    <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="KartichkaQR" />
-    <meta
-        property="og:title"
-        content="Картичка QR - Поздравителна картичка с вашия личен почерк"
-    />
-    <meta
-        property="og:description"
-        content="Създайте персонализирана поздравителна картичка с вашия почерк и глас. Перфектни картички за подаръци за всички поводи."
-    />
-    <meta property="og:url" content="https://kartichkaqr.com/" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta
-        name="twitter:title"
-        content="Картичка QR - Поздравителна картичка с вашия личен почерк"
-    />
-    <meta
-        name="twitter:description"
-        content="Създайте персонализирана поздравителна картичка с вашия почерк и глас. Перфектни картички за подаръци за всички поводи."
-    />
-    {@html `<script type="application/ld+json">${webAppSchema}<\/script>`}
-</svelte:head>
+<Seo
+    {title}
+    description="Създайте персонализирана поздравителна картичка с AI дизайн и вашия глас. Разгледайте примерни картички, изберете повод и споделете с QR код — онлайн или отпечатана."
+    canonical="/"
+    image={heroImage
+        ? {
+              url: imageUrl(heroImage.background, 1200),
+              alt: heroImage.title ?? "Примерна картичка",
+          }
+        : null}
+    {schema}
+/>
 
 <!-- Hero -->
 <section
-    class="grid items-center gap-8 pb-10 lg:grid-cols-2 lg:gap-12 lg:pb-16"
+    class="grid items-center gap-10 pb-12 lg:grid-cols-2 lg:gap-12 lg:pb-16"
+    aria-labelledby="hero-title"
 >
     <div
         class={[
@@ -173,6 +118,7 @@
             </Badge>
         </div>
         <h1
+            id="hero-title"
             use:reveal={{ delay: 80 }}
             class="text-4xl leading-tight font-semibold tracking-tight text-balance sm:text-5xl"
         >
@@ -197,62 +143,76 @@
                 data.showcase.length > 0 && "lg:justify-start",
             ]}
         >
-            <Button href="#create" size="lg">
+            <Button href="/create" size="lg">
                 <SparklesIcon /> Създай картичка
             </Button>
-            <Button href="#how" size="lg" variant="outline">
-                Как работи <ArrowDownIcon />
-            </Button>
+            {#if data.categories.length > 0}
+                <Button href="#categories" size="lg" variant="outline">
+                    Разгледай поводите
+                </Button>
+            {/if}
         </div>
     </div>
 
     {#if data.showcase.length > 0}
-        <div use:reveal={{ delay: 200, effect: "fade" }}>
-            <ShowcaseCarousel
-                templates={data.showcase}
-                onSelect={startFromShowcase}
-            />
+        <div use:reveal={{ delay: 120, effect: "fade" }}>
+            <ShowcaseCarousel templates={data.showcase} />
         </div>
     {/if}
 </section>
 
-<!-- Card wizard -->
-<section id="create">
-    <Stepper steps={TOTAL_STEPS} authenticated={data.authenticated}>
-        {#if ss.currentStep == STEP.PROMPT}
-            <Prompt categories={data.categories} />
-        {:else if ss.currentStep == STEP.DESIGN}
-            <Design categories={data.categories} />
-        {:else if ss.currentStep == STEP.INFO}
-            <CardInfo />
-        {:else if ss.currentStep == STEP.RECORD}
-            <Record />
-        {:else if ss.currentStep == STEP.REVIEW}
-            <Review />
-        {/if}
-    </Stepper>
-
-    {#if !data.authenticated}
-        <p class="mt-4 text-center text-sm text-muted-foreground">
-            За да създадете картичка, <a
-                href="/login?redirectTo=/"
-                class="font-medium text-primary underline-offset-4 hover:underline"
-                >влезте</a
+<!-- Categories: plain links so crawlers can reach every occasion -->
+{#if data.categories.length > 0}
+    <section
+        id="categories"
+        class="flex flex-col gap-6 py-12"
+        aria-labelledby="categories-title"
+    >
+        <div use:reveal class="flex flex-col gap-2 text-center">
+            <h2
+                id="categories-title"
+                class="text-2xl font-semibold tracking-tight sm:text-3xl"
             >
-            или
-            <a
-                href="/register?redirectTo=/"
-                class="font-medium text-primary underline-offset-4 hover:underline"
-                >създайте безплатен профил</a
-            >.
-        </p>
-    {/if}
-</section>
+                Картички за всеки повод
+            </h2>
+            <p class="text-muted-foreground">
+                Изберете повод и започнете с AI дизайн или готов шаблон.
+            </p>
+        </div>
+        <nav aria-label="Поводи за картички">
+            <ul class="flex flex-wrap justify-center gap-3">
+                {#each data.categories as c, i (c.id)}
+                    <li use:reveal={{ delay: (i % 6) * 60 }}>
+                        <a
+                            href="/create?category={c.id}"
+                            class="group flex items-center gap-2 rounded-full border bg-card px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+                        >
+                            Картички за {c.name}
+                            {#if c.templates > 0}
+                                <span
+                                    class="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground"
+                                    aria-label="{c.templates} шаблона"
+                                    >{c.templates}</span
+                                >
+                            {/if}
+                            <ArrowRightIcon
+                                class="size-3.5 transition-transform group-hover:translate-x-0.5"
+                            />
+                        </a>
+                    </li>
+                {/each}
+            </ul>
+        </nav>
+    </section>
+{/if}
 
 <!-- How it works -->
-<section id="how" class="mt-16 flex flex-col gap-8">
+<section id="how" class="flex flex-col gap-8 py-12" aria-labelledby="how-title">
     <div use:reveal class="flex flex-col gap-2 text-center">
-        <h2 class="text-2xl font-semibold tracking-tight sm:text-3xl">
+        <h2
+            id="how-title"
+            class="text-2xl font-semibold tracking-tight sm:text-3xl"
+        >
             Как работи
         </h2>
         <p class="text-muted-foreground">
@@ -280,14 +240,25 @@
             </li>
         {/each}
     </ol>
+    <div use:reveal class="flex justify-center">
+        <Button href="/create" size="lg">
+            Започни сега <ArrowRightIcon />
+        </Button>
+    </div>
 </section>
 
 <!-- Storage duration -->
-<div use:reveal>
-    <Card.Root class="mt-16">
+<section use:reveal class="py-12" aria-labelledby="storage-title">
+    <Card.Root>
         <Card.Header>
-            <Card.Title class="flex items-center gap-2 font-sans text-base">
-                <ClockIcon class="size-5 text-primary" /> Съхранение на вашата картичка
+            <Card.Title class="font-sans text-base">
+                <h2
+                    id="storage-title"
+                    class="flex items-center gap-2 font-sans"
+                >
+                    <ClockIcon class="size-5 text-primary" /> Съхранение на вашата
+                    картичка
+                </h2>
             </Card.Title>
         </Card.Header>
         <Card.Content class="flex flex-col gap-4">
@@ -295,13 +266,13 @@
                 <div
                     class="flex flex-col items-center gap-1 rounded-lg border p-5"
                 >
-                    <span class="text-5xl font-bold text-primary leading-none"
+                    <span class="text-5xl leading-none font-bold text-primary"
                         >3</span
                     >
-                    <span class="text-sm font-semibold uppercase tracking-wide"
+                    <span class="text-sm font-semibold tracking-wide uppercase"
                         >години</span
                     >
-                    <p class="text-xs text-muted-foreground text-center">
+                    <p class="text-center text-xs text-muted-foreground">
                         При закупуване на физическа картичка
                     </p>
                 </div>
@@ -309,18 +280,18 @@
                     class="flex flex-col items-center gap-1 rounded-lg border p-5"
                 >
                     <span
-                        class="text-5xl font-bold text-brand-coral leading-none"
+                        class="text-5xl leading-none font-bold text-brand-coral"
                         >3</span
                     >
-                    <span class="text-sm font-semibold uppercase tracking-wide"
+                    <span class="text-sm font-semibold tracking-wide uppercase"
                         >дни</span
                     >
-                    <p class="text-xs text-muted-foreground text-center">
+                    <p class="text-center text-xs text-muted-foreground">
                         За картички предназначени само за онлайн употреба
                     </p>
                 </div>
             </div>
-            <p class="text-sm text-muted-foreground leading-relaxed">
+            <p class="text-sm leading-relaxed text-muted-foreground">
                 Вашата картичка със звукозапис ще бъде запазена в базата данни
                 до
                 <strong class="text-foreground">3 години</strong> при закупуване
@@ -331,43 +302,4 @@
             </p>
         </Card.Content>
     </Card.Root>
-</div>
-
-<AlertDialog.Root bind:open={successOpen}>
-    <AlertDialog.Content>
-        <AlertDialog.Header>
-            <AlertDialog.Title>Успех!</AlertDialog.Title>
-            <AlertDialog.Description>
-                Картичката беше създадена успешно!
-                {#if physicalCopyRequested}
-                    Скоро ще получите имейл с линк към вашата картичка.
-                {/if}
-            </AlertDialog.Description>
-        </AlertDialog.Header>
-        {#if !physicalCopyRequested}
-            <div
-                class="flex gap-2 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-300"
-            >
-                <TriangleAlertIcon class="mt-0.5 size-4 shrink-0" />
-                <p>
-                    Запазете този линк! Той няма да бъде изпратен по имейл, но
-                    можете да го намерите в „Моите картички“.
-                </p>
-            </div>
-        {/if}
-        <p
-            class="rounded-lg bg-muted p-3 font-mono text-xs break-all select-all"
-        >
-            {createdUrl}
-        </p>
-        <AlertDialog.Footer class="gap-2">
-            <Button variant="ghost" onclick={() => finish("home")}>
-                Към началната страница
-            </Button>
-            <Button variant="outline" onclick={() => finish("copy")}>
-                Копирай линк
-            </Button>
-            <Button onclick={() => finish("card")}>Към картичката</Button>
-        </AlertDialog.Footer>
-    </AlertDialog.Content>
-</AlertDialog.Root>
+</section>

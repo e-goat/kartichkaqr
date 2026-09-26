@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { page } from "$app/state";
     import { defineStepperEvent } from "$lib/controller/Stepper";
     import { cs, ss } from "$lib/state.svelte";
     import Breadcrumb from "./stepper/Breadcrumb.svelte";
@@ -34,7 +35,11 @@
     function requireAuth() {
         if (authenticated) return true;
         toast.info("Влезте в профила си, за да продължите.");
-        goto("/login?redirectTo=/");
+        // Come back to this page with its query (template/category); the
+        // typed prompt is kept by the draft in sessionStorage.
+        goto(
+            `/login?redirectTo=${encodeURIComponent(page.url.pathname + page.url.search)}`,
+        );
         return false;
     }
 
