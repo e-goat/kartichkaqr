@@ -1,136 +1,63 @@
 <script lang="ts">
     import { ss } from "$lib/state.svelte";
-    import ConnectorIcon from "$lib/assets/connector-icon.svg";
-    import StepIconOne from "$lib/assets/step-1-icon.svg";
-    import StepIconTwo from "$lib/assets/step-2-icon.svg";
-    import StepIconThree from "$lib/assets/step-3-icon.svg";
-    import StepIconFour from "$lib/assets/step-4-icon.svg";
+    import { STEP_LABELS } from "$lib/config/steps";
+    import SparklesIcon from "@lucide/svelte/icons/sparkles";
+    import ImageIcon from "@lucide/svelte/icons/image";
+    import TypeIcon from "@lucide/svelte/icons/type";
+    import MicIcon from "@lucide/svelte/icons/mic";
+    import EyeIcon from "@lucide/svelte/icons/eye";
+    import CheckIcon from "@lucide/svelte/icons/check";
+    import { cn } from "$lib/utils/cn";
 
-    export let steps: number = 0;
+    let { steps = 0 }: { steps?: number } = $props();
 
-    const stepLabels = [
-        "Базова информация",
-        "Изберете дизайн",
-        "Добавете съдържание",
-        "Добавете гласово съобщение",
-    ];
-
-    const stepIcons = [StepIconOne, StepIconTwo, StepIconThree, StepIconFour];
+    const stepIcons = [SparklesIcon, ImageIcon, TypeIcon, MicIcon, EyeIcon];
 </script>
 
-<!-- Mobile/Tablet view: single item with swipe animation -->
-<div class="block lg:hidden">
-    <div class="relative overflow-hidden h-16">
-        <div
-            class="flex transition-transform duration-300 ease-in-out"
-            style="transform: translateX(-{(ss.currentStep - 1) * 100}%)"
-        >
-            {#each Array(steps) as _, index}
-                {@const stepNum = index + 1}
-                {@const isActive = stepNum === ss.currentStep}
-                {@const isCompleted = stepNum < ss.currentStep}
-
-                <div
-                    class="w-full shrink-0 flex gap-3 items-center justify-center text-base font-medium text-zinc-800 dark:text-zinc-200"
-                >
-                    <enhanced:img
-                        src={stepIcons[index]}
-                        alt="Step {stepNum} icon"
-                        class="object-contain shrink-0 {index === 0
-                            ? 'w-8 aspect-square'
-                            : index === 1
-                              ? 'aspect-[0.93] w-7.5'
-                              : index === 2
-                                ? 'w-9 aspect-[1.1]'
-                                : 'aspect-[1.05] w-8.5'} {isActive
-                            ? 'opacity-100'
-                            : isCompleted
-                              ? 'opacity-100'
-                              : 'opacity-50'}"
-                    />
-                    <div
-                        class={isActive
-                            ? "text-zinc-800 dark:text-zinc-200"
-                            : isCompleted
-                              ? "text-zinc-800 dark:text-zinc-200"
-                              : "text-zinc-400 dark:text-zinc-500"}
-                        data-name={stepLabels[index]}
-                    >
-                        {stepLabels[index]}
-                    </div>
-                </div>
-            {/each}
-        </div>
-    </div>
-
-    <!-- Step indicator dots -->
-    <div class="flex justify-center gap-2 mt-3">
-        {#each Array(steps) as _, index}
-            {@const stepNum = index + 1}
-            {@const isActive = stepNum === ss.currentStep}
-            {@const isCompleted = stepNum < ss.currentStep}
-
-            <div
-                class="w-2 h-2 rounded-full transition-colors duration-200 {isActive
-                    ? 'bg-custom-orange-400'
-                    : isCompleted
-                      ? 'bg-custom-orange-600'
-                      : 'bg-gray-300 dark:bg-gray-600'}"
-            ></div>
-        {/each}
-    </div>
-</div>
-
-<!-- Desktop view: full horizontal layout -->
-<div
-    class="hidden lg:flex overflow-hidden gap-6 items-center text-xl font-medium text-zinc-800 dark:text-zinc-200"
->
-    {#each Array(steps) as _, index}
+<ol class="flex items-center gap-2" aria-label="Стъпки">
+    {#each Array(steps) as _, index (index)}
         {@const stepNum = index + 1}
         {@const isActive = stepNum === ss.currentStep}
         {@const isCompleted = stepNum < ss.currentStep}
+        {@const Icon = isCompleted ? CheckIcon : stepIcons[index]}
 
-        <div
-            class="flex gap-4 items-center self-stretch my-auto {index === 0 ||
-            index === 2
-                ? 'min-w-60'
-                : ''}"
+        <li
+            class={cn(
+                "flex items-center gap-2",
+                isActive && "flex-1 sm:flex-none",
+            )}
+            aria-current={isActive ? "step" : undefined}
         >
-            <enhanced:img
-                src={stepIcons[index]}
-                alt="Step {stepNum} icon"
-                class="object-contain shrink-0 self-stretch my-auto {index === 0
-                    ? 'w-10 aspect-square'
-                    : index === 1
-                      ? 'aspect-[0.93] w-9.25'
-                      : index === 2
-                        ? 'w-11 aspect-[1.1]'
-                        : 'aspect-[1.05] w-10.5'} {isActive
-                    ? 'opacity-100'
-                    : isCompleted
-                      ? 'opacity-100'
-                      : 'opacity-50'}"
-            />
-            <div
-                class="self-stretch my-auto {isActive
-                    ? 'text-zinc-800 dark:text-zinc-200'
-                    : isCompleted
-                      ? 'text-zinc-800 dark:text-zinc-200'
-                      : 'text-zinc-400 dark:text-zinc-500'}"
-                data-name={stepLabels[index]}
+            <span
+                class={cn(
+                    "flex size-8 shrink-0 items-center justify-center rounded-full border text-sm transition-colors",
+                    isActive &&
+                        "border-primary bg-primary text-primary-foreground",
+                    isCompleted &&
+                        "border-primary/40 bg-primary/10 text-primary",
+                    !isActive && !isCompleted && "text-muted-foreground",
+                )}
             >
-                {stepLabels[index]}
-            </div>
-        </div>
-
+                <Icon class="size-4" />
+            </span>
+            <span
+                class={cn(
+                    "text-sm font-medium whitespace-nowrap",
+                    isActive ? "inline" : "hidden lg:inline",
+                    !isActive && "text-muted-foreground",
+                )}
+            >
+                {STEP_LABELS[index]}
+            </span>
+        </li>
         {#if index < steps - 1}
-            <enhanced:img
-                src={ConnectorIcon}
-                alt="Step connector"
-                class="object-contain shrink-0 self-stretch my-auto aspect-[20.83] w-10.5 invert dark:invert-0 {isCompleted
-                    ? 'opacity-100'
-                    : 'opacity-30'}"
-            />
+            <li
+                aria-hidden="true"
+                class={cn(
+                    "h-px flex-1 min-w-3 bg-border",
+                    isCompleted && "bg-primary/40",
+                )}
+            ></li>
         {/if}
     {/each}
-</div>
+</ol>

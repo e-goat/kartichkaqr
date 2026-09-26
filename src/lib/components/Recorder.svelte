@@ -1,6 +1,12 @@
 <script lang="ts">
     import { onMount, tick } from "svelte";
-    import Swal from "sweetalert2";
+    import { toast } from "svelte-sonner";
+    import MicIcon from "@lucide/svelte/icons/mic";
+    import SquareIcon from "@lucide/svelte/icons/square";
+    import CheckIcon from "@lucide/svelte/icons/check";
+    import PlayIcon from "@lucide/svelte/icons/play";
+    import RotateCcwIcon from "@lucide/svelte/icons/rotate-ccw";
+    import { Button } from "$lib/components/ui/button";
     import { cs, rs } from "$lib/state.svelte";
     interface Props {
         recording?: boolean;
@@ -107,16 +113,9 @@
                             isPlaying = false;
                         };
                         audioElement.onerror = (error) => {
-                            Swal.fire({
-                                title: "Грешка!",
-                                text: "Възникна грешка при възпроизвеждането на звука.",
-                                icon: "error",
-                                confirmButtonText: "Разбрано",
-                                customClass: {
-                                    confirmButton: "swal-confirm-button",
-                                },
-                                buttonsStyling: false,
-                            });
+                            toast.error(
+                                "Възникна грешка при възпроизвеждането на звука.",
+                            );
                             isPlaying = false;
                             if (rs.blob) {
                                 if (audioUrl) {
@@ -131,16 +130,9 @@
                     await audioElement.play();
                     isPlaying = true;
                 } catch (error) {
-                    Swal.fire({
-                        title: "Грешка!",
-                        text: "Възникна грешка при възпроизвеждането на звука.",
-                        icon: "error",
-                        confirmButtonText: "Разбрано",
-                        customClass: {
-                            confirmButton: "swal-confirm-button",
-                        },
-                        buttonsStyling: false,
-                    });
+                    toast.error(
+                        "Възникна грешка при възпроизвеждането на звука.",
+                    );
                     isPlaying = false;
 
                     if (rs.blob) {
@@ -168,14 +160,7 @@
         try {
             await setupStream();
         } catch (err) {
-            Swal.fire({
-                title: "Грешка!",
-                text: `Възникна грешка при записването на звука: ${err}`,
-                icon: "error",
-                confirmButtonText: "Разбрано",
-                customClass: { confirmButton: "swal-confirm-button" },
-                buttonsStyling: false,
-            });
+            toast.error(`Възникна грешка при записването на звука: ${err}`);
             return;
         }
         mediaRecorder.start();
@@ -304,7 +289,7 @@
 
 <div class="flex justify-center items-center flex-col gap-6">
     <div class="relative">
-        <svg class="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+        <svg class="size-32 -rotate-90" viewBox="0 0 120 120">
             <circle
                 cx="60"
                 cy="60"
@@ -312,7 +297,7 @@
                 stroke="currentColor"
                 stroke-width="8"
                 fill="none"
-                class="text-gray-200 dark:text-gray-700"
+                class="text-muted"
             />
             {#if hasStarted}
                 <circle
@@ -322,8 +307,8 @@
                     stroke="currentColor"
                     stroke-width="8"
                     fill="none"
-                    class:text-red-500={isActive}
-                    class:text-blue-500={isRecordingComplete}
+                    class:text-destructive={isActive}
+                    class:text-primary={isRecordingComplete}
                     stroke-dasharray="339.292"
                     stroke-dashoffset={339.292 -
                         (progressPercentage / 100) * 339.292}
@@ -334,66 +319,22 @@
         </svg>
 
         <button
-            class="absolute inset-0 flex justify-center items-center border-4 bg-custom-teal-200/30 dark:bg-gray-700/50 border-custom-orange-400 rounded-full text-center w-28 h-28 m-2 focus:outline-none focus:ring-4 focus:ring-custom-orange-400/50 hover:bg-custom-teal-200/50 dark:hover:bg-gray-600/50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-custom-teal-200/30 dark:disabled:hover:bg-gray-700/50"
+            type="button"
+            class="absolute inset-0 m-2 flex size-28 items-center justify-center rounded-full border-4 border-primary/60 bg-primary/10 text-destructive transition-colors hover:bg-primary/20 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring/50 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:bg-primary/10"
+            aria-label={isActive
+                ? "Спри записа"
+                : isRecordingComplete
+                  ? "Записът е завършен"
+                  : "Започни запис"}
             disabled={isRecordingComplete}
             onclick={handleStartStop}
         >
             {#if isActive}
-                <span class="absolute">
-                    <svg
-                        width="32"
-                        height="32"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="text-red-500"
-                    >
-                        <rect
-                            x="6"
-                            y="6"
-                            width="12"
-                            height="12"
-                            fill="currentColor"
-                        ></rect>
-                    </svg>
-                </span>
+                <SquareIcon class="size-8 fill-current" />
             {:else if !isRecordingComplete}
-                <span class="absolute">
-                    <svg
-                        width="32"
-                        height="32"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="text-red-500"
-                    >
-                        <polygon points="5,3 19,12 5,21" fill="currentColor"
-                        ></polygon>
-                    </svg>
-                </span>
+                <MicIcon class="size-9" />
             {:else}
-                <span class="absolute">
-                    <svg
-                        width="32"
-                        height="32"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        class="text-gray-400"
-                    >
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <path d="M8 12h8"></path>
-                    </svg>
-                </span>
+                <CheckIcon class="size-9 text-primary" />
             {/if}
         </button>
     </div>
@@ -401,33 +342,29 @@
     <div class="flex flex-col items-center gap-2">
         <div
             class="text-2xl font-bold tabular-nums"
-            class:text-red-500={isActive}
-            class:text-blue-500={isRecordingComplete}
-            class:text-gray-500={!hasStarted}
+            class:text-destructive={isActive}
+            class:text-primary={isRecordingComplete}
+            class:text-muted-foreground={!hasStarted}
         >
             {formatTime(timeLeft)}
         </div>
 
         {#if isActive}
-            <div
-                class="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2"
-            >
+            <div class="text-sm text-muted-foreground flex items-center gap-2">
                 <div
-                    class="w-2 h-2 bg-red-500 rounded-full animate-pulse"
+                    class="size-2 bg-destructive rounded-full animate-pulse"
                 ></div>
                 Записване...
             </div>
         {:else if isRecordingComplete}
-            <div
-                class="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2"
-            >
-                <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+            <div class="text-sm text-muted-foreground flex items-center gap-2">
+                <div class="size-2 bg-primary rounded-full"></div>
                 Записът е завършен
             </div>
         {:else}
-            <div class="text-sm text-gray-500 dark:text-gray-400 text-center">
+            <div class="text-sm text-muted-foreground text-center">
                 Натиснете за започване на запис<br />
-                <span class="text-xs text-gray-400 dark:text-gray-500">
+                <span class="text-xs">
                     Максимално време за запис: {MAX_TIME} секунди</span
                 >
             </div>
@@ -436,29 +373,21 @@
 
     {#if isRecordingComplete}
         <div class="flex justify-center items-center gap-2">
-            <button
-                class="cursor-pointer px-4 py-2 text-sm bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-500"
-                onclick={handleReset}
+            <Button type="button" variant="outline" onclick={handleReset}>
+                <RotateCcwIcon /> Отначало
+            </Button>
+            <Button
+                type="button"
+                variant={isPlaying ? "destructive" : "secondary"}
+                disabled={!(rs.blob && audioUrl)}
+                onclick={handleMediaRecording}
             >
-                Отначало
-            </button>
-            {#if rs.blob && audioUrl}
-                <button
-                    class="cursor-pointer px-4 py-2 text-sm rounded-lg focus:outline-none focus:ring-2 {isPlaying
-                        ? 'bg-red-200 dark:bg-red-900/50 hover:bg-red-300 dark:hover:bg-red-800/60 text-red-700 dark:text-red-400 focus:ring-red-400'
-                        : 'bg-green-200 dark:bg-green-900/50 hover:bg-green-300 dark:hover:bg-green-800/60 text-green-700 dark:text-green-400 focus:ring-green-400'}"
-                    onclick={handleMediaRecording}
-                >
-                    {isPlaying ? "Спри" : "Пусни"}
-                </button>
-            {:else}
-                <button
-                    class="cursor-not-allowed px-4 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 rounded-lg"
-                    disabled
-                >
-                    Пусни
-                </button>
-            {/if}
+                {#if isPlaying}
+                    <SquareIcon /> Спри
+                {:else}
+                    <PlayIcon /> Пусни
+                {/if}
+            </Button>
         </div>
     {/if}
 </div>

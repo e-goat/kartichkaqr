@@ -1,4 +1,6 @@
 import { ss, pcs } from "$lib/state.svelte";
+import { STEP } from "$lib/config/steps";
+import { generateImage } from "$lib/controller/AiImage";
 import { error } from "@sveltejs/kit";
 import {
     validateStep,
@@ -32,6 +34,12 @@ export async function defineStepperEvent(
                 };
             }
 
+            // Start generating as soon as the prompt is valid; the Design
+            // step shows progress. Unchanged prompts are not re-sent.
+            if (ss.currentStep === STEP.PROMPT) {
+                void generateImage();
+            }
+
             // Only proceed if validation passes
             if (!(ss.currentStep == steps)) {
                 ss.currentStep += 1;
@@ -59,8 +67,8 @@ export async function defineStepperEvent(
                 };
             }
 
-            // Validate physical copy if requested (step 4)
-            if (ss.currentStep === 4 && pcs.requested) {
+            // Validate physical copy if requested (Review step)
+            if (ss.currentStep === STEP.REVIEW && pcs.requested) {
                 const physicalCopyValidation = validatePhysicalCopy({
                     name: pcs.name,
                     email: pcs.email,

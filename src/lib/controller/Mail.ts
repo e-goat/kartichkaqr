@@ -4,10 +4,14 @@ import { render } from "svelte/server";
 import EmailTemplate from "$lib/components/EmailTemplate.svelte";
 
 class Mail {
-    #resend: Resend;
+    #resend: Resend | null = null;
 
-    constructor() {
-        this.#resend = new Resend(RESEND_API_KEY);
+    // Created on first use: Resend throws without a key, and environments
+    // such as Vercel previews intentionally have none.
+    get #client(): Resend | null {
+        if (!RESEND_API_KEY) return null;
+        this.#resend ??= new Resend(RESEND_API_KEY);
+        return this.#resend;
     }
 
     async send({
@@ -39,6 +43,12 @@ class Mail {
         cardUrl: string;
         senderComment: string;
     }) {
+        const client = this.#client;
+        if (!client) {
+            console.warn(`RESEND_API_KEY not set, skipping email: ${title}`);
+            return null;
+        }
+
         try {
             const { body } = render(EmailTemplate, {
                 props: {
@@ -56,7 +66,7 @@ class Mail {
                 },
             });
 
-            const { data, error } = await this.#resend.emails.send({
+            const { data, error } = await client.emails.send({
                 from: from,
                 to: [to],
                 subject: title,

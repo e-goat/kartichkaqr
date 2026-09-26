@@ -1,7 +1,8 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import { fly } from "svelte/transition";
-    import CardCreate from "$lib/components/CardCreate.svelte";
+    import SparklesIcon from "@lucide/svelte/icons/sparkles";
+    import { Button } from "$lib/components/ui/button";
 
     let mounted = false;
 
@@ -43,7 +44,7 @@
             in:fly={{ y: 30, duration: 500, delay: 100 }}
         >
             <h1
-                class="text-3xl md:text-4xl font-medium text-zinc-800 dark:text-zinc-200 text-center"
+                class="text-3xl md:text-4xl font-medium text-foreground text-center"
             >
                 За нашата компания
             </h1>
@@ -68,7 +69,7 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <!-- За нас -->
             <div
-                class="flex flex-col gap-5 p-6 bg-white dark:bg-gray-800 rounded-2xl border border-amber-200 dark:border-amber-800/50 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-700 transition-all duration-200"
+                class="flex flex-col gap-5 p-6 bg-card rounded-2xl border border-amber-200 dark:border-amber-800/50 shadow-sm hover:shadow-md hover:border-amber-300 dark:hover:border-amber-700 transition-all duration-200"
                 in:fly={{ y: 40, duration: 500, delay: 200 }}
             >
                 <div
@@ -90,13 +91,11 @@
                     </svg>
                 </div>
                 <div class="flex flex-col gap-3">
-                    <h3
-                        class="text-xl font-semibold text-zinc-800 dark:text-zinc-200"
-                    >
+                    <h3 class="text-xl font-semibold text-foreground">
                         За нас
                     </h3>
                     <div
-                        class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed space-y-3"
+                        class="text-sm text-muted-foreground leading-relaxed space-y-3"
                     >
                         <p>
                             Ние сме малък български екип с една проста, но добре
@@ -119,7 +118,7 @@
 
             <!-- Нашата мисия -->
             <div
-                class="flex flex-col gap-5 p-6 bg-white dark:bg-gray-800 rounded-2xl border border-rose-200 dark:border-rose-900/50 shadow-sm hover:shadow-md hover:border-rose-300 dark:hover:border-rose-800 transition-all duration-200"
+                class="flex flex-col gap-5 p-6 bg-card rounded-2xl border border-rose-200 dark:border-rose-900/50 shadow-sm hover:shadow-md hover:border-rose-300 dark:hover:border-rose-800 transition-all duration-200"
                 in:fly={{ y: 40, duration: 500, delay: 300 }}
             >
                 <div
@@ -141,13 +140,11 @@
                     </svg>
                 </div>
                 <div class="flex flex-col gap-3">
-                    <h3
-                        class="text-xl font-semibold text-zinc-800 dark:text-zinc-200"
-                    >
+                    <h3 class="text-xl font-semibold text-foreground">
                         Нашата мисия
                     </h3>
                     <div
-                        class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed space-y-3"
+                        class="text-sm text-muted-foreground leading-relaxed space-y-3"
                     >
                         <p>
                             KartichkaQR прави персоналните поздравителни
@@ -169,7 +166,7 @@
 
             <!-- Нашата философия -->
             <div
-                class="flex flex-col gap-5 p-6 bg-white dark:bg-gray-800 rounded-2xl border border-purple-200 dark:border-purple-900/50 shadow-sm hover:shadow-md hover:border-purple-300 dark:hover:border-purple-800 transition-all duration-200"
+                class="flex flex-col gap-5 p-6 bg-card rounded-2xl border border-purple-200 dark:border-purple-900/50 shadow-sm hover:shadow-md hover:border-purple-300 dark:hover:border-purple-800 transition-all duration-200"
                 in:fly={{ y: 40, duration: 500, delay: 400 }}
             >
                 <div
@@ -191,16 +188,14 @@
                     </svg>
                 </div>
                 <div class="flex flex-col gap-3">
-                    <h3
-                        class="text-xl font-semibold text-zinc-800 dark:text-zinc-200"
-                    >
+                    <h3 class="text-xl font-semibold text-foreground">
                         Нашата философия
                     </h3>
                     <div
-                        class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed space-y-3"
+                        class="text-sm text-muted-foreground leading-relaxed space-y-3"
                     >
                         <p
-                            class="italic font-medium text-zinc-600 dark:text-zinc-400 text-base border-l-2 border-purple-300 dark:border-purple-700 pl-3"
+                            class="italic font-medium text-muted-foreground text-base border-l-2 border-purple-300 dark:border-purple-700 pl-3"
                         >
                             "Най-важните думи не се четат - те се чуват."
                         </p>
@@ -224,13 +219,11 @@
 
         <!-- Vision & CTA -->
         <div
-            class="flex flex-col gap-6 p-6 sm:p-8 bg-white dark:bg-gray-800 rounded-2xl border border-amber-200 dark:border-amber-800/50 shadow-sm"
+            class="flex flex-col gap-6 p-6 sm:p-8 bg-card rounded-2xl border border-amber-200 dark:border-amber-800/50 shadow-sm"
             in:fly={{ y: 40, duration: 500, delay: 500 }}
         >
             <div class="flex flex-col gap-3 items-center text-center">
-                <h2
-                    class="text-2xl sm:text-3xl font-medium text-zinc-800 dark:text-zinc-200"
-                >
+                <h2 class="text-2xl sm:text-3xl font-medium text-foreground">
                     Нашата визия
                 </h2>
                 <svg
@@ -249,7 +242,7 @@
                     ></path>
                 </svg>
                 <p
-                    class="text-sm sm:text-base text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-2xl italic mt-1"
+                    class="text-sm sm:text-base text-muted-foreground leading-relaxed max-w-2xl italic mt-1"
                 >
                     "Да революционизираме начина, по който хората се свързват,
                     като направим всяка поздравителна картичка уникално, лично
@@ -261,18 +254,18 @@
             <div
                 class="flex flex-col items-center gap-4 p-6 bg-amber-50 dark:bg-amber-950/20 rounded-xl border border-amber-100 dark:border-amber-800/30 text-center"
             >
-                <h3
-                    class="text-lg sm:text-xl font-semibold text-zinc-800 dark:text-zinc-200"
-                >
+                <h3 class="text-lg sm:text-xl font-semibold text-foreground">
                     Готови да създадете магия?
                 </h3>
                 <p
-                    class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-md"
+                    class="text-sm text-muted-foreground leading-relaxed max-w-md"
                 >
                     Присъединете се към потребителите, които вече са открили
                     радостта от персонализираните поздравителни картички.
                 </p>
-                <CardCreate label="Започни да създаваш сега" />
+                <Button href="/" size="lg"
+                    ><SparklesIcon /> Започни да създаваш сега</Button
+                >
             </div>
         </div>
     {/if}

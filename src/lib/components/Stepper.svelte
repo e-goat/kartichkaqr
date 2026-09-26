@@ -1,16 +1,23 @@
 <script lang="ts">
-    import Button from "$lib/components/Button.svelte";
     import { defineStepperEvent } from "$lib/controller/Stepper";
     import { cs, ss } from "$lib/state.svelte";
     import Breadcrumb from "./stepper/Breadcrumb.svelte";
     import { enhance } from "$app/forms";
+    import { goto } from "$app/navigation";
     import { onMount, onDestroy } from "svelte";
-    import Swal from "sweetalert2";
-    import Separator from "$lib/assets/separator.svg";
+    import { toast } from "svelte-sonner";
+    import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
+    import ArrowRightIcon from "@lucide/svelte/icons/arrow-right";
+    import CheckIcon from "@lucide/svelte/icons/check";
+    import Loader2Icon from "@lucide/svelte/icons/loader-2";
+    import { Button } from "$lib/components/ui/button";
+    import * as Card from "$lib/components/ui/card";
+    import * as AlertDialog from "$lib/components/ui/alert-dialog";
 
-    let { children, steps = 0, form } = $props();
-    let initialStep: number = steps + 1 - steps;
-    let globalErrorMessage = $state<string | null>(null);
+    let { children, steps = 0, authenticated = false } = $props();
+    let initialStep: number = 1;
+    let confirmOpen = $state(false);
+    let formEl = $state<HTMLFormElement>();
 
     ss.currentStep = initialStep;
     ss.isRendering = false;
@@ -24,7 +31,15 @@
         ss.isRendering = false;
     });
 
+    function requireAuth() {
+        if (authenticated) return true;
+        toast.info("Влезте в профила си, за да продължите.");
+        goto("/login?redirectTo=/");
+        return false;
+    }
+
     async function handleNext() {
+        if (!requireAuth()) return;
         const result = await defineStepperEvent("next", steps, initialStep);
 
         if (!result.success) {
@@ -32,17 +47,10 @@
                 ss.validationErrors = result.validationResult.errors;
             }
             if (result.errorMessage) {
-                globalErrorMessage = result.errorMessage;
-                await Swal.fire({
-                    icon: "error",
-                    title: "Грешка при валидация",
-                    text: result.errorMessage,
-                    confirmButtonText: "Разбрах",
-                });
+                toast.error(result.errorMessage);
             }
         } else {
             ss.validationErrors = {};
-            globalErrorMessage = null;
         }
     }
 
@@ -50,7 +58,6 @@
         const result = await defineStepperEvent("prev", steps, initialStep);
         if (result.success) {
             ss.validationErrors = {};
-            globalErrorMessage = null;
         }
     }
 
@@ -62,20 +69,19 @@
                 ss.validationErrors = result.validationResult.errors;
             }
             if (result.errorMessage) {
-                globalErrorMessage = result.errorMessage;
-                await Swal.fire({
-                    icon: "error",
-                    title: "Грешка при валидация",
-                    text: result.errorMessage,
-                    confirmButtonText: "Разбрах",
-                });
+                toast.error(result.errorMessage);
             }
             return false;
         }
 
         ss.validationErrors = {};
-        globalErrorMessage = null;
         return true;
+    }
+
+    function confirmAndSubmit() {
+        confirmOpen = false;
+        ss.isSubmitting = true;
+        formEl?.requestSubmit();
     }
 </script>
 
@@ -83,102 +89,82 @@
     <div
         class="fixed inset-0 z-50 bg-black/60 flex flex-col items-center justify-center gap-4"
     >
-        <div
-            class="animate-spin rounded-full h-14 w-14 border-4 border-white border-t-transparent"
-        ></div>
+        <Loader2Icon class="size-12 animate-spin text-white" />
         <p class="text-white text-sm font-medium">Създаване на картичка...</p>
     </div>
 {/if}
 
-<div class="px-px max-w-95.25 text-zinc-800 dark:text-zinc-200 mx-auto mb-6">
-    <div class="flex flex-col justify-center">
-        <div
-            class="text-center text-lg sm:text-2xl md:text-3xl font-medium whitespace-nowrap"
-            data-name="Създаване на картичка"
-        >
-            Създаване на картичка
-        </div>
-        <enhanced:img
-            src={Separator}
-            class="object-contain mt-4 w-full aspect-[200]"
-            alt="Card creation illustration"
-        />
-    </div>
-</div>
-
-<article
-    class="shadow rounded-xl bg-white/70 dark:bg-gray-800/80 w-full flex flex-col"
->
+<Card.Root class="w-full gap-0 py-0 overflow-hidden">
     <form
         id="step-form"
+        bind:this={formEl}
         method="POST"
         action="?/create"
         enctype="multipart/form-data"
         use:enhance
         class="flex flex-col"
     >
-        <div class="p-8 flex flex-col min-h-[85vh]">
-            <div class="mb-10">
-                <Breadcrumb {steps} />
-            </div>
-            <div
-                class="flex-1 overflow-y-auto flex items-center justify-center bg-custom-orange-200/5 dark:bg-custom-orange-200/[0.02] p-5 rounded-xl border border-gray-300 dark:border-gray-600"
-            >
-                {@render children()}
-            </div>
+        <div class="border-b px-4 py-4 sm:px-6">
+            <Breadcrumb {steps} />
         </div>
-        <div class="flex justify-between px-8 pb-8 shrink-0">
+        <div class="p-4 sm:p-6 min-h-[60vh] flex items-start justify-center">
+            {@render children()}
+        </div>
+        <div
+            class="flex justify-between gap-3 border-t bg-muted/40 px-4 py-4 sm:px-6"
+        >
             <Button
-                ariaLabel="Предишна стъпка"
-                text={"Назад"}
-                clickEvent={handlePrev}
+                type="button"
+                variant="outline"
+                aria-label="Предишна стъпка"
+                onclick={handlePrev}
                 disabled={ss.currentStep == initialStep}
-                buttonType="button"
-            />
+            >
+                <ArrowLeftIcon /> Назад
+            </Button>
             {#if ss.currentStep != steps}
                 <Button
-                    ariaLabel="Следваща стъпка"
-                    text={"Напред"}
-                    clickEvent={handleNext}
-                    disabled={ss.currentStep == steps}
-                    buttonType="button"
-                />
+                    type="button"
+                    aria-label="Следваща стъпка"
+                    onclick={handleNext}
+                >
+                    Напред <ArrowRightIcon />
+                </Button>
             {:else}
                 <input type="hidden" name="card" value={JSON.stringify(cs)} />
                 <Button
-                    ariaLabel="Бутон за запазване на картата"
-                    text={"Запази"}
-                    buttonType="submit"
-                    loading={ss.isSubmitting}
-                    clickEvent={async (e) => {
-                        e.preventDefault();
-                        const isValid = await handleSubmit();
-                        if (isValid) {
-                            const confirmation = await Swal.fire({
-                                title: "Потвърждение",
-                                text: "Сигурни ли сте, че дизайнът на картичката е окончателен?",
-                                icon: "question",
-                                showCancelButton: true,
-                                confirmButtonText: "Да, създай картичката",
-                                cancelButtonText: "Отказ",
-                                customClass: {
-                                    confirmButton: "swal-confirm-button",
-                                    cancelButton: "swal-cancel-button",
-                                },
-                                buttonsStyling: false,
-                            });
-
-                            if (confirmation.isConfirmed) {
-                                ss.isSubmitting = true;
-                                const form = document.getElementById(
-                                    "step-form",
-                                ) as HTMLFormElement;
-                                form?.requestSubmit();
-                            }
-                        }
+                    type="button"
+                    aria-label="Бутон за запазване на картата"
+                    disabled={ss.isSubmitting}
+                    onclick={async () => {
+                        if (await handleSubmit()) confirmOpen = true;
                     }}
-                />
+                >
+                    {#if ss.isSubmitting}
+                        <Loader2Icon class="animate-spin" />
+                    {:else}
+                        <CheckIcon />
+                    {/if}
+                    Запази
+                </Button>
             {/if}
         </div>
     </form>
-</article>
+</Card.Root>
+
+<AlertDialog.Root bind:open={confirmOpen}>
+    <AlertDialog.Content>
+        <AlertDialog.Header>
+            <AlertDialog.Title>Потвърждение</AlertDialog.Title>
+            <AlertDialog.Description>
+                Сигурни ли сте, че дизайнът на картичката е окончателен?
+            </AlertDialog.Description>
+        </AlertDialog.Header>
+        <AlertDialog.Footer>
+            <AlertDialog.Cancel>Отказ</AlertDialog.Cancel>
+            <AlertDialog.Action onclick={confirmAndSubmit}>
+                Да, създай картичката
+            </AlertDialog.Action>
+        </AlertDialog.Footer>
+    </AlertDialog.Content>
+</AlertDialog.Root>

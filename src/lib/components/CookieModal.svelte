@@ -1,6 +1,9 @@
 <script lang="ts">
     import { invalidateAll } from "$app/navigation";
     import { onMount } from "svelte";
+    import CookieIcon from "@lucide/svelte/icons/cookie";
+    import { Button } from "$lib/components/ui/button";
+    import * as Card from "$lib/components/ui/card";
 
     let { cookieConsent } = $props();
     let showModal = $state(false);
@@ -33,37 +36,35 @@
 
 {#if showModal && !cookieConsent}
     <div
-        class="fixed bottom-4 right-4 z-50 max-w-md w-full sm:w-auto"
+        class="fixed bottom-4 right-4 left-4 sm:left-auto z-50 sm:max-w-md animate-in fade-in slide-in-from-bottom-4"
         role="dialog"
         aria-modal="true"
         aria-labelledby="cookie-modal-title"
     >
-        <div
-            class="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 transform transition-transform duration-300"
-        >
-            <p
-                class="text-gray-800 dark:text-gray-200 mb-6 text-base md:text-lg leading-relaxed"
-            >
-                Нашият сайт използва бисквитки, за да подобри вашето изживяване,
-                анализира използването на сайта и подпомага нашите маркетингови
-                усилия.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end">
-                <button
+        <Card.Root class="shadow-xl">
+            <Card.Content class="flex gap-3">
+                <CookieIcon class="mt-0.5 size-5 shrink-0 text-primary" />
+                <p id="cookie-modal-title" class="text-sm leading-relaxed">
+                    Нашият сайт използва бисквитки, за да подобри вашето
+                    изживяване, анализира използването на сайта и подпомага
+                    нашите маркетингови усилия.
+                </p>
+            </Card.Content>
+            <Card.Footer class="justify-end gap-2">
+                <Button
+                    variant="outline"
                     onclick={handleClose}
-                    class="px-6 py-2.5 border-2 border-green-600 text-green-600 bg-white dark:bg-gray-700 dark:border-green-500 dark:text-green-400 rounded-lg font-medium hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50"
                     aria-label="Затвори известието за бисквитки"
                 >
                     Затвори
-                </button>
-                <button
+                </Button>
+                <Button
                     onclick={handleAcceptAll}
-                    class="px-6 py-2.5 border-2 border-green-600 text-green-600 bg-white dark:bg-gray-700 dark:border-green-500 dark:text-green-400 rounded-lg font-medium hover:bg-green-50 dark:hover:bg-green-900/20 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-opacity-50"
                     aria-label="Приемам всички бисквитки"
                 >
                     Приемам всички
-                </button>
-            </div>
-        </div>
+                </Button>
+            </Card.Footer>
+        </Card.Root>
     </div>
 {/if}

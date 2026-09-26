@@ -1,3 +1,5 @@
+import { DEFAULT_CARD_STYLE } from "$lib/config/card";
+
 // IN YOUR INTERFACE
 //
 interface CardState {
@@ -10,6 +12,33 @@ interface CardState {
     slug: string;
     audioUrl: string | null;
     cardUuid: string;
+    // Set when the front is an AI image (mutually exclusive with templateId)
+    backgroundUrl: string | null;
+    categoryId: number | null;
+    prompt: string | null;
+    // Per-card typography
+    titleFont: string;
+    titleFontSize: number;
+    titleColor: string;
+    descriptionFont: string;
+    descriptionFontSize: number;
+    descriptionColor: string;
+}
+
+interface AiState {
+    prompt: string;
+    // null = let Claude pick from the DB categories
+    categoryId: number | null;
+    enhance: boolean;
+    generating: boolean;
+    error: string | null;
+    // prompt/category/enhance of the last request, to skip identical re-runs
+    lastRequestKey: string | null;
+    result: {
+        imageUrl: string;
+        imagePrompt: string;
+        category: { id: number; name: string };
+    } | null;
 }
 
 interface StepperState {
@@ -45,11 +74,8 @@ interface TemplateState {
     description: string;
     title: string;
     titlePosition: "top" | "bottom" | "center";
-    titleFontSize: number;
     background: string;
     backgroundBack: string;
-    font: string;
-    fontColor: string;
     templateDescription: string;
     templateTitle: string;
     designPage: number;
@@ -65,6 +91,20 @@ export const cs: CardState = $state({
     slug: "",
     audioUrl: null,
     cardUuid: "",
+    backgroundUrl: null,
+    categoryId: null,
+    prompt: null,
+    ...DEFAULT_CARD_STYLE,
+});
+
+export const ai: AiState = $state({
+    prompt: "",
+    categoryId: null,
+    enhance: false,
+    generating: false,
+    error: null,
+    lastRequestKey: null,
+    result: null,
 });
 
 export const ss: StepperState = $state({
@@ -90,11 +130,8 @@ export const ts: TemplateState = $state({
     description: "",
     title: "",
     titlePosition: "center",
-    titleFontSize: 24,
     background: "",
     backgroundBack: "",
-    font: "",
-    fontColor: "",
     templateDescription: "",
     templateTitle: "",
     designPage: 1,
@@ -119,6 +156,24 @@ export function resetCardState() {
     cs.slug = "";
     cs.audioUrl = null;
     cs.cardUuid = "";
+    cs.backgroundUrl = null;
+    cs.categoryId = null;
+    cs.prompt = null;
+    Object.assign(cs, DEFAULT_CARD_STYLE);
+
+    ts.background = "";
+    ts.backgroundBack = "";
+    ts.titlePosition = "center";
+    ts.templateTitle = "";
+    ts.templateDescription = "";
+
+    // Keep ai.enhance: it's a saved preference, not per-card state
+    ai.prompt = "";
+    ai.categoryId = null;
+    ai.generating = false;
+    ai.error = null;
+    ai.lastRequestKey = null;
+    ai.result = null;
 
     ss.currentStep = 1;
     ss.isSubmitting = false;
