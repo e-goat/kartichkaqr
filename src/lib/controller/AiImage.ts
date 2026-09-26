@@ -62,6 +62,5 @@ export function useAiImage() {
     cs.templateId = 0;
     ts.background = ai.result.imageUrl;
     ts.backgroundBack = "";
-    ts.titlePosition = "center";
     delete ss.validationErrors.templateId;
 }

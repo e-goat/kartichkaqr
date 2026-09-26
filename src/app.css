@@ -165,6 +165,8 @@
     html {
         @apply font-sans;
         scroll-behavior: smooth;
+        /* Keep anchor targets clear of the sticky header */
+        scroll-padding-top: 5rem;
     }
     body {
         @apply bg-background text-foreground;
@@ -177,5 +179,33 @@
     h5,
     h6 {
         @apply font-serif;
+    }
+}
+
+/* Scroll reveal (see $lib/actions/reveal.ts). The `js` class is added by an
+   inline script in app.html, so without JavaScript nothing is hidden. */
+html.js [data-reveal] {
+    opacity: 0;
+    transition:
+        opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+        translate 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+}
+html.js [data-reveal="up"] {
+    translate: 0 1.5rem;
+}
+html.js [data-reveal][data-revealed] {
+    opacity: 1;
+    translate: 0 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    html.js [data-reveal] {
+        opacity: 1;
+        translate: none;
+        transition: none;
     }
 }

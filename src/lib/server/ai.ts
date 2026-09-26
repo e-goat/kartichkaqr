@@ -10,6 +10,15 @@ const MODEL = "claude-haiku-4-5";
 
 type Category = { id: number; name: string };
 
+/**
+ * Things the artwork must never contain; the card's title and message are
+ * rendered on top of it by the app. The fal.ai FLUX.1 [schnell] endpoint has
+ * no negative_prompt input, so these are appended to the prompt as an
+ * exclusion clause instead.
+ */
+export const NEGATIVE_PROMPT =
+    "text, words, letters, signatures, watermarks, writing, typography, labels";
+
 export class CategoryMismatchError extends Error {}
 
 /**
@@ -42,7 +51,7 @@ export async function planImage({
     const tasks = [
         needCategory && `Pick the best category from: ${names.join(", ")}.`,
         enhance &&
-            "Rewrite the idea as an English image prompt for greeting card background art: subject, style, palette, lighting. Leave room for text, no lettering. Max 60 words.",
+            "Rewrite the idea as an English image prompt for greeting card background art. Describe only visual elements: subject, scene, background, art style, palette, lighting, composition with calm open space. Never mention or quote any text, words, names, letters, signs, banners or captions, even if the idea asks for them. Max 60 words.",
     ]
         .filter(Boolean)
         .join(" ");
@@ -92,7 +101,7 @@ export async function renderImage(prompt: string, category: Category) {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            prompt: `${prompt}. Greeting card background art, occasion: ${category.name}. No text.`,
+            prompt: `${prompt}. Text-free greeting card background artwork, occasion: ${category.name}, purely visual illustration. Exclude: ${NEGATIVE_PROMPT}.`,
             image_size: "portrait_4_3",
         }),
     });

@@ -1,14 +1,6 @@
 <script lang="ts">
     import { cs, ts } from "$lib/state.svelte";
-    import { toCqw } from "$lib/config/card";
-
-    const titlePositionClass = $derived(
-        ts.titlePosition === "top"
-            ? "top-[6%]"
-            : ts.titlePosition === "bottom"
-              ? "bottom-[6%]"
-              : "top-1/2 -translate-y-1/2",
-    );
+    import { titlePlacementClass, toCqw } from "$lib/config/card";
 </script>
 
 <!-- Live preview of the card front and the inner message page -->
@@ -26,10 +18,12 @@
         {/if}
         {#if cs.title}
             <div
-                class="absolute inset-x-[6%] text-center {titlePositionClass}"
+                class="absolute inset-x-[6%] text-center {titlePlacementClass(
+                    cs.titlePos,
+                )}"
                 style="color: {cs.titleColor}; font-family: var(--font-family-{cs.titleFont}); font-size: {toCqw(
                     cs.titleFontSize,
-                )}; line-height: 1.4;"
+                )}; line-height: 1.4; transform: rotate({cs.titleRotation}deg);"
             >
                 {cs.title}
             </div>

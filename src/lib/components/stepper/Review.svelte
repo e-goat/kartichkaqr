@@ -99,7 +99,8 @@
             description={cs.description}
             sender={cs.sender ?? undefined}
             previewMode={true}
-            titlePosition={ts.titlePosition}
+            titlePosition={cs.titlePos}
+            titleRotation={cs.titleRotation}
             titleFontSize={cs.titleFontSize}
             descriptionFont={cs.descriptionFont}
             descriptionFontSize={cs.descriptionFontSize}

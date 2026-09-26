@@ -5,6 +5,7 @@
     import TruckIcon from "@lucide/svelte/icons/truck";
     import Trash2Icon from "@lucide/svelte/icons/trash-2";
     import { enhance } from "$app/forms";
+    import { reveal } from "$lib/actions/reveal";
     import { toast } from "svelte-sonner";
     import * as AlertDialog from "$lib/components/ui/alert-dialog";
     import { Badge } from "$lib/components/ui/badge";
@@ -53,8 +54,8 @@
         </Card.Root>
     {:else}
         <ul class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-            {#each data.cards as card (card.id)}
-                <li class="relative">
+            {#each data.cards as card, i (card.id)}
+                <li class="relative" use:reveal={{ delay: (i % 4) * 60 }}>
                     <Button
                         variant="secondary"
                         size="icon-sm"

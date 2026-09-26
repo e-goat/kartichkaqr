@@ -42,10 +42,44 @@ export const CARD_FONT_KEYS = CARD_FONTS.map((f) => f.key) as [
 export const TITLE_FONT_SIZE = { min: 14, max: 64, default: 28 };
 export const DESCRIPTION_FONT_SIZE = { min: 10, max: 28, default: 16 };
 
-export const DEFAULT_CARD_STYLE = {
+/** Title placements offered in the editor (a subset of the TitlePosition enum). */
+export const TITLE_POSITIONS = ["top", "center", "bottom"] as const;
+export type TitlePosition = (typeof TITLE_POSITIONS)[number];
+
+/** Title rotation in whole degrees. */
+export const TITLE_ROTATION = { min: -180, max: 180, default: 0 };
+
+/** Narrows a stored/template position to one the editor supports. */
+export function toTitlePosition(
+    value: string | null | undefined,
+): TitlePosition {
+    return TITLE_POSITIONS.includes(value as TitlePosition)
+        ? (value as TitlePosition)
+        : "top";
+}
+
+/** Tailwind placement for a title overlay inside a `relative` card front. */
+export function titlePlacementClass(pos: string): string {
+    if (pos === "top") return "top-[6%]";
+    if (pos === "bottom") return "bottom-[6%]";
+    return "top-1/2 -translate-y-1/2";
+}
+
+export const DEFAULT_CARD_STYLE: {
+    titleFont: string;
+    titleFontSize: number;
+    titleColor: string;
+    titlePos: TitlePosition;
+    titleRotation: number;
+    descriptionFont: string;
+    descriptionFontSize: number;
+    descriptionColor: string;
+} = {
     titleFont: "PlayfairDisplay",
     titleFontSize: TITLE_FONT_SIZE.default,
     titleColor: "#ffffff",
+    titlePos: "top",
+    titleRotation: TITLE_ROTATION.default,
     descriptionFont: "Montserrat",
     descriptionFontSize: DESCRIPTION_FONT_SIZE.default,
     descriptionColor: "#1f2937",

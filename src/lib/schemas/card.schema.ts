@@ -4,6 +4,8 @@ import {
     CARD_FONT_KEYS,
     DESCRIPTION_FONT_SIZE,
     TITLE_FONT_SIZE,
+    TITLE_POSITIONS,
+    TITLE_ROTATION,
 } from "$lib/config/card";
 
 /**
@@ -33,6 +35,12 @@ export const cardStyleSchema = z.object({
         .min(TITLE_FONT_SIZE.min)
         .max(TITLE_FONT_SIZE.max),
     titleColor: hexColor,
+    titlePos: z.enum(TITLE_POSITIONS, "Невалидна позиция на заглавието"),
+    titleRotation: z
+        .number()
+        .int()
+        .min(TITLE_ROTATION.min)
+        .max(TITLE_ROTATION.max),
     descriptionFont: z.enum(CARD_FONT_KEYS, "Невалиден шрифт"),
     descriptionFontSize: z
         .number()
