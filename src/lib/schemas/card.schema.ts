@@ -133,10 +133,9 @@ export const physicalCopySchema = z.object({
         .default(""),
 });
 
-export const completeCardSchema = introStepSchema.extend({
-    designStepSchema,
-    recordStepSchema,
-});
+export const completeCardSchema = introStepSchema
+    .extend(recordStepSchema.shape)
+    .and(designStepSchema);
 
 export type AiPromptStepData = z.infer<typeof aiPromptStepSchema>;
 export type CardStyleData = z.infer<typeof cardStyleSchema>;

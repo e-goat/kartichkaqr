@@ -74,6 +74,8 @@ export function validateCardInfoStep(): ValidationResult {
         titleFont: cs.titleFont,
         titleFontSize: cs.titleFontSize,
         titleColor: cs.titleColor,
+        titlePos: cs.titlePos,
+        titleRotation: cs.titleRotation,
         descriptionFont: cs.descriptionFont,
         descriptionFontSize: cs.descriptionFontSize,
         descriptionColor: cs.descriptionColor,
