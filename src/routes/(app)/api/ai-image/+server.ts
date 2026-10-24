@@ -2,7 +2,12 @@ import { error, json } from "@sveltejs/kit";
 import { z } from "zod";
 import Anthropic from "@anthropic-ai/sdk";
 import * as db from "$lib/server/database";
-import { planImage, renderImage, CategoryMismatchError } from "$lib/server/ai";
+import {
+    planImage,
+    renderImage,
+    CategoryMismatchError,
+    TextInImageError,
+} from "$lib/server/ai";
 import { AI_PROMPT_MAX_LENGTH } from "$lib/config/card";
 import type { RequestHandler } from "./$types";
 
@@ -32,9 +37,11 @@ export const POST: RequestHandler = async ({ request, locals }) => {
             fixedCategory,
             enhance,
         });
-        const category = plan?.category ?? fixedCategory!;
-        const imagePrompt = plan?.prompt ?? prompt;
-        const imageUrl = await renderImage(imagePrompt, category);
+        const { category } = plan;
+        const imageUrl = await renderImage(plan.prompt);
+        // The visual-only English prompt is internal; only show it to the
+        // user as an "improved prompt" when they asked for enhancement.
+        const imagePrompt = enhance ? plan.prompt : prompt;
 
         return json({
             imageUrl,
@@ -44,6 +51,12 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     } catch (e) {
         if (e instanceof CategoryMismatchError) {
             error(422, "Не успяхме да определим категория. Изберете ръчно.");
+        }
+        if (e instanceof TextInImageError) {
+            error(
+                502,
+                "Не успяхме да генерираме изображение без текст. Опитайте отново.",
+            );
         }
         if (e instanceof Anthropic.RateLimitError) {
             error(429, "Твърде много заявки. Опитайте след малко.");
