@@ -10,7 +10,7 @@ KartichkaQR is a Bulgarian greeting-card app built with SvelteKit 2, Svelte 5 ru
 
 ```bash
 npm run dev        # dev server
-npm run build      # production build (adapter-vercel, nodejs20.x)
+npm run build      # production build (adapter-vercel, nodejs22.x)
 npm run check      # svelte-kit sync + svelte-check
 npm run lint       # eslint + prettier --check
 npm run format     # prettier --write
